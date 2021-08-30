@@ -1,11 +1,11 @@
 
-export function render(board: Array<Array<number>>) {
+export function buildGraphicalBoard(board: Array<Array<number>>): String {
     const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     const lettresEntete = ' ' + alphabet.substr(0, board[0].length)
     const entete = lettresEntete.split("").map(char => ` ${char} `)
     const firstLine = entete.join("")
-
-    console.log(firstLine)
+    
+    let result = firstLine + '\n';
 
     for (let i = 0; i < board.length; i++) {
         let line = ` ${i} `;
@@ -26,7 +26,12 @@ export function render(board: Array<Array<number>>) {
             }
 
         }
-        console.log(line)
+        result += line + '\n';
     }
 
+    return result;
+}
+
+export function render(graphicalBoard: String) {
+    console.log(graphicalBoard)
 }

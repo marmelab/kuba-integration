@@ -1,6 +1,6 @@
 import { getInitialBoard } from './Board'
-import { render } from './VisualBoard'
+import { buildGraphicalBoard, render } from './VisualBoard'
 
 let firstBoard = getInitialBoard();
-
-render(firstBoard);
+let graphicalBoard = buildGraphicalBoard(firstBoard)
+render(graphicalBoard);

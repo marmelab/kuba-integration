@@ -1,9 +1,9 @@
 
 export function buildGraphicalBoard(board: Array<Array<number>>): String {
     const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    const lettresEntete = ' ' + alphabet.substr(0, board[0].length)
-    const entete = lettresEntete.split("").map(char => ` ${char} `)
-    const firstLine = entete.join("")
+    const headerLetter = ' ' + alphabet.substr(0, board[0].length)
+    const header = headerLetter.split("").map(char => ` ${char} `)
+    const firstLine = header.join("")
     
     let result = firstLine + '\n';
 

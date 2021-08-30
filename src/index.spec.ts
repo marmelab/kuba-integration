@@ -1,6 +1,6 @@
 import expect from "expect";
 import { getInitialBoard } from './Board'
-import { buildGraphicalBoard } from './VisualBoard'
+import { renderBoard } from './RenderBoard'
 
 describe("initial test", () => {
   it("should pass", () => {
@@ -14,7 +14,7 @@ describe("initial test", () => {
 
   it("should getGraphical Board", () => {
     const board = [[1, 2], [0, 3]];
-    const graphicalBoard = buildGraphicalBoard(board)
+    const graphicalBoard = renderBoard(board)
     expect(graphicalBoard).toBe("    A  B \n 0 \u001b[31m • \u001b[0m\u001b[34m • \u001b[0m\n 1    \u001b[37m • \u001b[0m\n");
   });
 });

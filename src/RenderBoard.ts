@@ -1,5 +1,7 @@
 
-export function buildGraphicalBoard(board: Array<Array<number>>): String {
+import { Board } from './Board'
+
+export function renderBoard(board: Board): String {
     const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     const headerLetter = ' ' + alphabet.substr(0, board[0].length)
     const header = headerLetter.split("").map(char => ` ${char} `)

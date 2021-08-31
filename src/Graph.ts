@@ -2,6 +2,8 @@
  * Transform an array into graph
  */
 
+import { Board } from "./Board";
+
 /**
  * TYPES
  */
@@ -30,12 +32,11 @@ export type Graph = {
  * FUNCTIONS
  */
 
-export function boardToGraph(board: Array<Array<number>>): Graph | undefined {
+export function boardToGraph(board: Board): Graph {
 
-  if (board.length < 1) return undefined;
+    if (board.length < 1) return newBlankGraph()
 
   let graphFromBoard: Graph = newBlankGraph();
-
 
   const verticalLines: number = board.length;
     const horizontalLines: number = board[0].length;

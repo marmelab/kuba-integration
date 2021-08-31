@@ -1,7 +1,7 @@
 import { getInitialBoard } from './Board'
-import { renderBoard, render } from './RenderBoard'
+import { renderBoard, renderToConsole } from './RenderBoard'
 
-let firstBoard = getInitialBoard();
-let graphicalBoard = renderBoard(firstBoard)
+const firstBoard = getInitialBoard();
+const graphicalBoard = renderBoard(firstBoard)
 
-render(graphicalBoard);
+renderToConsole(graphicalBoard);

@@ -12,8 +12,13 @@ export const INITIAL_BOARD: Board = [
   [2, 2, 0, 0, 0, 1, 1],
 ];
 
+enum Mode {
+  initial = '1',
+  custom = '2',
+}
+
 export async function getBoard(mode: string): Promise<Board> {
-  if (mode === "1") {
+  if (mode === Mode.initial) {
     return getInitialBoard();
   }
 
@@ -22,12 +27,9 @@ export async function getBoard(mode: string): Promise<Board> {
 }
 
 export function getBoardFromFile(customPath: string): Board {
-  let board;
-
   try {
     const data = readFileSync(customPath, { encoding: "utf8" });
-    board = JSON.parse(data).board;
-    return board;
+    return JSON.parse(data).board;
   } catch (err) {
     return [];
   }

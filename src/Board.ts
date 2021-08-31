@@ -1,4 +1,4 @@
-const fs = require("fs");
+import { readFileSync } from "fs";
 import { askUserBoardPath } from "./UserInput";
 
 export type Board = Array<Array<number>>;
@@ -12,31 +12,23 @@ export const INITIAL_BOARD: Board = [
   [2, 2, 0, 0, 0, 1, 1],
 ];
 
-export async function getBoard(mode: String): Promise<Board> {
+export async function getBoard(mode: string): Promise<Board> {
   let board;
   if (mode === "1") {
     board = getInitialBoard();
   } else {
     const boardPath = await askUserBoardPath();
-    board = await getBoardFromFile(boardPath);
+    board = getBoardFromFile(boardPath);
   }
 
   return board;
 }
 
-export async function getBoardFromFile(customPath: String): Promise<Board> {
+export function getBoardFromFile(customPath: string): Board {
   let board;
 
   try {
-    const data: string = await new Promise((resolve) => {
-      fs.readFile(customPath, "utf8", (err: string, data: string) => {
-        if (err) {
-          resolve(data);
-        }
-        resolve(data);
-      });
-    });
-
+    const data = readFileSync(customPath, { encoding: "utf8" });
     board = JSON.parse(data).board;
     return board;
   } catch (err) {

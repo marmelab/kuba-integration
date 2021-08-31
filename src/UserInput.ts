@@ -5,17 +5,17 @@ const rl = readline.createInterface({
     output: process.stdout
 });
 
-export function askWhichBoard(): Promise<String> {
+export function askWhichBoard(): Promise<string> {
     return new Promise((resolve, reject) => {
-        rl.question('Type 1 for initial board or 2 for custom board ', (answer: String) => {
+        rl.question('Type 1 for initial board or 2 for custom board ', (answer: string) => {
             resolve(answer)
         })
     })
 }
 
-export function askUserBoardPath(): Promise<String> {
+export function askUserBoardPath(): Promise<string> {
     return new Promise((resolve, reject) => {
-        rl.question('Path ', (answer: String) => {
+        rl.question('Path ', (answer: string) => {
             resolve(answer)
         })
     })
@@ -27,18 +27,18 @@ export async function askUserMove(): Promise<void> {
     rl.close();
 }
 
-function marble(): Promise<String> {
+function marble(): Promise<string> {
     return new Promise((resolve, reject) => {
-        rl.question('Marble (e.g B2) ', (answer: String) => {
+        rl.question('Marble (e.g B2) ', (answer: string) => {
             console.log(`Your marble is: ${answer}`);
             resolve(answer)
         })
     })
 }
 
-function direction(): Promise<String> {
+function direction(): Promise<string> {
     return new Promise((resolve, reject) => {
-        rl.question('Direction (e.g W) ', (answer: String) => {
+        rl.question('Direction (e.g W) ', (answer: string) => {
             console.log(`Your direction is: ${answer}`);
             resolve(answer)
         })

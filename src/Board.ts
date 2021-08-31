@@ -1,16 +1,6 @@
-import { Graph, Node } from "./Types";
-export type Board = Array<Array<number>>;
+import { Graph, Node, Board, Direction, Deriv } from "./Types";
 
-type deriv = {
-  x: number;
-  y: number;
-};
-
-type direction = {
-  [direction: string]: deriv;
-};
-
-const DIRECTIONS: direction = {
+const DIRECTIONS: Direction = {
   E: {
     x: 1,
     y: 0,
@@ -71,7 +61,7 @@ function hasFreeSpotBeforeToMove(
   let hIndex: number = basePosition.x;
   let vIndex: number = basePosition.y;
 
-  const DERIVATION: deriv = DIRECTIONS[direction];
+  const DERIVATION: Deriv = DIRECTIONS[direction];
 
   hIndex += DERIVATION.x;
   vIndex += DERIVATION.y;

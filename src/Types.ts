@@ -17,3 +17,14 @@ export type Graph = {
   };
   edges: Array<Edge>;
 };
+
+export type Board = Array<Array<number>>;
+
+export type Deriv = {
+  x: number;
+  y: number;
+};
+
+export type Direction = {
+  [direction: string]: Deriv;
+};

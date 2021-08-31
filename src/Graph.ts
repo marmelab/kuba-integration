@@ -1,5 +1,4 @@
-import { Board } from "./Board";
-import { Node, Edge, Graph } from "./Types";
+import { Graph, Board } from "./Types";
 
 export function boardToGraph(board: Board): Graph {
   if (board.length < 1) return newBlankGraph();

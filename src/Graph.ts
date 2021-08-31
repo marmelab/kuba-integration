@@ -15,7 +15,6 @@ export function boardToGraph(board: Board): Graph {
       graphWithNodes = fillNodes(graph, board, hIndex, vIndex);
       graphWithNodesAndDirections = addDirections(
         graphWithNodes,
-        board,
         hIndex,
         vIndex
       );
@@ -49,12 +48,7 @@ function fillNodes(
   return graphWithNodes;
 }
 
-function addDirections(
-  graph: Graph,
-  board: Board,
-  hIndex: number,
-  vIndex: number
-): Graph {
+function addDirections(graph: Graph, hIndex: number, vIndex: number): Graph {
   graph.edges.push({
     from: `${hIndex},${vIndex}`,
     to: `${hIndex - 1},${vIndex}`,

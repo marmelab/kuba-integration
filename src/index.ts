@@ -1,9 +1,16 @@
 import { getInitialBoard } from './Board'
 import { renderBoard, renderToConsole } from './RenderBoard'
-import { askUserMove } from './UserInput'
+import { askUserBoard, askUserMove } from './UserInput'
 
-const firstBoard = getInitialBoard();
-const graphicalBoard = renderBoard(firstBoard);
 
-renderToConsole(graphicalBoard);
-askUserMove();
+
+async function main() {
+    const customPath = await askUserBoard();
+    const firstBoard = await getInitialBoard(customPath);
+    const graphicalBoard = renderBoard(firstBoard);
+
+    renderToConsole(graphicalBoard);
+    askUserMove();
+}
+
+main();

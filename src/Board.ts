@@ -1,6 +1,6 @@
-import { Graph, Node, Board, Direction, Deriv } from "./Types";
+import { Graph, Node, Board, DirectionInBoard, Deriv } from "./Types";
 
-const DIRECTIONS: Direction = {
+const DIRECTIONS: DirectionInBoard = {
   E: {
     x: 1,
     y: 0,

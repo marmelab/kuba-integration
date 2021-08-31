@@ -3,9 +3,11 @@ import { Graph, Board } from "./Types";
 export function boardToGraph(board: Board): Graph {
   if (board.length < 1) return newBlankGraph();
 
+  console.log(board);
+
   let graph: Graph = newBlankGraph();
-  let graphWithNodes: Graph;
-  let graphWithNodesAndDirections: Graph;
+  let graphWithNodes: Graph = { ...graph };
+  let graphWithNodesAndDirections: Graph = { ...graph };
 
   const verticalLines: number = board.length;
   const horizontalLines: number = board[0].length;
@@ -49,31 +51,33 @@ function fillNodes(
 }
 
 function addDirections(graph: Graph, hIndex: number, vIndex: number): Graph {
-  graph.edges.push({
+  let graphWithDirections = { ...graph };
+
+  graphWithDirections.edges.push({
     from: `${hIndex},${vIndex}`,
     to: `${hIndex - 1},${vIndex}`,
     direction: "W",
   });
 
-  graph.edges.push({
+  graphWithDirections.edges.push({
     from: `${hIndex},${vIndex}`,
     to: `${hIndex + 1},${vIndex}`,
     direction: "E",
   });
 
-  graph.edges.push({
+  graphWithDirections.edges.push({
     from: `${hIndex},${vIndex}`,
     to: `${hIndex},${vIndex - 1}`,
     direction: "N",
   });
 
-  graph.edges.push({
+  graphWithDirections.edges.push({
     from: `${hIndex},${vIndex}`,
     to: `${hIndex},${vIndex + 1}`,
     direction: "S",
   });
 
-  return graph;
+  return graphWithDirections;
 }
 
 function isAnExit(board: Board, x: number, y: number) {

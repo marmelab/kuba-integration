@@ -5,10 +5,12 @@ export type Node = {
   isExit: Boolean;
 };
 
+export type Direction = "N" | "S" | "E" | "W";
+
 export type Edge = {
   from: string;
   to: string;
-  direction: string;
+  direction: Direction;
 };
 
 export type Graph = {
@@ -25,6 +27,8 @@ export type Deriv = {
   y: number;
 };
 
-export type Direction = {
-  [direction: string]: Deriv;
+export type DirectionInBoard = {
+  [coordinates: string]: Deriv;
 };
+
+export type Coordinates = string;

@@ -3,19 +3,26 @@ import { Graph, Board } from "./Types";
 export function boardToGraph(board: Board): Graph {
   if (board.length < 1) return newBlankGraph();
 
-  let graphFromBoard: Graph = newBlankGraph();
+  let graph: Graph = newBlankGraph();
+  let graphWithNodes: Graph;
+  let graphWithNodesAndDirections: Graph;
 
   const verticalLines: number = board.length;
   const horizontalLines: number = board[0].length;
 
   for (let hIndex = 0; hIndex < horizontalLines; hIndex++) {
     for (let vIndex = 0; vIndex < verticalLines; vIndex++) {
-      graphFromBoard = fillNodes(graphFromBoard, board, hIndex, vIndex);
-      graphFromBoard = addDirections(graphFromBoard, board, hIndex, vIndex);
+      graphWithNodes = fillNodes(graph, board, hIndex, vIndex);
+      graphWithNodesAndDirections = addDirections(
+        graphWithNodes,
+        board,
+        hIndex,
+        vIndex
+      );
     }
   }
 
-  return graphFromBoard;
+  return graphWithNodesAndDirections;
 }
 
 function newBlankGraph(): Graph {

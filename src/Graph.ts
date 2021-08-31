@@ -7,9 +7,9 @@
  */
 
 type node = {
-  x: number;
-  y: number;
-  value: number;
+  x: Number;
+  y: Number;
+  value: Number;
   isExit: Boolean;
 };
 
@@ -31,42 +31,105 @@ type Graph = {
  */
 
 export function boardToGraph(board: Array<Array<Number>>): Graph | undefined {
-  /* obviously all the 0:x and x:0 are exits
-        all board[x, length] and board[length, x] are exits
-        the only admitted directions are N, E, S, W
-    */
 
   if (board.length < 1) return undefined;
 
-  let graphFromBoard: Graph = newGraph();
+  let graphFromBoard: Graph = newBlankGraph();
 
-  const verticvalLines: Number = board.length;
-  const horizontalLines: Number = board[0].length;
 
-  graphFromBoard = addBoardBoundaries()
+  const verticalLines: Number = board.length;
+    const horizontalLines: Number = board[0].length;
+  
+
+    for (let hIndex = 0; hIndex < horizontalLines; hIndex++){
+        for (let vIndex = 0; vIndex < verticalLines; vIndex++){
+
+            graphFromBoard = addBoardBoundaries(graphFromBoard, board, hIndex, vIndex)
+            graphFromBoard = addDirections(graphFromBoard, board, hIndex, vIndex)
+
+        }
+    }
+
+  return graphFromBoard;
+
 }
 
-function newGraph(): Graph {
+function newBlankGraph(): Graph {
   return {
     nodes: {},
     edges: [],
   };
 }
 
-function addBoardBoundaries(graph: Graph, horizontalLines, verticalLines): Graph {
+function addBoardBoundaries(graph: Graph, board: Array<Array<Number>>, hIndex: number, vIndex: number): Graph {
 
-    
+    graph.nodes[`${hIndex},${vIndex}`] = {
+        x: hIndex,
+        y: vIndex,
+        value: board[vIndex][hIndex],
+        isExit: isAnExit(board, hIndex, vIndex)
+    }
 
   return graph;
 }
 
-function initGraphFromBoard(board: Array<Array<Number>>) {}
+function addDirections(graph: Graph, board: Array<Array<Number>>, hIndex: number, vIndex: number): Graph {
 
-function addDirections(graph: Graph): Graph {
+    graph.edges.push({
+        from: `${hIndex},${vIndex}`,
+        to: `${hIndex-1},${vIndex}`,
+        direction: 'W'
+    })
+
+    graph.edges.push({
+        from: `${hIndex},${vIndex}`,
+        to: `${hIndex+1},${vIndex}`,
+        direction: 'E'
+    })
+
+    graph.edges.push({
+        from: `${hIndex},${vIndex}`,
+        to: `${hIndex},${vIndex-1}`,
+        direction: 'N'
+    })
+
+    graph.edges.push({
+        from: `${hIndex},${vIndex}`,
+        to: `${hIndex},${vIndex+1}`,
+        direction: 'S'
+    })
+
   return graph;
+}
+
+function isAnExit(board: Array<Array<Number>>, x: Number, y: Number){
+    const firstColumnIndex: Number = 0;
+    const firstRowIndex: Number = 0;
+    const lastColumnIndex: Number = board[0].length - 1;
+    const lastRowIndex: Number = board.length - 1;
+
+    if (x === firstColumnIndex) return true
+    if (y === firstRowIndex) return true
+    if (x === lastColumnIndex) return true
+    if (y === lastRowIndex) return true
+
+    return false
+
 }
 
 /*
+
+TODO: To be removed
+
+obviously all the 0:x and x:0 are exits
+        all board[x, length] and board[length, x] are exits
+        the only admitted directions are N, E, S, W
+
+directions : 
+    x-1 == 'West'
+    x+1 == 'East'
+    y-1 == 'North'
+    y+1 == 'South'
 
 const board = [
   [1, 0],

@@ -1,7 +1,13 @@
 import { getInitialBoard } from './Board'
-import { renderBoard, render } from './RenderBoard'
+import { boardToGraph } from './Graph'
+//import { renderBoard, render } from './RenderBoard'
 
 let firstBoard = getInitialBoard();
-let graphicalBoard = renderBoard(firstBoard)
+//let graphicalBoard = renderBoard(firstBoard)
 
-render(graphicalBoard);
+//render(graphicalBoard);
+
+
+let firstGraph = boardToGraph(firstBoard)
+
+console.log(firstGraph) //TODO: Basic test, to be removed !

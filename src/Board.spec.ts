@@ -2,7 +2,7 @@ import expect from "expect";
 import { getInitialBoard } from './Board'
 
 describe("Board test", () => {
-  it("should to turn over the initial game board", () => {
+  it("should turn over the initial game board", () => {
     const firstBoard = getInitialBoard();
     expect(firstBoard).toStrictEqual([
         [1, 1, 0, 0, 0, 2, 2], 

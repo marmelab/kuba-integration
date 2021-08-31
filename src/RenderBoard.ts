@@ -27,22 +27,11 @@ export function renderBoard(board: Board): String {
 }
 
 function marbleValuetoANSIColorCode(marble: number): String {
-    let marbleColor: String;
-    switch (marble) {
-        case 1:
-            marbleColor = redMarble;
-            break;
-        case 2:
-            marbleColor = blueMarble;
-            break;
-        case 3:
-            marbleColor = whiteMarble;
-            break;
-        default:
-            marbleColor = emptyMarble;
-    }
-
-    return marbleColor;
+    const marbleColor = [emptyMarble];
+    marbleColor[1] = redMarble;
+    marbleColor[2] = blueMarble;
+    marbleColor[3] = whiteMarble;
+    return marbleColor[marble];
 }
 
 export function renderToConsole(graphicalBoard: String) {

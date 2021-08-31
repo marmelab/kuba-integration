@@ -1,9 +1,10 @@
 import { Board } from './Board'
 
-export const redMarble: String= `\u001b[31m \u2022 \u001b[0m`;
-export const blueMarble: String = `\u001b[34m \u2022 \u001b[0m`;
-export const whiteMarble: String = `\u001b[37m \u2022 \u001b[0m`;
-export const emptyMarble: String = `   `;
+export const RED_MARBLE: String= `\u001b[31m \u2022 \u001b[0m`;
+export const BLUE_MARBLE: String = `\u001b[34m \u2022 \u001b[0m`;
+export const WHITE_MARBLE: String = `\u001b[37m \u2022 \u001b[0m`;
+export const EMPTY_MARBLE: String = `   `;
+const MARBLE_COLORS = [EMPTY_MARBLE, RED_MARBLE, BLUE_MARBLE, WHITE_MARBLE];
 
 const alphabet: String = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
@@ -27,11 +28,7 @@ export function renderBoard(board: Board): String {
 }
 
 function marbleValuetoANSIColorCode(marble: number): String {
-    const marbleColor = [emptyMarble];
-    marbleColor[1] = redMarble;
-    marbleColor[2] = blueMarble;
-    marbleColor[3] = whiteMarble;
-    return marbleColor[marble];
+    return MARBLE_COLORS[marble];
 }
 
 export function renderToConsole(graphicalBoard: String) {

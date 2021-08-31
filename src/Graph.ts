@@ -2,55 +2,68 @@
  * Transform array to graph
  */
 
-interface Graph{
-    nodes: {
+/**
+ * TYPES
+ */
 
-    },
-    edges: {
+type node = {
+  x: number;
+  y: number;
+  value: number;
+  isExit: Boolean;
+};
 
-    }
-}
+type edge = {
+  from: string;
+  to: string;
+  direction: string;
+};
 
- export function boardToGraph(board: Array<Array<Number>>){
-    /* obviously all the 0:x and x:0 are exits
+type Graph = {
+  nodes: {
+    [coordinates: string]: node;
+  };
+  edges: Array<edge>;
+};
+
+/**
+ * FUNCTIONS
+ */
+
+export function boardToGraph(board: Array<Array<Number>>): Graph | undefined {
+  /* obviously all the 0:x and x:0 are exits
         all board[x, length] and board[length, x] are exits
         the only admitted directions are N, E, S, W
     */
 
-    const initialGraph: Graph = initGraph(board);
-    const graphWithDirections: Graph = addDirections(initialGraph);
-    const graphWithDirectionsAndBoundaries: Graph = checkAndAddBoardBoundaries(graphWithDirections);
+  if (board.length < 1) return undefined;
 
-    for (let i = 0; i < board.length; i++){
+  let graphFromBoard: Graph = newGraph();
 
-    }
+  const verticvalLines: Number = board.length;
+  const horizontalLines: Number = board[0].length;
 
+  graphFromBoard = addBoardBoundaries()
 }
 
-function initGraph(board: Array<Array<Number>>): Graph{
-    let graph: Graph = {
-        nodes: {
-
-        },
-        edges:{
-
-        }
-    }
-
-    return graph
+function newGraph(): Graph {
+  return {
+    nodes: {},
+    edges: [],
+  };
 }
 
-function initGraphFromBoard(){
+function addBoardBoundaries(graph: Graph, horizontalLines, verticalLines): Graph {
 
+    
+
+  return graph;
 }
 
-function addDirections(graph: Graph): Graph{
-    return graph
-}
+function initGraphFromBoard(board: Array<Array<Number>>) {}
 
-function checkAndAddBoardBoundaries(graph: Graph):Graph{
-
-    return graph
+function addDirections(graph: Graph): Graph {
+  return graph;
 }
 
 /*

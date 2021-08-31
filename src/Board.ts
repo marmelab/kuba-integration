@@ -13,15 +13,12 @@ export const INITIAL_BOARD: Board = [
 ];
 
 export async function getBoard(mode: string): Promise<Board> {
-  let board;
   if (mode === "1") {
-    board = getInitialBoard();
-  } else {
-    const boardPath = await askUserBoardPath();
-    board = getBoardFromFile(boardPath);
+    return getInitialBoard();
   }
 
-  return board;
+  const boardPath = await askUserBoardPath();
+  return getBoardFromFile(boardPath);
 }
 
 export function getBoardFromFile(customPath: string): Board {

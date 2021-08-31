@@ -1,44 +1,44 @@
 /**
- * Transform array to graph
+ * Transform an array into graph
  */
 
 /**
  * TYPES
  */
 
-type node = {
-  x: Number;
-  y: Number;
-  value: Number;
+export type Node = {
+  x: number;
+  y: number;
+  value: number;
   isExit: Boolean;
 };
 
-type edge = {
+export type Edge = {
   from: string;
   to: string;
   direction: string;
 };
 
-type Graph = {
+export type Graph = {
   nodes: {
-    [coordinates: string]: node;
+    [coordinates: string]: Node;
   };
-  edges: Array<edge>;
+  edges: Array<Edge>;
 };
 
 /**
  * FUNCTIONS
  */
 
-export function boardToGraph(board: Array<Array<Number>>): Graph | undefined {
+export function boardToGraph(board: Array<Array<number>>): Graph | undefined {
 
   if (board.length < 1) return undefined;
 
   let graphFromBoard: Graph = newBlankGraph();
 
 
-  const verticalLines: Number = board.length;
-    const horizontalLines: Number = board[0].length;
+  const verticalLines: number = board.length;
+    const horizontalLines: number = board[0].length;
   
 
     for (let hIndex = 0; hIndex < horizontalLines; hIndex++){
@@ -61,7 +61,7 @@ function newBlankGraph(): Graph {
   };
 }
 
-function addBoardBoundaries(graph: Graph, board: Array<Array<Number>>, hIndex: number, vIndex: number): Graph {
+function addBoardBoundaries(graph: Graph, board: Array<Array<number>>, hIndex: number, vIndex: number): Graph {
 
     graph.nodes[`${hIndex},${vIndex}`] = {
         x: hIndex,
@@ -73,7 +73,7 @@ function addBoardBoundaries(graph: Graph, board: Array<Array<Number>>, hIndex: n
   return graph;
 }
 
-function addDirections(graph: Graph, board: Array<Array<Number>>, hIndex: number, vIndex: number): Graph {
+function addDirections(graph: Graph, board: Array<Array<number>>, hIndex: number, vIndex: number): Graph {
 
     graph.edges.push({
         from: `${hIndex},${vIndex}`,
@@ -102,11 +102,11 @@ function addDirections(graph: Graph, board: Array<Array<Number>>, hIndex: number
   return graph;
 }
 
-function isAnExit(board: Array<Array<Number>>, x: Number, y: Number){
-    const firstColumnIndex: Number = 0;
-    const firstRowIndex: Number = 0;
-    const lastColumnIndex: Number = board[0].length - 1;
-    const lastRowIndex: Number = board.length - 1;
+function isAnExit(board: Array<Array<number>>, x: number, y: number){
+    const firstColumnIndex: number = 0;
+    const firstRowIndex: number = 0;
+    const lastColumnIndex: number = board[0].length - 1;
+    const lastRowIndex: number = board.length - 1;
 
     if (x === firstColumnIndex) return true
     if (y === firstRowIndex) return true
@@ -114,10 +114,17 @@ function isAnExit(board: Array<Array<Number>>, x: Number, y: Number){
     if (y === lastRowIndex) return true
 
     return false
-
 }
 
 /*
+
+TODO: Check user move
+this implies : 
+    - register players and colors of players
+    - register last move
+    - checking the marble color of user
+    - check is move is not a revert of last one
+
 
 TODO: To be removed
 

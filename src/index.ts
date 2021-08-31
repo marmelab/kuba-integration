@@ -1,16 +1,17 @@
-import { getInitialBoard } from './Board'
-import { renderBoard, renderToConsole } from './RenderBoard'
-import { askUserBoard, askUserMove } from './UserInput'
-
-
+import { getBoard } from "./Board";
+import { renderBoard, renderToConsole } from "./RenderBoard";
+import { askWhichBoard, askUserMove } from "./UserInput";
 
 async function main() {
-    const customPath = await askUserBoard();
-    const firstBoard = await getInitialBoard(customPath);
-    const graphicalBoard = renderBoard(firstBoard);
+  const wichBoard = await askWhichBoard();
+  const board = await getBoard(wichBoard);
+
+  if (board) {
+    const graphicalBoard = renderBoard(board);
 
     renderToConsole(graphicalBoard);
     askUserMove();
+  }
 }
 
 main();

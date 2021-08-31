@@ -5,9 +5,17 @@ const rl = readline.createInterface({
     output: process.stdout
 });
 
-export function askUserBoard(): Promise<String> {
+export function askWhichBoard(): Promise<String> {
     return new Promise((resolve, reject) => {
-        rl.question('Do you have a custom board ? (path or empty) ', (answer: String) => {
+        rl.question('Type 1 for initial board or 2 for custom board ', (answer: String) => {
+            resolve(answer)
+        })
+    })
+}
+
+export function askUserBoardPath(): Promise<String> {
+    return new Promise((resolve, reject) => {
+        rl.question('Path ', (answer: String) => {
             resolve(answer)
         })
     })

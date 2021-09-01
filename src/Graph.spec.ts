@@ -1,7 +1,11 @@
 import expect from "expect";
 import { Graph, Board } from "./Types";
 import { getInitialBoard } from "./Board";
-import { boardToGraph, positionToCoordinate, moveMarbleInDirection } from "./Graph";
+import {
+  boardToGraph,
+  positionToCoordinate,
+  moveMarbleInDirection,
+} from "./Graph";
 
 const INITIAL_BOARD: Board = [
   [1, 1, 1],
@@ -19,7 +23,6 @@ describe("graph test", () => {
     expect(GRAPH.nodes["0,1"].isExit).toBe(true);
     expect(GRAPH.edges[0].from).toBe("0,0");
     expect(GRAPH);
-
   });
 
   it("should transform position into coordinate", () => {
@@ -36,12 +39,12 @@ describe("graph test", () => {
 
     const coordinate = positionToCoordinate(position);
 
-    expect(coordinate).toStrictEqual({x: -1, y:-1});
+    expect(coordinate).toStrictEqual({ x: -1, y: -1 });
   });
 
   it("should not move marbles because start on value 0", () => {
-    const coordinate = {x: 2, y: 0};
-    const direction = "E"
+    const coordinate = { x: 2, y: 0 };
+    const direction = "E";
     const graph = {
       nodes: {
         "0,0": { x: 0, y: 0, value: 1, isExit: false },
@@ -60,50 +63,65 @@ describe("graph test", () => {
       },
       edges: [],
     };
-    
+
     const graphMoved = moveMarbleInDirection(graph, coordinate, direction);
 
     expect(graphMoved).toStrictEqual(movedGraph);
   });
 
   it("should move marbles from start position and vertical direction", () => {
-    const coordinate = {x: 0, y: 0};
-    const direction = "S"
-    const graph = {
+    const coordinate = { x: 0, y: 0 };
+    const direction = "S";
+    const graph: Graph = {
       nodes: {
         "0,0": { x: 0, y: 0, value: 1, isExit: false },
-        "1,0": { x: 1, y: 0, value: 1, isExit: false },
-        "2,0": { x: 2, y: 0, value: 0, isExit: false },
-        "3,0": { x: 3, y: 0, value: 2, isExit: false },
+        "1,0": { x: 0, y: 1, value: 1, isExit: false },
+        "2,0": { x: 0, y: 2, value: 0, isExit: false },
+        "3,0": { x: 0, y: 3, value: 2, isExit: false },
       },
-      edges: [],
+      edges: [
+        { from: "0,0", to: "1,0", direction: "S" },
+        { from: "1,0", to: "2,0", direction: "S" },
+        { from: "2,0", to: "3,0", direction: "S" },
+        { from: "3,0", to: "4,0", direction: "S" },
+      ],
     };
     const movedGraph = {
       nodes: {
         "0,0": { x: 0, y: 0, value: 0, isExit: false },
-        "1,0": { x: 1, y: 0, value: 1, isExit: false },
-        "2,0": { x: 2, y: 0, value: 1, isExit: false },
-        "3,0": { x: 3, y: 0, value: 2, isExit: false },
+        "1,0": { x: 0, y: 1, value: 1, isExit: false },
+        "2,0": { x: 0, y: 2, value: 1, isExit: false },
+        "3,0": { x: 0, y: 3, value: 2, isExit: false },
       },
-      edges: [],
+      edges: [
+        { from: "0,0", to: "1,0", direction: "S" },
+        { from: "1,0", to: "2,0", direction: "S" },
+        { from: "2,0", to: "3,0", direction: "S" },
+        { from: "3,0", to: "4,0", direction: "S" },
+      ],
     };
-    
+
     const graphMoved = moveMarbleInDirection(graph, coordinate, direction);
 
     expect(graphMoved).toStrictEqual(movedGraph);
   });
 
   it("should move marbles from start position and horizontal direction", () => {
-    const coordinate = {x: 3, y: 0};
-    const direction = "W"
-    const graph = {
+    const coordinate = { x: 3, y: 0 };
+    const direction = "W";
+    const graph: Graph = {
       nodes: {
         "0,0": { x: 0, y: 0, value: 1, isExit: false },
         "0,1": { x: 1, y: 0, value: 1, isExit: false },
         "0,2": { x: 2, y: 0, value: 0, isExit: false },
         "0,3": { x: 3, y: 0, value: 2, isExit: false },
       },
-      edges: [],
+      edges: [
+        { from: "0,1", to: "0,0", direction: "W" },
+        { from: "0,2", to: "0,1", direction: "W" },
+        { from: "0,3", to: "0,2", direction: "W" },
+        { from: "0,4", to: "0,3", direction: "W" },
+      ],
     };
     const movedGraph = {
       nodes: {
@@ -112,9 +130,14 @@ describe("graph test", () => {
         "0,2": { x: 2, y: 0, value: 2, isExit: false },
         "0,3": { x: 3, y: 0, value: 0, isExit: false },
       },
-      edges: [],
+      edges: [
+        { from: "0,1", to: "0,0", direction: "W" },
+        { from: "0,2", to: "0,1", direction: "W" },
+        { from: "0,3", to: "0,2", direction: "W" },
+        { from: "0,4", to: "0,3", direction: "W" },
+      ],
     };
-    
+
     const graphMoved = moveMarbleInDirection(graph, coordinate, direction);
 
     expect(graphMoved).toStrictEqual(movedGraph);

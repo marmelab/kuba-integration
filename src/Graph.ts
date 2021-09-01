@@ -1,12 +1,6 @@
 import { Graph, Board, Edge, Node } from "./Types";
 import { ALPHABET } from "./RenderBoard";
 
-const VALUE_DIRECTION: { [key: string]: number } = {};
-VALUE_DIRECTION["W"] = -1;
-VALUE_DIRECTION["E"] = 1;
-VALUE_DIRECTION["N"] = -1;
-VALUE_DIRECTION["S"] = 1;
-
 export function boardToGraph(board: Board): Graph {
   if (board.length < 1) return newBlankGraph();
 
@@ -99,21 +93,6 @@ export function positionToCoordinate(position: string): {
   }
 
   return { x, y };
-}
-
-function nextCoordinateFromDirection(
-  coordinate: { x: number; y: number },
-  direction: string
-): { x: number; y: number } {
-  if (!coordinate || !direction) {
-    return { x: -1, y: -1 };
-  }
-
-  if (direction == "W" || direction == "E") {
-    return { x: coordinate.x + VALUE_DIRECTION[direction], y: coordinate.y };
-  }
-
-  return { x: coordinate.x, y: coordinate.y + VALUE_DIRECTION[direction] };
 }
 
 export function moveMarbleInDirection(

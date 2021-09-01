@@ -48,6 +48,8 @@ describe("graphToBoard", () => {
 
     const coordinate = positionToCoordinate(position);
 
+    console.log(coordinate)
+
     expect(coordinate).toStrictEqual(coordinateResult);
   });
 

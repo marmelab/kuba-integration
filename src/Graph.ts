@@ -141,3 +141,14 @@ export function moveMarbleInDirection(
 
   return graph;
 }
+export const graphToBoard = (graph: Graph): Board => {
+  const board: Board = [[]];
+  for (const index in graph.nodes) {
+    const node: Node = graph.nodes[index];
+    if (!board[node.y]) {
+      board.push([]);
+    }
+    board[node.y][node.x] = node.value;
+  }
+  return board;
+};

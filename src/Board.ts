@@ -1,11 +1,15 @@
 import { Graph, Node, Board, DirectionInBoard, Derivation } from "./Types";
 import { readFileSync } from "fs";
 import { askUserBoardPath } from "./UserInput";
+<<<<<<< HEAD
 import {
   positionToCoordinate,
   boardToGraph,
   moveMarbleInDirection,
 } from "./Graph";
+=======
+import { positionToCoordinate, boardToGraph } from "./Graph";
+>>>>>>> work fusion
 
 const DIRECTIONS: DirectionInBoard = {
   E: {
@@ -118,6 +122,7 @@ function hasFreeSpotBeforeToMove(
   return !positionExistsInBoard(boardGraph, `${hIndex},${vIndex}`);
 }
 
+<<<<<<< HEAD
 export function moveMarble(
   board: Board,
   userMove: { marblePosition: string; marbleDirection: string }
@@ -140,4 +145,12 @@ export function moveMarble(
     coordinate,
     userMove.marbleDirection
   );
+=======
+export function moveMarble(board: Board, userMove: {marblePosition: string, marbleDirection: string}): void {
+  const coordinate = positionToCoordinate(userMove.marblePosition);
+  const boardGraph = boardToGraph(board);
+  const canMove = canMoveMarbleInDirection(boardGraph, `${coordinate.x},${coordinate.y}`, userMove.marbleDirection);
+
+  console.log(canMove);
+>>>>>>> work fusion
 }

@@ -117,7 +117,7 @@ export function moveMarbleInDirection(graph: Graph, marbleCoordinate: {x: number
 
   const firstNode = graph.nodes[`${marbleCoordinate.x},${marbleCoordinate.y}`];
   let previousNodeValue = firstNode.value;
-  firstNode.value = 0;graph.nodes[`${marbleCoordinate.x},${marbleCoordinate.y}`];
+  firstNode.value = 0;
 
   let nextCoordinate = nextCoordinateFromDirection(marbleCoordinate, direction);
 

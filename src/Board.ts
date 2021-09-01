@@ -82,12 +82,10 @@ export function canMoveMarbleInDirection(
   marblePosition: string,
   direction: string
 ): Boolean {
-  if (positionExistsInBoard(boardGraph, marblePosition)) {
-    if (hasFreeSpotBeforeToMove(boardGraph, marblePosition, direction))
-      return true;
-  }
-
-  return false;
+  return (
+    positionExistsInBoard(boardGraph, marblePosition) &&
+    hasFreeSpotBeforeToMove(boardGraph, marblePosition, direction)
+  );
 }
 
 function positionExistsInBoard(

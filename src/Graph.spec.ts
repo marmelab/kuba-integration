@@ -9,7 +9,7 @@ const INITAL_BOARD: Board = [
   [1, 1, 1],
 ];
 
-describe("Graph test", () => {
+describe("graph test", () => {
   it("should return a well formed Graph when a Board is passed as argument with the boardToGraph method", () => {
     const GRAPH: Graph = boardToGraph(INITAL_BOARD);
 

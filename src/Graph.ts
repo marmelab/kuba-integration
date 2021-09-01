@@ -1,6 +1,12 @@
 import { Graph, Board, Edge, Node } from "./Types";
 import { ALPHABET } from "./RenderBoard";
 
+const VALUE_DIRECTION = [];
+VALUE_DIRECTION["W"] = -1;
+VALUE_DIRECTION["E"] = 1;
+VALUE_DIRECTION["N"] = -1;
+VALUE_DIRECTION["S"] = -1;
+
 export function boardToGraph(board: Board): Graph {
   if (board.length < 1) return newBlankGraph();
 
@@ -75,12 +81,15 @@ function isAnExit(board: Board, x: number, y: number) {
   );
 }
 
-export function positionToCoordinate(position: string): {x: number, y: number} {
+export function positionToCoordinate(position: string): {
+  x: number;
+  y: number;
+} {
   if (position.length > 3) {
     return undefined;
   }
 
-  const positionSplit = position.split('');
+  const positionSplit = position.split("");
 
   const x = ALPHABET.indexOf(positionSplit[0]);
   const y = parseInt(positionSplit[1] + positionSplit[2]);
@@ -89,28 +98,29 @@ export function positionToCoordinate(position: string): {x: number, y: number} {
     return undefined;
   }
 
-  return {x, y};
+  return { x, y };
 }
 
-function nextCoordinateFromDirection(coordinate: {x: number, y:number}, direction: string): {x: number, y: number} {
+function nextCoordinateFromDirection(
+  coordinate: { x: number; y: number },
+  direction: string
+): { x: number; y: number } {
   if (!coordinate || !direction) {
     return undefined;
   }
 
-  const valueDirection = [];
-  valueDirection['W'] = -1;
-  valueDirection['E'] = 1;
-  valueDirection['N'] = -1;
-  valueDirection['S'] = -1;
-
-  if (direction == 'W' || direction == 'E') {
-    return {x: coordinate.x + valueDirection[direction], y: coordinate.y}
+  if (direction == "W" || direction == "E") {
+    return { x: coordinate.x + VALUE_DIRECTION[direction], y: coordinate.y };
   }
 
-  return {x: coordinate.x, y: coordinate.y + valueDirection[direction]}
+  return { x: coordinate.x, y: coordinate.y + VALUE_DIRECTION[direction] };
 }
 
-export function moveMarbleInDirection(graph: Graph, marbleCoordinate: {x: number, y: number}, direction: string): Graph {
+export function moveMarbleInDirection(
+  graph: Graph,
+  marbleCoordinate: { x: number; y: number },
+  direction: string
+): Graph {
   if (!marbleCoordinate || !graph || !direction) {
     return undefined;
   }

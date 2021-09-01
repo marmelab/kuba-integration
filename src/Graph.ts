@@ -92,10 +92,47 @@ export function positionToCoordinate(position: string): {x: number, y: number} {
   return {x, y};
 }
 
-export function moveMarbleInDirection(graph: Graph, marbleCoordinate: {x: number, y: number}, direction: string): void {
+function nextCoordinateFromDirection(coordinate: {x: number, y:number}, direction: string): {x: number, y: number} {
+  if (!coordinate || !direction) {
+    return undefined;
+  }
+
+  const valueDirection = [];
+  valueDirection['W'] = -1;
+  valueDirection['E'] = 1;
+  valueDirection['N'] = -1;
+  valueDirection['S'] = -1;
+
+  if (direction == 'W' || direction == 'E') {
+    return {x: coordinate.x + valueDirection[direction], y: coordinate.y}
+  }
+
+  return {x: coordinate.x, y: coordinate.y + valueDirection[direction]}
+}
+
+export function moveMarbleInDirection(graph: Graph, marbleCoordinate: {x: number, y: number}, direction: string): Graph {
   if (!marbleCoordinate || !graph || !direction) {
     return undefined;
   }
 
-  
+  const firstNode = graph.nodes[`${marbleCoordinate.x},${marbleCoordinate.y}`];
+  let previousNodeValue = firstNode.value;
+  firstNode.value = 0;graph.nodes[`${marbleCoordinate.x},${marbleCoordinate.y}`];
+
+  let nextCoordinate = nextCoordinateFromDirection(marbleCoordinate, direction);
+
+  while (graph.nodes[`${nextCoordinate.x},${nextCoordinate.y}`]) {
+    const node = graph.nodes[`${nextCoordinate.x},${nextCoordinate.y}`];
+    const tmpValue = node.value;
+    node.value = previousNodeValue;
+    previousNodeValue = tmpValue;
+
+    if (tmpValue === 0) {
+      break;
+    }
+
+    nextCoordinate = nextCoordinateFromDirection(nextCoordinate, direction);
+  }
+
+  return graph;
 }

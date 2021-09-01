@@ -73,3 +73,9 @@ function isAnExit(board: Board, x: number, y: number) {
     y === lastRowIndex
   );
 }
+
+export const graphToBoard = (graph: Graph): Board => {
+  let board: Board;
+
+  return board;
+};

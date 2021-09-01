@@ -1,4 +1,4 @@
-import { getBoard } from "./Board";
+import { getBoard, moveMarble } from "./Board";
 import { renderBoard, renderToConsole } from "./RenderBoard";
 import { askWhichBoard, askUserMove } from "./UserInput";
 import { close } from "./UserInput";
@@ -13,7 +13,8 @@ async function main() {
   }
   const graphicalBoard = renderBoard(board);
   renderToConsole(graphicalBoard);
-  askUserMove();
+  const userMove = await askUserMove();
+  moveMarble(board, userMove)
 }
 
 main();

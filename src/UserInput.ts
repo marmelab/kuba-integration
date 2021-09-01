@@ -17,10 +17,11 @@ export function askUserBoardPath(): Promise<string> {
   });
 }
 
-export async function askUserMove(): Promise<void> {
-  const userMable = await marble();
-  const userDirection = await direction();
+export async function askUserMove(): Promise<{marblePosition: string, marbleDirection: string}> {
+  const marblePosition = await marble();
+  const marbleDirection = await direction();
   close();
+  return {marblePosition, marbleDirection}
 }
 
 function marble(): Promise<string> {

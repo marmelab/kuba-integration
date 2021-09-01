@@ -1,6 +1,7 @@
 import { Graph, Node, Board, DirectionInBoard, Derivation } from "./Types";
 import { readFileSync } from "fs";
 import { askUserBoardPath } from "./UserInput";
+import { positionToCoordinate, boardToGraph } from "./Graph";
 
 const DIRECTIONS: DirectionInBoard = {
   E: {
@@ -111,4 +112,12 @@ function hasFreeSpotBeforeToMove(
   vIndex += DERIVATION.y;
 
   return !positionExistsInBoard(boardGraph, `${hIndex},${vIndex}`);
+}
+
+export function moveMarble(board: Board, userMove: {marblePosition: string, marbleDirection: string}): void {
+  const coordinate = positionToCoordinate(userMove.marblePosition);
+  const boardGraph = boardToGraph(board);
+  const canMove = canMoveMarbleInDirection(boardGraph, `${coordinate.x},${coordinate.y}`, userMove.marbleDirection);
+
+  console.log(canMove);
 }

@@ -6,9 +6,10 @@ export function boardToGraph(board: Board): Graph {
   const verticalLines: number = board.length;
   const horizontalLines: number = board[0].length;
 
+  let graph: Graph = newBlankGraph();
+
   for (let hIndex = 0; hIndex < horizontalLines; hIndex++) {
     for (let vIndex = 0; vIndex < verticalLines; vIndex++) {
-      let graph: Graph = newBlankGraph();
       graph = {
         nodes: {
           ...graph.nodes,

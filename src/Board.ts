@@ -1,4 +1,11 @@
-import { Graph, Node, Board, DirectionInBoard, Derivation } from "./Types";
+import {
+  Graph,
+  Node,
+  Board,
+  DirectionInBoard,
+  Derivation,
+  Player,
+} from "./Types";
 import { readFileSync } from "fs";
 import { askUserBoardPath } from "./UserInput";
 
@@ -80,11 +87,14 @@ export function getInitialBoard(): Board {
 export function canMoveMarbleInDirection(
   boardGraph: Graph,
   marblePosition: string,
-  direction: string
+  direction: string,
+  player: Player
 ): Boolean {
+  const marbleColor = boardGraph.nodes[marblePosition].value;
   return (
     positionExistsInBoard(boardGraph, marblePosition) &&
-    hasFreeSpotBeforeToMove(boardGraph, marblePosition, direction)
+    hasFreeSpotBeforeToMove(boardGraph, marblePosition, direction) &&
+    isOfMyMarbleColor(player, marbleColor)
   );
 }
 
@@ -111,4 +121,8 @@ function hasFreeSpotBeforeToMove(
   vIndex += DERIVATION.y;
 
   return !positionExistsInBoard(boardGraph, `${hIndex},${vIndex}`);
+}
+
+function isOfMyMarbleColor(player: Player, marbleColor: number) {
+  return player.marbleColor === marbleColor;
 }

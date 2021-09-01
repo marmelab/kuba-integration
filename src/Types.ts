@@ -32,3 +32,8 @@ export type DirectionInBoard = {
 };
 
 export type Coordinates = string;
+
+export type Player = {
+  playerNumber: number;
+  marbleColor: number;
+};

@@ -1,4 +1,5 @@
 import { Graph, Board, Edge, Node } from "./Types";
+import { ALPHABET } from "./RenderBoard";
 
 export function boardToGraph(board: Board): Graph {
   if (board.length < 1) return newBlankGraph();
@@ -72,4 +73,29 @@ function isAnExit(board: Board, x: number, y: number) {
     x === lastColumnIndex ||
     y === lastRowIndex
   );
+}
+
+export function positionToCoordinate(position: string): {x: number, y: number} {
+  if (position.length > 3) {
+    return undefined;
+  }
+
+  const positionSplit = position.split('');
+
+  const x = ALPHABET.indexOf(positionSplit[0]);
+  const y = parseInt(positionSplit[1] + positionSplit[2]);
+
+  if (!x || x === -1 || !y) {
+    return undefined;
+  }
+
+  return {x, y};
+}
+
+export function moveMarbleInDirection(graph: Graph, marbleCoordinate: {x: number, y: number}, direction: string): void {
+  if (!marbleCoordinate || !graph || !direction) {
+    return undefined;
+  }
+
+  
 }

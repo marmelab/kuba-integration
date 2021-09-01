@@ -6,7 +6,7 @@ export const WHITE_MARBLE: string = `\u001b[37m \u2022 \u001b[0m`;
 export const EMPTY_MARBLE: string = `   `;
 const MARBLE_COLORS = [EMPTY_MARBLE, RED_MARBLE, BLUE_MARBLE, WHITE_MARBLE];
 
-const ALPHABET: string = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+export const ALPHABET: string = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 export function renderBoard(board: Board): string {
   const columnLetters = ALPHABET.substr(0, board[0].length);

@@ -6,7 +6,9 @@ import {
   positionToCoordinate,
   boardToGraph,
   moveMarbleInDirection,
+  graphToBoard
 } from "./Graph";
+import { renderToConsole, renderBoard } from "./RenderBoard";
 
 const DIRECTIONS: DirectionInBoard = {
   E: {
@@ -107,7 +109,7 @@ function hasFreeSpotBeforeToMove(
   direction: string
 ): Boolean {
   const basePosition: Node = boardGraph.nodes[marblePosition];
-
+  
   let hIndex: number = basePosition.x;
   let vIndex: number = basePosition.y;
 
@@ -143,4 +145,9 @@ export function moveMarble(
     coordinate,
     userMove.marbleDirection
   );
+
+  const newBoard = graphToBoard(movedGraph);
+  const graphicalBoard = renderBoard(newBoard);
+  renderToConsole(graphicalBoard);
+
 }

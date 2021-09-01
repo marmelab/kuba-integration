@@ -75,7 +75,15 @@ function isAnExit(board: Board, x: number, y: number) {
 }
 
 export const graphToBoard = (graph: Graph): Board => {
-  let board: Board;
-
+  let board: Board = [[]];
+  let maxDimension = 0;
+  for (const index in graph.nodes) {
+    const node: Node = graph.nodes[index];
+    if (node.y > maxDimension) {
+      maxDimension++;
+      board.push([]);
+    }
+    board[node.y][node.x] = node.value;
+  }
   return board;
 };

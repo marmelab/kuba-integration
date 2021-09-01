@@ -107,7 +107,7 @@ export function moveMarbleInDirection(
     };
   }
 
-  let currentNode = graph.nodes[`${marbleCoordinate.y},${marbleCoordinate.x}`];
+  let currentNode = graph.nodes[`${marbleCoordinate.x},${marbleCoordinate.y}`];
 
   if (currentNode.value === 0) {
     return graph;
@@ -117,9 +117,9 @@ export function moveMarbleInDirection(
   while (true) {
 
     const edge = graph.edges.find((edge) => {
-      return edge.direction === direction && edge.from === `${currentNode.y},${currentNode.x}`;
+      return edge.direction === direction && edge.from === `${currentNode.x},${currentNode.y}`;
     });
-    
+
     if (!edge || !graph.nodes[edge.to]) {
       break;
     };

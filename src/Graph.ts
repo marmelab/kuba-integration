@@ -1,11 +1,11 @@
 import { Graph, Board, Edge, Node } from "./Types";
 import { ALPHABET } from "./RenderBoard";
 
-const VALUE_DIRECTION = [];
+const VALUE_DIRECTION: { [key: string]: number } = {};
 VALUE_DIRECTION["W"] = -1;
 VALUE_DIRECTION["E"] = 1;
 VALUE_DIRECTION["N"] = -1;
-VALUE_DIRECTION["S"] = -1;
+VALUE_DIRECTION["S"] = 1;
 
 export function boardToGraph(board: Board): Graph {
   if (board.length < 1) return newBlankGraph();
@@ -86,7 +86,7 @@ export function positionToCoordinate(position: string): {
   y: number;
 } {
   if (position.length > 3) {
-    return undefined;
+    return { x: -1, y: -1 };
   }
 
   const positionSplit = position.split("");
@@ -95,7 +95,7 @@ export function positionToCoordinate(position: string): {
   const y = parseInt(positionSplit[1] + positionSplit[2]);
 
   if (!x || x === -1 || !y) {
-    return undefined;
+    return { x: -1, y: -1 };
   }
 
   return { x, y };
@@ -106,14 +106,14 @@ function nextCoordinateFromDirection(
   direction: string
 ): { x: number; y: number } {
   if (!coordinate || !direction) {
-    return undefined;
+    return { x: -1, y: -1 };
   }
 
   if (direction == "W" || direction == "E") {
-    return { x: coordinate.x + VALUE_DIRECTION[direction], y: coordinate.y };
+    return { x: coordinate.x + VALUE_DIRECTION[direction] , y: coordinate.y };
   }
 
-  return { x: coordinate.x, y: coordinate.y + VALUE_DIRECTION[direction] };
+  return { x: coordinate.x , y: coordinate.y + VALUE_DIRECTION[direction] };
 }
 
 export function moveMarbleInDirection(
@@ -122,17 +122,25 @@ export function moveMarbleInDirection(
   direction: string
 ): Graph {
   if (!marbleCoordinate || !graph || !direction) {
-    return undefined;
+    return {
+      nodes: {},
+      edges: [],
+    };
   }
 
-  const firstNode = graph.nodes[`${marbleCoordinate.x},${marbleCoordinate.y}`];
+  const firstNode = graph.nodes[`${marbleCoordinate.y},${marbleCoordinate.x}`];
+
+  if (firstNode.value === 0) {
+    return graph;
+  }
+
   let previousNodeValue = firstNode.value;
   firstNode.value = 0;
 
   let nextCoordinate = nextCoordinateFromDirection(marbleCoordinate, direction);
 
-  while (graph.nodes[`${nextCoordinate.x},${nextCoordinate.y}`]) {
-    const node = graph.nodes[`${nextCoordinate.x},${nextCoordinate.y}`];
+  while (graph.nodes[`${nextCoordinate.y},${nextCoordinate.x}`]) {
+    const node = graph.nodes[`${nextCoordinate.y},${nextCoordinate.x}`];
     const tmpValue = node.value;
     node.value = previousNodeValue;
     previousNodeValue = tmpValue;

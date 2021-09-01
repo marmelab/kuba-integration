@@ -36,11 +36,11 @@ describe("graph test", () => {
 
     const coordinate = positionToCoordinate(position);
 
-    expect(coordinate).toBe(undefined);
+    expect(coordinate).toStrictEqual({x: -1, y:-1});
   });
 
   it("should not move marbles because start on value 0", () => {
-    const coordinate = {x: 0, y: 2};
+    const coordinate = {x: 2, y: 0};
     const direction = "E"
     const graph = {
       nodes: {
@@ -66,9 +66,9 @@ describe("graph test", () => {
     expect(graphMoved).toStrictEqual(movedGraph);
   });
 
-  it("should move marbles from start position and horizontal direction", () => {
+  it("should move marbles from start position and vertical direction", () => {
     const coordinate = {x: 0, y: 0};
-    const direction = "E"
+    const direction = "S"
     const graph = {
       nodes: {
         "0,0": { x: 0, y: 0, value: 1, isExit: false },
@@ -93,24 +93,24 @@ describe("graph test", () => {
     expect(graphMoved).toStrictEqual(movedGraph);
   });
 
-  it("should move marbles from start position and vertical direction", () => {
-    const coordinate = {x: 0, y: 3};
-    const direction = "N"
+  it("should move marbles from start position and horiwontal direction", () => {
+    const coordinate = {x: 3, y: 0};
+    const direction = "W"
     const graph = {
       nodes: {
         "0,0": { x: 0, y: 0, value: 1, isExit: false },
-        "0,1": { x: 0, y: 1, value: 1, isExit: false },
-        "0,2": { x: 0, y: 2, value: 0, isExit: false },
-        "0,3": { x: 0, y: 3, value: 2, isExit: false },
+        "0,1": { x: 1, y: 0, value: 1, isExit: false },
+        "0,2": { x: 2, y: 0, value: 0, isExit: false },
+        "0,3": { x: 3, y: 0, value: 2, isExit: false },
       },
       edges: [],
     };
     const movedGraph = {
       nodes: {
         "0,0": { x: 0, y: 0, value: 1, isExit: false },
-        "0,1": { x: 0, y: 1, value: 1, isExit: false },
-        "0,2": { x: 0, y: 2, value: 2, isExit: false },
-        "0,3": { x: 0, y: 3, value: 0, isExit: false },
+        "0,1": { x: 1, y: 0, value: 1, isExit: false },
+        "0,2": { x: 2, y: 0, value: 2, isExit: false },
+        "0,3": { x: 3, y: 0, value: 0, isExit: false },
       },
       edges: [],
     };

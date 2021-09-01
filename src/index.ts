@@ -10,16 +10,14 @@ renderToConsole(graphicalBoard);
 
 let graph: Graph = boardToGraph(firstBoard);
 if (graph) {
-  console.log(graph);
-
-  let newMove = canMoveMarbleInDirection(graph, "0,0", "S");
+  let newMove = canMoveMarbleInDirection(graph, "0,0", "E");
   console.log(
     `the move from 0,0 in the south direction is authorized ? `,
     newMove
   );
-  let newMove2 = canMoveMarbleInDirection(graph, "0,0", "N");
+  let newMove2 = canMoveMarbleInDirection(graph, "1,0", "E");
   console.log(
-    `the move from 0,0 in the south direction is authorized ? `,
+    `the move from 0,0 in the North direction is authorized ? `,
     newMove2
   );
 }

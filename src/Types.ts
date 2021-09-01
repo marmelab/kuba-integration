@@ -22,13 +22,13 @@ export type Graph = {
 
 export type Board = Array<Array<number>>;
 
-export type Deriv = {
+export type Derivation = {
   x: number;
   y: number;
 };
 
 export type DirectionInBoard = {
-  [coordinates: string]: Deriv;
+  [coordinates: string]: Derivation;
 };
 
 export type Coordinates = string;

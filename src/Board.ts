@@ -1,11 +1,10 @@
-import { Graph, Node, Board, DirectionInBoard, Deriv } from "./Types";
+import { Graph, Node, Board, DirectionInBoard, Derivation } from "./Types";
 
 const DIRECTIONS: DirectionInBoard = {
   E: {
     x: 1,
     y: 0,
   },
-
   S: {
     x: 0,
     y: 1,
@@ -17,6 +16,25 @@ const DIRECTIONS: DirectionInBoard = {
   N: {
     x: 0,
     y: -1,
+  },
+};
+
+const INVERSE_DIRECTION: DirectionInBoard = {
+  E: {
+    x: -1,
+    y: 0,
+  },
+  S: {
+    x: 0,
+    y: -1,
+  },
+  W: {
+    x: 1,
+    y: 0,
+  },
+  N: {
+    x: 0,
+    y: 1,
   },
 };
 
@@ -58,10 +76,11 @@ function hasFreeSpotBeforeToMove(
   direction: string
 ): Boolean {
   const basePosition: Node = boardGraph.nodes[marblePosition];
+
   let hIndex: number = basePosition.x;
   let vIndex: number = basePosition.y;
 
-  const DERIVATION: Deriv = DIRECTIONS[direction];
+  const DERIVATION: Derivation = INVERSE_DIRECTION[direction];
 
   hIndex += DERIVATION.x;
   vIndex += DERIVATION.y;

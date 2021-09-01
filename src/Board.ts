@@ -85,7 +85,5 @@ function hasFreeSpotBeforeToMove(
   hIndex += DERIVATION.x;
   vIndex += DERIVATION.y;
 
-  if (!positionExistsInBoard(boardGraph, `${hIndex},${vIndex}`)) return true;
-
-  return false;
+  return !positionExistsInBoard(boardGraph, `${hIndex},${vIndex}`);
 }

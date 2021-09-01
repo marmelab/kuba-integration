@@ -1,7 +1,45 @@
+import { Graph, Node, Board, DirectionInBoard, Derivation } from "./Types";
 import { readFileSync } from "fs";
 import { askUserBoardPath } from "./UserInput";
 
-export type Board = Array<Array<number>>;
+const DIRECTIONS: DirectionInBoard = {
+  E: {
+    x: 1,
+    y: 0,
+  },
+  S: {
+    x: 0,
+    y: 1,
+  },
+  W: {
+    x: -1,
+    y: 0,
+  },
+  N: {
+    x: 0,
+    y: -1,
+  },
+};
+
+const INVERSE_DIRECTION: DirectionInBoard = {
+  E: {
+    x: -1,
+    y: 0,
+  },
+  S: {
+    x: 0,
+    y: -1,
+  },
+  W: {
+    x: 1,
+    y: 0,
+  },
+  N: {
+    x: 0,
+    y: 1,
+  },
+};
+
 export const INITIAL_BOARD: Board = [
   [1, 1, 0, 0, 0, 2, 2],
   [1, 1, 0, 3, 0, 2, 2],
@@ -13,8 +51,8 @@ export const INITIAL_BOARD: Board = [
 ];
 
 enum Mode {
-  initial = '1',
-  custom = '2',
+  initial = "1",
+  custom = "2",
 }
 
 export async function getBoard(mode: string): Promise<Board> {
@@ -37,4 +75,40 @@ export function getBoardFromFile(customPath: string): Board {
 
 export function getInitialBoard(): Board {
   return INITIAL_BOARD;
+}
+
+export function canMoveMarbleInDirection(
+  boardGraph: Graph,
+  marblePosition: string,
+  direction: string
+): Boolean {
+  return (
+    positionExistsInBoard(boardGraph, marblePosition) &&
+    hasFreeSpotBeforeToMove(boardGraph, marblePosition, direction)
+  );
+}
+
+function positionExistsInBoard(
+  boardGraph: Graph,
+  marblePosition: string
+): Boolean {
+  return !!boardGraph.nodes[marblePosition];
+}
+
+function hasFreeSpotBeforeToMove(
+  boardGraph: Graph,
+  marblePosition: string,
+  direction: string
+): Boolean {
+  const basePosition: Node = boardGraph.nodes[marblePosition];
+
+  let hIndex: number = basePosition.x;
+  let vIndex: number = basePosition.y;
+
+  const DERIVATION: Derivation = INVERSE_DIRECTION[direction];
+
+  hIndex += DERIVATION.x;
+  vIndex += DERIVATION.y;
+
+  return !positionExistsInBoard(boardGraph, `${hIndex},${vIndex}`);
 }

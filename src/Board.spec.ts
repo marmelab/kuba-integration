@@ -1,15 +1,25 @@
 import expect from "expect";
-import { getInitialBoard, getBoardFromFile, INITIAL_BOARD } from "./Board";
-import { close } from './UserInput';
+import {
+  getInitialBoard,
+  getBoardFromFile,
+  INITIAL_BOARD,
+  canMoveMarbleInDirection,
+} from "./Board";
+import { boardToGraph } from "./Graph";
+import { close } from "./UserInput";
 
 describe("Board test", () => {
+  let firstBoard;
+
   afterAll(() => {
     close();
   });
 
-  it("should turn over the initial game board", () => {
-    const firstBoard = getInitialBoard();
+  beforeEach(() => {
+    firstBoard = getInitialBoard();
+  });
 
+  it("should turn over the initial game board", () => {
     expect(firstBoard).toStrictEqual(INITIAL_BOARD);
   });
 
@@ -30,5 +40,11 @@ describe("Board test", () => {
     expect(board).toStrictEqual([]);
   });
 
-  
+  describe("canMoveMarbleInDirection", () => {
+    it("should return true or false when a position, a direction and a Graph is passed as parameter with the canMoveMarbleInDirection function", () => {
+      const graph = boardToGraph(firstBoard);
+      expect(canMoveMarbleInDirection(graph, "0,0", "E")).toBe(true);
+      expect(canMoveMarbleInDirection(graph, "1,0", "E")).toBe(false);
+    });
+  });
 });

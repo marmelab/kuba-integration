@@ -23,17 +23,17 @@ describe("boardToGraph", () => {
 });
 
 describe("graphToBoard", () => {
-  it("should return a well formed Board when a graph is passed as argument with the graphToBoard function", () => {});
+  it("should return a well formed Board when a graph is passed as argument with the graphToBoard function", () => {
+    const customBoard: Board = [
+      [1, 2, 0],
+      [2, 2, 2],
+      [3, 1, 0],
+    ];
 
-  const customBoard: Board = [
-    [1, 2, 0],
-    [2, 2, 2],
-    [3, 1, 0],
-  ];
+    const graph: Graph = boardToGraph(customBoard);
 
-  const graph: Graph = boardToGraph(customBoard);
+    const boardFromGraph: Board = graphToBoard(graph);
 
-  const boardFromGraph: Board = graphToBoard(graph);
-
-  expect(boardFromGraph).toEqual(customBoard);
+    expect(boardFromGraph).toEqual(customBoard);
+  });
 });

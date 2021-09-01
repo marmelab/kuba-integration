@@ -75,12 +75,10 @@ function isAnExit(board: Board, x: number, y: number) {
 }
 
 export const graphToBoard = (graph: Graph): Board => {
-  let board: Board = [[]];
-  let maxDimension = 0;
+  const board: Board = [[]];
   for (const index in graph.nodes) {
     const node: Node = graph.nodes[index];
-    if (node.y > maxDimension) {
-      maxDimension++;
+    if (!board[node.y]) {
       board.push([]);
     }
     board[node.y][node.x] = node.value;

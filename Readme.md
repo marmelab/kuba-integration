@@ -23,3 +23,13 @@ yarn start
 ```
 yarn test
 ```
+
+### Board JSON Format
+```
+{
+    "board": [
+        [1, 2], 
+        [0, 3]
+    ]
+}
+```

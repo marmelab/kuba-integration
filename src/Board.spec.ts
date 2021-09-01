@@ -1,24 +1,43 @@
 import expect from "expect";
-import { getInitialBoard, canMoveMarbleInDirection } from "./Board";
+import {
+  getInitialBoard,
+  getBoardFromFile,
+  INITIAL_BOARD,
+  canMoveMarbleInDirection,
+} from "./Board";
 import { boardToGraph } from "./Graph";
+import { close } from "./UserInput";
 
 describe("Board test", () => {
   let firstBoard;
+
+  afterAll(() => {
+    close();
+  });
 
   beforeEach(() => {
     firstBoard = getInitialBoard();
   });
 
   it("should turn over the initial game board", () => {
-    expect(firstBoard).toStrictEqual([
-      [1, 1, 0, 0, 0, 2, 2],
-      [1, 1, 0, 3, 0, 2, 2],
-      [0, 0, 3, 3, 3, 0, 0],
-      [0, 3, 3, 3, 3, 3, 0],
-      [0, 0, 3, 3, 3, 0, 0],
-      [2, 2, 0, 3, 0, 1, 1],
-      [2, 2, 0, 0, 0, 1, 1],
-    ]);
+    expect(firstBoard).toStrictEqual(INITIAL_BOARD);
+  });
+
+  it("should turn over a custom game board with good path", async () => {
+    const customGameBoard = [
+      [1, 2],
+      [0, 3],
+    ];
+
+    const board = await getBoardFromFile("assets/board.json");
+
+    expect(board).toStrictEqual(customGameBoard);
+  });
+
+  it("should turn over a empty board if bad path specified", async () => {
+    const board = await getBoardFromFile("badpath");
+
+    expect(board).toStrictEqual([]);
   });
 
   describe("canMoveMarbleInDirection", () => {

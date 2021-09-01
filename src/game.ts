@@ -4,9 +4,13 @@
 // Change player after a move
 // except when the previous move exists a marble.
 
-import { Player } from "./Types";
+import { Player, Board } from "./Types";
+import { renderToConsole, renderBoard } from "./RenderBoard";
+import { askUserMove } from "./UserInput";
 
-export const startNewGame = () => {
+export const startNewGame = (board: Board) => {
+  let players: Array<Player> = [];
+
   const player1: Player = {
     playerNumber: 1,
     marbleColor: 1,
@@ -16,4 +20,26 @@ export const startNewGame = () => {
     playerNumber: 2,
     marbleColor: 2,
   };
+
+  players = [player1, player2];
+
+  let thisTurnPlayer: Player = player1;
+
+  while (true) {
+    const graphicalBoard = renderBoard(board);
+    renderToConsole(graphicalBoard, thisTurnPlayer);
+    askUserMove();
+
+    thisTurnPlayer = switchToNextPlayer(player1, players);
+  }
+};
+
+export const switchToNextPlayer = (
+  actualPlayer: Player,
+  players: Array<Player>
+): Player => {
+  let nextPlayerIndex = players.indexOf(actualPlayer) + 1;
+
+  if (nextPlayerIndex > players.length - 1) return players[0];
+  return players[nextPlayerIndex];
 };

@@ -20,7 +20,7 @@ export type Graph = {
   edges: Array<Edge>;
 };
 
-export type Board = Array<Array<number>>;
+export type Board = number[][];
 
 export type Derivation = {
   x: number;

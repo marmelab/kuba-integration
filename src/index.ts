@@ -1,4 +1,5 @@
 import { getBoard } from "./Board";
+import { startNewGame } from "./game";
 import { renderBoard, renderToConsole } from "./RenderBoard";
 import { askWhichBoard, askUserMove } from "./UserInput";
 import { close } from "./UserInput";
@@ -11,9 +12,7 @@ async function main() {
     close();
     return;
   }
-  const graphicalBoard = renderBoard(board);
-  renderToConsole(graphicalBoard);
-  askUserMove();
-}
 
+  startNewGame(board);
+}
 main();

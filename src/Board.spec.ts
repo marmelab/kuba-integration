@@ -6,6 +6,7 @@ import {
   canMoveMarbleInDirection,
 } from "./Board";
 import { boardToGraph } from "./Graph";
+import { Player } from "./Types";
 import { close } from "./UserInput";
 
 describe("Board test", () => {
@@ -43,8 +44,16 @@ describe("Board test", () => {
   describe("canMoveMarbleInDirection", () => {
     it("should return true or false when a position, a direction and a Graph is passed as parameter with the canMoveMarbleInDirection function", () => {
       const graph = boardToGraph(firstBoard);
-      expect(canMoveMarbleInDirection(graph, "0,0", "E")).toBe(true);
-      expect(canMoveMarbleInDirection(graph, "1,0", "E")).toBe(false);
+      let player1: Player = {
+        playerNumber: 1,
+        marbleColor: 1,
+      };
+      let player2: Player = {
+        playerNumber: 2,
+        marbleColor: 2,
+      };
+      expect(canMoveMarbleInDirection(graph, "0,0", "E", player1)).toBe(true);
+      expect(canMoveMarbleInDirection(graph, "1,0", "E", player1)).toBe(false);
     });
   });
 });

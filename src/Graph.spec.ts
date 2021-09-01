@@ -3,7 +3,7 @@ import { Graph, Board } from "./Types";
 import { getInitialBoard } from "./Board";
 import { boardToGraph, positionToCoordinate, moveMarbleInDirection } from "./Graph";
 
-const INITAL_BOARD: Board = [
+const INITIAL_BOARD: Board = [
   [1, 1, 1],
   [2, 0, 1],
   [1, 1, 1],
@@ -11,7 +11,7 @@ const INITAL_BOARD: Board = [
 
 describe("graph test", () => {
   it("should return a well formed Graph when a Board is passed as argument with the boardToGraph method", () => {
-    const GRAPH: Graph = boardToGraph(INITAL_BOARD);
+    const GRAPH: Graph = boardToGraph(INITIAL_BOARD);
 
     expect(GRAPH.nodes).toBeTruthy();
     expect(GRAPH.nodes["0,0"].value).toBe(1);
@@ -31,7 +31,7 @@ describe("graph test", () => {
     expect(coordinate).toStrictEqual(coordinateResult);
   });
 
-  it("should return undefined if position not match pattern", () => {
+  it("should return a coordinate outside the board box if position not match pattern", () => {
     const position = "13D";
 
     const coordinate = positionToCoordinate(position);
@@ -93,7 +93,7 @@ describe("graph test", () => {
     expect(graphMoved).toStrictEqual(movedGraph);
   });
 
-  it("should move marbles from start position and horiwontal direction", () => {
+  it("should move marbles from start position and horizontal direction", () => {
     const coordinate = {x: 3, y: 0};
     const direction = "W"
     const graph = {

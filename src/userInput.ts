@@ -24,11 +24,12 @@ export function askUserBoardPath(): Promise<string> {
 export async function askUserMove(): Promise<UserMove> {
   const marblePosition = await marble();
   const marbleDirection = await direction();
-  close();
+
   const userMove: UserMove = {
     marblePosition: marblePosition,
     direction: marbleDirection,
   };
+  console.log(`userMove : `, userMove);
   return userMove;
 }
 

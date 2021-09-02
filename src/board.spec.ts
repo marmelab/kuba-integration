@@ -54,6 +54,8 @@ describe("Board test", () => {
       };
       expect(canMoveMarbleInDirection(graph, "0,0", "E", player1)).toBe(true);
       expect(canMoveMarbleInDirection(graph, "1,0", "E", player1)).toBe(false);
+      expect(canMoveMarbleInDirection(graph, "5,0", "S", player2)).toBe(true);
+      expect(canMoveMarbleInDirection(graph, "0,0", "S", player2)).toBe(false);
     });
   });
 });

@@ -4,8 +4,9 @@ import {
   BLUE_MARBLE,
   EMPTY_MARBLE,
   WHITE_MARBLE,
-  renderBoard,
-} from "./renderBoard";
+} from "./constants";
+
+import { renderBoard } from "./renderBoard";
 
 describe("RenderBoard test", () => {
   it("should return a string that graphically represents a board with renderBoard method", () => {

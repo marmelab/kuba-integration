@@ -4,13 +4,34 @@
 // Change player after a move
 // except when the previous move exists a marble.
 
-import { Player, Board } from "./types";
+import { Player, Board, UserMove, Graph } from "./types";
 import { renderToConsole, renderBoard } from "./renderBoard";
-import { askUserMove } from "./userInput";
+import { askUserMove, close } from "./userInput";
+import { moveMarble } from "./board";
+import { graphToBoard } from "./graph";
 
-export const startNewGame = (board: Board) => {
-  let players: Array<Player> = [];
+export const startNewGame = async (initialBoard: Board) => {
+  let board = initialBoard;
 
+  let players: Array<Player> = initializePlayers();
+
+  let thisTurnPlayer: Player = players[0];
+
+  let gameOver: Boolean = false;
+
+  while (!gameOver) {
+    const graphicalBoard = renderBoard(board);
+    renderToConsole(graphicalBoard, thisTurnPlayer);
+    let userMove: UserMove = await askUserMove();
+    let graphs: Array<Graph> = moveMarble(board, userMove, thisTurnPlayer);
+    board = graphToBoard(graphs[1]);
+
+    thisTurnPlayer = switchToNextPlayer(thisTurnPlayer, players);
+  }
+  close();
+};
+
+const initializePlayers = () => {
   const player1: Player = {
     playerNumber: 1,
     marbleColor: 1,
@@ -21,17 +42,7 @@ export const startNewGame = (board: Board) => {
     marbleColor: 2,
   };
 
-  players = [player1, player2];
-
-  let thisTurnPlayer: Player = player1;
-
-  while (true) {
-    const graphicalBoard = renderBoard(board);
-    renderToConsole(graphicalBoard, thisTurnPlayer);
-    askUserMove();
-
-    thisTurnPlayer = switchToNextPlayer(player1, players);
-  }
+  return [player1, player2];
 };
 
 export const switchToNextPlayer = (
@@ -43,3 +54,8 @@ export const switchToNextPlayer = (
   if (nextPlayerIndex > players.length - 1) return players[0];
   return players[nextPlayerIndex];
 };
+
+/* const graphicalBoard = renderBoard(board);
+renderToConsole(graphicalBoard); //TODO: Add player to params
+const userMove: UserMove = await askUserMove();
+moveMarble(board, userMove); */

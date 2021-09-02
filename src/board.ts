@@ -17,7 +17,6 @@ import {
   moveMarbleInDirection,
   graphToBoard,
 } from "./graph";
-import { renderToConsole, renderBoard } from "./renderBoard";
 
 import { INVERSE_DIRECTION, INITIAL_BOARD } from "./constants";
 
@@ -66,7 +65,9 @@ function positionExistsInBoard(
   boardGraph: Graph,
   marblePosition: string
 ): Boolean {
-  return !!boardGraph.nodes[marblePosition];
+  let node = boardGraph.nodes[marblePosition];
+  if (node) return node.value !== 0;
+  return !!node;
 }
 
 function hasFreeSpotBeforeToMove(
@@ -83,7 +84,6 @@ function hasFreeSpotBeforeToMove(
 
   hIndex += derivation.x;
   vIndex += derivation.y;
-
   return !positionExistsInBoard(boardGraph, `${hIndex},${vIndex}`);
 }
 
@@ -91,19 +91,24 @@ function isOfMyMarbleColor(player: Player, marbleColor: number) {
   return player.marbleColor === marbleColor;
 }
 
-//TODO: Add Player to args
-export function moveMarble(board: Board, userMove: UserMove): void {
+export function moveMarble(
+  board: Board,
+  userMove: UserMove,
+  player: Player
+): Array<Graph> {
   const coordinate = positionToCoordinate(userMove.marblePosition);
   const stringCoordinate = `${coordinate.y},${coordinate.x}`;
   const boardGraph = boardToGraph(board);
   const canMove = canMoveMarbleInDirection(
     boardGraph,
     stringCoordinate,
-    userMove.marbleDirection
+    userMove.direction,
+    player
   );
 
   if (!canMove) {
     console.log("This movement is not possible");
+    return [boardGraph, boardGraph];
   }
 
   const movedGraph = moveMarbleInDirection(
@@ -112,7 +117,5 @@ export function moveMarble(board: Board, userMove: UserMove): void {
     userMove.direction
   );
 
-  const newBoard = graphToBoard(movedGraph);
-  const graphicalBoard = renderBoard(newBoard);
-  renderToConsole(graphicalBoard); //TODO: Add player in parameters
+  return [boardGraph, movedGraph];
 }

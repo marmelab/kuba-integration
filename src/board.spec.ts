@@ -58,7 +58,7 @@ describe("Board test", () => {
         "This position does not exist in the board"
       );
       const errorPosition = new CantMoveError(
-        "This marble can't move in this direction"
+        "No free space before the marble"
       );
 
       const errorColor = new CantMoveError(

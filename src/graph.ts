@@ -10,8 +10,8 @@ export function boardToGraph(board: Board): Graph {
 
   let graph: Graph = newBlankGraph();
 
-  for (let hIndex = 0; hIndex < horizontalLines; hIndex++) {
-    for (let vIndex = 0; vIndex < verticalLines; vIndex++) {
+  for (let hIndex = -1; hIndex < horizontalLines + 1; hIndex++) {
+    for (let vIndex = -1; vIndex < verticalLines + 1; vIndex++) {
       graph = {
         nodes: {
           ...graph.nodes,
@@ -31,11 +31,10 @@ function newBlankGraph(): Graph {
     edges: [],
   };
 }
-
 const makeNode = (hIndex: number, vIndex: number, board: Board): Node => ({
   x: hIndex,
   y: vIndex,
-  value: board[vIndex][hIndex],
+  value: isAnExit(board, hIndex, vIndex) ? -1 : board[vIndex][hIndex],
   isExit: isAnExit(board, hIndex, vIndex),
 });
 
@@ -63,16 +62,16 @@ const makeEdges = (hIndex: number, vIndex: number): Edge[] => [
 ];
 
 function isAnExit(board: Board, x: number, y: number) {
-  const firstColumnIndex: number = 0;
-  const firstRowIndex: number = 0;
-  const lastColumnIndex: number = board[0].length - 1;
-  const lastRowIndex: number = board.length - 1;
+  const beforeFirstColumnIndex: number = -1;
+  const beforeFirstRowIndex: number = -1;
+  const afterLastColumnIndex: number = board[0].length;
+  const afterLastRowIndex: number = board.length;
 
   return (
-    x === firstColumnIndex ||
-    y === firstRowIndex ||
-    x === lastColumnIndex ||
-    y === lastRowIndex
+    x === beforeFirstColumnIndex ||
+    y === beforeFirstRowIndex ||
+    x === afterLastColumnIndex ||
+    y === afterLastRowIndex
   );
 }
 
@@ -88,6 +87,8 @@ export function positionToCoordinate(position: string): {
 
   const x = ALPHABET.indexOf(positionSplit[0]);
   const y = parseInt(positionSplit[1] + positionSplit[2]);
+
+  console.log(`X form input : ${x}, Y form input : ${y}`);
 
   if (x === -1 || y < 0) {
     throw new UserPositionError("This position is not well formatted");
@@ -148,10 +149,12 @@ export const graphToBoard = (graph: Graph): Board => {
   const board: Board = [[]];
   for (const index in graph.nodes) {
     const node: Node = graph.nodes[index];
-    if (!board[node.y]) {
-      board.push([]);
+    if (node.value >= 0) {
+      if (!board[node.y]) {
+        board.push([]);
+      }
+      board[node.y][node.x] = node.value;
     }
-    board[node.y][node.x] = node.value;
   }
   return board;
 };

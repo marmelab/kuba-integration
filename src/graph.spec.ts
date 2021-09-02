@@ -1,6 +1,5 @@
 import expect from "expect";
 import { Graph, Board } from "./types";
-import { INITIAL_BOARD } from "./constants";
 import {
   boardToGraph,
   positionToCoordinate,
@@ -9,15 +8,21 @@ import {
 } from "./graph";
 import { UserPositionError } from "./error";
 
+const initialBoard: Board = [
+  [1, 1, 1],
+  [1, 0, 2],
+  [1, 2, 2],
+];
+
 describe("graph test", () => {
   it("should return a well formed Graph when a Board is passed as argument with the boardToGraph function", () => {
-    const graph: Graph = boardToGraph(INITIAL_BOARD);
+    const graph: Graph = boardToGraph(initialBoard);
 
     expect(graph.nodes).toBeTruthy();
     expect(graph.nodes["0,0"].value).toBe(1);
     expect(graph.nodes["1,1"].isExit).toBe(false);
-    expect(graph.nodes["0,1"].isExit).toBe(true);
-    expect(graph.edges[0].from).toBe("0,0");
+    expect(graph.nodes["-1,1"].isExit).toBe(true);
+    expect(graph.edges[0].from).toBe("-1,-1");
     expect(graph);
   });
 });

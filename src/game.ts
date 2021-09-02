@@ -55,8 +55,3 @@ export const switchToNextPlayer = (
   if (nextPlayerIndex > players.length - 1) return players[0];
   return players[nextPlayerIndex];
 };
-
-/* const graphicalBoard = renderBoard(board);
-renderToConsole(graphicalBoard); //TODO: Add player to params
-const userMove: UserMove = await askUserMove();
-moveMarble(board, userMove); */

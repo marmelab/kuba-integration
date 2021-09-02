@@ -4,27 +4,36 @@ import {
   BLUE_MARBLE,
   EMPTY_MARBLE,
   WHITE_MARBLE,
-  renderBoard,
-} from "./RenderBoard";
-import { Player } from "./Types";
+} from "./constants";
+import { Player } from "./types";
 
 import { switchToNextPlayer } from "./game";
 
-describe("switch player trun", () => {
-  it("should return the next player who will play when the actual player and an array of players are given in arguments with the switchPlayers function ", () => {
-    const player1: Player = {
-      playerNumber: 1,
-      marbleColor: 1,
-    };
+describe("game", () => {
+  afterAll(() => {
+    close();
+  });
 
-    const player2: Player = {
-      playerNumber: 2,
-      marbleColor: 2,
-    };
+  describe("Switch players", () => {
+    it("should return the next player who will play when the actual player and an array of players are given in arguments with the switchPlayers function ", () => {
+      const player1: Player = {
+        playerNumber: 1,
+        marbleColor: 1,
+      };
 
-    const players: Array<Player> = [player1, player2];
+      const player2: Player = {
+        playerNumber: 2,
+        marbleColor: 2,
+      };
 
-    expect(switchToNextPlayer(player1, players)).toEqual(player2);
-    expect(switchToNextPlayer(player2, players)).toEqual(player1);
+      const players: Array<Player> = [player1, player2];
+
+      expect(switchToNextPlayer(player1, players)).toEqual(player2);
+      expect(switchToNextPlayer(player2, players)).toEqual(player1);
+    });
+  });
+
+  describe("Player turn when marble exits", () => {
+    it("should set the same player for this turn when a marble has been exited by this player", () => {});
   });
 });

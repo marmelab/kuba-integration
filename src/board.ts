@@ -19,53 +19,7 @@ import {
 } from "./graph";
 import { renderToConsole, renderBoard } from "./renderBoard";
 
-const DIRECTIONS: DirectionInBoard = {
-  E: {
-    x: 1,
-    y: 0,
-  },
-  S: {
-    x: 0,
-    y: 1,
-  },
-  W: {
-    x: -1,
-    y: 0,
-  },
-  N: {
-    x: 0,
-    y: -1,
-  },
-};
-
-const INVERSE_DIRECTION: DirectionInBoard = {
-  E: {
-    x: -1,
-    y: 0,
-  },
-  S: {
-    x: 0,
-    y: -1,
-  },
-  W: {
-    x: 1,
-    y: 0,
-  },
-  N: {
-    x: 0,
-    y: 1,
-  },
-};
-
-export const INITIAL_BOARD: Board = [
-  [1, 1, 0, 0, 0, 2, 2],
-  [1, 1, 0, 3, 0, 2, 2],
-  [0, 0, 3, 3, 3, 0, 0],
-  [0, 3, 3, 3, 3, 3, 0],
-  [0, 0, 3, 3, 3, 0, 0],
-  [2, 2, 0, 3, 0, 1, 1],
-  [2, 2, 0, 0, 0, 1, 1],
-];
+import { INVERSE_DIRECTION, INITIAL_BOARD } from "./constants";
 
 enum Mode {
   initial = "1",
@@ -125,10 +79,10 @@ function hasFreeSpotBeforeToMove(
   let hIndex: number = basePosition.x;
   let vIndex: number = basePosition.y;
 
-  const DERIVATION: Derivation = INVERSE_DIRECTION[direction];
+  const derivation: Derivation = INVERSE_DIRECTION[direction];
 
-  hIndex += DERIVATION.x;
-  vIndex += DERIVATION.y;
+  hIndex += derivation.x;
+  vIndex += derivation.y;
 
   return !positionExistsInBoard(boardGraph, `${hIndex},${vIndex}`);
 }

@@ -1,23 +1,12 @@
 import expect from "expect";
 import { Graph, Board } from "./types";
-import { getInitialBoard } from "./board";
+import { INITIAL_BOARD } from "./constants";
 import {
   boardToGraph,
   positionToCoordinate,
   moveMarbleInDirection,
   graphToBoard,
 } from "./graph";
-
-const INITIAL_BOARD: Board = [
-  [1, 1, 1],
-  [2, 0, 1],
-  [1, 1, 1],
-  [1, 1, 1],
-  [1, 1, 1],
-  [1, 1, 1],
-  [1, 1, 1],
-  [1, 1, 1],
-];
 
 describe("graph test", () => {
   it("should return a well formed Graph when a Board is passed as argument with the boardToGraph function", () => {

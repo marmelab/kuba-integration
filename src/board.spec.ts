@@ -2,12 +2,12 @@ import expect from "expect";
 import {
   getInitialBoard,
   getBoardFromFile,
-  INITIAL_BOARD,
   canMoveMarbleInDirection,
 } from "./board";
 import { boardToGraph } from "./graph";
 import { Player } from "./types";
 import { close } from "./userInput";
+import { INITIAL_BOARD } from "./constants";
 
 describe("Board test", () => {
   let firstBoard;

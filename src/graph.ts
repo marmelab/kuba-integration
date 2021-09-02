@@ -1,5 +1,5 @@
 import { Graph, Board, Edge, Node } from "./types";
-import { ALPHABET } from "./renderBoard";
+import { ALPHABET } from "./constants";
 
 export function boardToGraph(board: Board): Graph {
   if (board.length < 1) return newBlankGraph();

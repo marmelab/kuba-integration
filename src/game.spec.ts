@@ -56,7 +56,7 @@ describe("game", () => {
 });
 
 describe("Checks if the player has won a marble", () => {
-  it("should return false if no marble has been won", () => {
+  it("should return -1 if no marble has been won", () => {
     const playerHasWinMarble = marbleWonByPlayer(GRAPH);
 
     expect(playerHasWinMarble).toBe(-1);

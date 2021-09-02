@@ -1,9 +1,3 @@
-// initialize a game with standard/custom board
-// affect marbles color to player
-// store player turns
-// Change player after a move
-// except when the previous move exists a marble.
-
 import { Player, Board, UserMove, Graph } from "./types";
 import { renderToConsole, renderBoard } from "./renderBoard";
 import { askUserMove, close } from "./userInput";

@@ -6,7 +6,7 @@ import {
 } from "./renderBoard";
 import { askUserMove, close } from "./userInput";
 import { moveMarble } from "./board";
-import { graphToBoard } from "./graph";
+import { graphToBoard, sanitizeGraph } from "./graph";
 
 export const startNewGame = async (initialBoard: Board) => {
   let board = initialBoard;
@@ -30,23 +30,23 @@ export const startNewGame = async (initialBoard: Board) => {
       continue;
     }
 
-    board = graphToBoard(graphs[1]);
     const marbleWon = marbleWonByPlayer(graphs[1]);
-    console.log(marbleWon);
+    sanitizeGraph(graphs[1]);
+    board = graphToBoard(graphs[1]);
 
     if (marbleWon > -1) {
       thisTurnPlayer.marblesWon.push(marbleWon);
+      renderClear();
+      if (checkIfPlayerWon(thisTurnPlayer)) {
+        renderScoreBoard(players);
+        renderWinnerScreen(thisTurnPlayer);
+        break;
+      }
       continue;
     }
 
-    if (checkIfPlayerWon(thisTurnPlayer)) {
-      consoleClear();
-      renderScoreBoard(players);
-      renderWinnerScreen(thisTurnPlayer);
-      break;
-    }
-
     thisTurnPlayer = switchToNextPlayer(thisTurnPlayer, players);
+    renderClear();
   }
   close();
 };
@@ -83,7 +83,7 @@ export const marbleWonByPlayer = (graph: Graph): number => {
   }
 
   for (const node of Object.values(graph.nodes)) {
-    if (node.isExit && node.value) {
+    if (node.isExit && node.value > -1) {
       return node.value;
     }
   }
@@ -114,13 +114,13 @@ export const renderWinnerScreen = (player: Player): void => {
   console.log("----------------");
 
   console.log(
-    `Congratulations, the player ${player.playerNumber} has won the Kuba game`
+    `\n\nCongratulations, the player ${player.playerNumber} has won the Kuba game`
   );
 
   console.log("\n\n----------------");
   console.log("----------------");
 };
 
-const consoleClear = (): void => {
+const renderClear = (): void => {
   console.clear();
-}
+};

@@ -123,9 +123,7 @@ export function moveMarble(
 ): Array<Graph> {
   const coordinate = positionToCoordinate(userMove.marblePosition);
   const stringCoordinate = `${coordinate.x},${coordinate.y}`;
-  console.log(board);
   const boardGraph = boardToGraph(board);
-  console.log(boardGraph);
   const canMove = checkMoveMarbleInDirection(
     boardGraph,
     stringCoordinate,

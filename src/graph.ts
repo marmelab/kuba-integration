@@ -8,9 +8,6 @@ export function boardToGraph(board: Board): Graph {
   const verticalLines: number = board.length;
   const horizontalLines: number = board[0].length;
 
-  console.log("COUCU")
-  console.log(verticalLines);
-  console.log(horizontalLines);
 
   let graph: Graph = newBlankGraph();
 
@@ -160,3 +157,11 @@ export const graphToBoard = (graph: Graph): Board => {
   }
   return board;
 };
+
+export const sanitizeGraph = (graph: Graph) => {
+  for (const node of Object.values(graph.nodes)) {
+    if (node.isExit && node.value > -1) {
+      node.value = -1;
+    }
+  }
+}

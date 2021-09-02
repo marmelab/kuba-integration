@@ -31,7 +31,7 @@ describe("Board test", () => {
       [0, 3],
     ];
 
-    const board = await getBoardFromFile("assets/board.json");
+    const board = await getBoardFromFile("assets/board-test.json");
 
     expect(board).toStrictEqual(customGameBoard);
   });

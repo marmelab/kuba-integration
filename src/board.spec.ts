@@ -31,7 +31,7 @@ describe("Board test", () => {
       [0, 3],
     ];
 
-    const board = await getBoardFromFile("assets/board.json");
+    const board = await getBoardFromFile("assets/board-test.json");
 
     expect(board).toStrictEqual(customGameBoard);
   });
@@ -48,10 +48,12 @@ describe("Board test", () => {
       let player1: Player = {
         playerNumber: 1,
         marbleColor: 1,
+        marblesWon:[]
       };
       let player2: Player = {
         playerNumber: 2,
         marbleColor: 2,
+        marblesWon:[]
       };
 
       const errorDirection = new CantMoveError(
@@ -60,7 +62,6 @@ describe("Board test", () => {
       const errorPosition = new CantMoveError(
         "No free space before the marble"
       );
-
       const errorColor = new CantMoveError(
         "This marble can't be moved because it is not your color"
       );

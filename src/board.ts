@@ -70,6 +70,12 @@ export function checkMoveMarbleInDirection(
   }
 
   const marbleColor = boardGraph.nodes[marblePosition].value;
+  if (!marbleColor) {
+    throw new Error(
+      "No marble at this position"
+    );
+  }
+
   const myMarbleColor = isOfMyMarbleColor(player, marbleColor);
 
   if (!myMarbleColor) {

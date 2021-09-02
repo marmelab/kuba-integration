@@ -36,6 +36,7 @@ export type Coordinates = string;
 export type Player = {
   playerNumber: number;
   marbleColor: number;
+  marblesWon: number[];
 };
 
 export type UserMove = {

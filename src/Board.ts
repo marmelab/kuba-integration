@@ -9,6 +9,7 @@ import {
   graphToBoard
 } from "./Graph";
 import { renderToConsole, renderBoard } from "./RenderBoard";
+import { CantMoveError } from "./error";
 
 const DIRECTIONS: DirectionInBoard = {
   E: {
@@ -85,22 +86,29 @@ export function getInitialBoard(): Board {
   return INITIAL_BOARD;
 }
 
-export function canMoveMarbleInDirection(
+export function checkMoveMarbleInDirection(
   boardGraph: Graph,
   marblePosition: string,
   direction: string
-): Boolean {
-  return (
-    positionExistsInBoard(boardGraph, marblePosition) &&
-    hasFreeSpotBeforeToMove(boardGraph, marblePosition, direction)
-  );
+): void {
+  
+    const existInBoard = positionExistsInBoard(boardGraph, marblePosition);
+    if (!existInBoard) {
+        throw new CantMoveError('This position does not exist in the board')
+    }
+
+    const freeSpotBeforeToMove = hasFreeSpotBeforeToMove(boardGraph, marblePosition, direction);
+    if (!freeSpotBeforeToMove) {
+      throw new CantMoveError("This marble can't move in this direction")
+    }
+  ;
 }
 
 function positionExistsInBoard(
   boardGraph: Graph,
   marblePosition: string
 ): Boolean {
-  return !!boardGraph.nodes[marblePosition];
+  return !!boardGraph.nodes[marblePosition]
 }
 
 function hasFreeSpotBeforeToMove(
@@ -135,10 +143,6 @@ export function moveMarble(
     stringCoordinate,
     userMove.marbleDirection
   );
-
-  if (!canMove) {
-    console.log("This movement is not possible");
-  }
 
   const movedGraph = moveMarbleInDirection(
     boardGraph,

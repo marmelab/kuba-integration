@@ -13,8 +13,17 @@ async function main() {
   }
   const graphicalBoard = renderBoard(board);
   renderToConsole(graphicalBoard);
-  const userMove = await askUserMove();
-  moveMarble(board, userMove)
+
+  let userMove = await askUserMove();
+
+  try {
+    moveMarble(board, userMove);
+  }catch {
+    userMove = await askUserMove();
+    moveMarble(board, userMove);
+  }
+  
+  close();
 }
 
 main();

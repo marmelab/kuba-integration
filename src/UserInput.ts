@@ -24,7 +24,6 @@ export function askUserBoardPath(): Promise<string> {
 export async function askUserMove(): Promise<{marblePosition: string, marbleDirection: Direction}> {
   const marblePosition = await marble();
   const marbleDirection = await direction();
-  close();
   return {marblePosition, marbleDirection}
 }
 

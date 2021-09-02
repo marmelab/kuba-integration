@@ -7,6 +7,7 @@ import {
   moveMarbleInDirection,
   graphToBoard
 } from "./Graph";
+import { UserPositionError } from "./error";
 
 const INITIAL_BOARD: Board = [
   [1, 1, 1],
@@ -51,12 +52,11 @@ describe("graphToBoard", () => {
     expect(coordinate).toStrictEqual(coordinateResult);
   });
 
-  it("should return a coordinate outside the board box if position not match pattern", () => {
+  it("should throw an error if position not match pattern", () => {
     const position = "13D";
+    const error = new UserPositionError('This position is not well formatted');
 
-    const coordinate = positionToCoordinate(position);
-
-    expect(coordinate).toStrictEqual({ x: -1, y: -1 });
+    expect(() => {positionToCoordinate(position)}).toThrowError(error)
   });
 
   it("should not move marbles because start on value 0", () => {

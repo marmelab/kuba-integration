@@ -7,6 +7,7 @@ import {
 } from "./Board";
 import { boardToGraph } from "./Graph";
 import { close } from "./UserInput";
+import { CantMoveError } from "./error";
 
 describe("Board test", () => {
   let firstBoard;
@@ -43,8 +44,10 @@ describe("Board test", () => {
   describe("canMoveMarbleInDirection", () => {
     it("should return true or false when a position, a direction and a Graph is passed as parameter with the canMoveMarbleInDirection function", () => {
       const graph = boardToGraph(firstBoard);
+      const error = new CantMoveError('This move is not allowed');
+
       expect(canMoveMarbleInDirection(graph, "0,0", "E")).toBe(true);
-      expect(canMoveMarbleInDirection(graph, "1,0", "E")).toBe(false);
+      expect(() => {canMoveMarbleInDirection(graph, "1,0", "E")}).toThrowError(error);
     });
   });
 });

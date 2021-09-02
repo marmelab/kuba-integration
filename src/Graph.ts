@@ -1,5 +1,6 @@
 import { Graph, Board, Edge, Node } from "./Types";
 import { ALPHABET } from "./RenderBoard";
+import { UserPositionError } from "./error";
 
 export function boardToGraph(board: Board): Graph {
   if (board.length < 1) return newBlankGraph();
@@ -80,7 +81,7 @@ export function positionToCoordinate(position: string): {
   y: number;
 } {
   if (position.length > 3) {
-    return { x: -1, y: -1 };
+    throw new UserPositionError('This position is longer than 3 characters')
   }
 
   const positionSplit = position.split("");
@@ -89,7 +90,7 @@ export function positionToCoordinate(position: string): {
   const y = parseInt(positionSplit[1] + positionSplit[2]);
 
   if (x === -1 || y < 0) {
-    return { x: -1, y: -1 };
+    throw new UserPositionError('This position is not well formatted')
   }
 
   return { x, y };

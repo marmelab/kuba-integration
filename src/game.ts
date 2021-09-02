@@ -6,7 +6,10 @@ import {
 } from "./renderBoard";
 import { askUserMove, close } from "./userInput";
 import { moveMarble } from "./board";
-import { graphToBoard, sanitizeGraph } from "./graph";
+import { graphToBoard, sanitizeGraph, boardToGraph } from "./graph";
+import { MARBLE_INT_COLORS } from "./constants";
+
+const blessed = require('blessed');
 
 export const startNewGame = async (initialBoard: Board) => {
   let board = initialBoard;
@@ -17,38 +20,87 @@ export const startNewGame = async (initialBoard: Board) => {
 
   let gameOver: Boolean = false;
 
-  while (!gameOver) {
-    const graphicalBoard = renderBoard(board);
-    renderToConsole(graphicalBoard, thisTurnPlayer);
-    renderScoreBoard(players);
-    let graphs: Array<Graph>;
+  // Create a screen object.
+  const screen = blessed.screen({
+    smartCSR: true
+  });
 
-    try {
-      let userMove: UserMove = await askUserMove();
-      graphs = moveMarble(board, userMove, thisTurnPlayer);
-    } catch {
-      continue;
+  const outerBox = blessed.box({
+    parent: screen,
+    top: 'center',
+    width: '50%',
+    height: '100%',
+    border: {
+      type: 'line'
+    },
+    style: {
+      fg: 'white',
+      border: {
+        fg: '#f0f0f0'
+      },
     }
+  });
 
-    const marbleWon = marbleWonByPlayer(graphs[1]);
-    sanitizeGraph(graphs[1]);
-    board = graphToBoard(graphs[1]);
+  // Append our box to the screen.
+  screen.append(outerBox);
 
-    if (marbleWon > -1) {
-      thisTurnPlayer.marblesWon.push(marbleWon);
-      renderClear();
-      if (checkIfPlayerWon(thisTurnPlayer)) {
-        renderScoreBoard(players);
-        renderWinnerScreen(thisTurnPlayer);
-        break;
+  // render graph
+  const graph = boardToGraph(board);
+  const nodes = Object.values(graph.nodes);
+  nodes.filter(n => n.value !== -1).forEach(node => {
+    const marbleBox = blessed.box({
+      top: `${node.y * 10}%`,
+      left: `${node.x * 15}%`,
+      width: 2,
+      height: 2,
+      content: node.value === 0 ? '' : '\u2022',
+      style: {
+        fg: MARBLE_INT_COLORS[node.value],
       }
-      continue;
-    }
+    });
 
-    thisTurnPlayer = switchToNextPlayer(thisTurnPlayer, players);
-    renderClear();
-  }
-  close();
+    // If our box is clicked, change the content.
+    marbleBox.on('click', function (data: any) {});
+
+    outerBox.append(marbleBox);
+  });
+
+  // Render the screen.
+  screen.render();
+
+
+  // while (!gameOver) {
+  //   const graphicalBoard = renderBoard(board);
+  //   renderToConsole(graphicalBoard, thisTurnPlayer);
+  //   renderScoreBoard(players);
+  //   let graphs: Array<Graph>;
+
+  //   try {
+  //     let userMove: UserMove = await askUserMove();
+  //     graphs = moveMarble(board, userMove, thisTurnPlayer);
+  //   } catch {
+  //     continue;
+  //   }
+
+  //   const marbleWon = marbleWonByPlayer(graphs[1]);
+  //   sanitizeGraph(graphs[1]);
+  //   board = graphToBoard(graphs[1]);
+
+  //   if (marbleWon > -1) {
+  //     thisTurnPlayer.marblesWon.push(marbleWon);
+  //     renderClear();
+  //     if (checkIfPlayerWon(thisTurnPlayer)) {
+  //       renderScoreBoard(players);
+  //       renderWinnerScreen(thisTurnPlayer);
+  //       break;
+  //     }
+  //     continue;
+  //   }
+
+  //   thisTurnPlayer = switchToNextPlayer(thisTurnPlayer, players);
+  //   renderClear();
+  // }
+  // close();
 };
 
 const initializePlayers = () => {

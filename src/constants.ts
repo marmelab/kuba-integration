@@ -60,4 +60,4 @@ export const MARBLE_COLORS = [
 ];
 
 export const ALPHABET: string = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-export const MARBLE_INT_COLORS: string[] = ["empty", "red", "blue", "white"];
+export const MARBLE_INT_COLORS: string[] = ["transparent", "red", "blue", "white"];

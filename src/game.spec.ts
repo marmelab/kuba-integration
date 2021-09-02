@@ -45,7 +45,7 @@ describe("Checks if the player has won a marble", () => {
   it("should return false if no marble has been won", () => {
     const playerHasWinMarble = marbleWonByPlayer(GRAPH);
 
-    expect(playerHasWinMarble).toBe(null);
+    expect(playerHasWinMarble).toBe(-1);
   });
   it("should return true if a marble has been won", () => {
     const playerHasWinMarble = marbleWonByPlayer(GRAPH_WITH_MARBLE_IN_EXIT);

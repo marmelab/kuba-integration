@@ -20,15 +20,16 @@ export function renderBoard(board: Board): string {
   return result;
 }
 
-function marbleValuetoANSIColorCode(marble: number): string {
+export function marbleValuetoANSIColorCode(marble: number): string {
   return MARBLE_COLORS[marble];
 }
 
 export function renderToConsole(graphicalBoard: string, player: Player) {
+  console.log(graphicalBoard);
+
   console.log(
-    ` \n player ${player.playerNumber} (${
+    ` \nPlayer ${player.playerNumber} (${
       MARBLE_INT_COLORS[player.marbleColor]
     } marbles) turn to play`
   );
-  console.log(graphicalBoard);
 }

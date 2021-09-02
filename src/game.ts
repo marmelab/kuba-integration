@@ -1,5 +1,5 @@
 import { Player, Board, UserMove, Graph } from "./types";
-import { renderToConsole, renderBoard } from "./renderBoard";
+import { renderToConsole, renderBoard, marbleValuetoANSIColorCode } from "./renderBoard";
 import { askUserMove, close } from "./userInput";
 import { moveMarble } from "./board";
 import { graphToBoard } from "./graph";
@@ -29,7 +29,7 @@ export const startNewGame = async (initialBoard: Board) => {
     board = graphToBoard(graphs[1]);
     const marbleWon = marbleWonByPlayer(graphs[1]);
 
-    if (marbleWon) {
+    if (marbleWon > -1) {
       thisTurnPlayer.marblesWon.push(marbleWon);
       continue;
     }
@@ -67,7 +67,7 @@ export const switchToNextPlayer = (
 
 export const marbleWonByPlayer = (graph:Graph): number => {
   if (!graph) {
-    return null;
+    return -1;
   }
 
   for (const node of Object.values(graph.nodes)) {
@@ -76,9 +76,20 @@ export const marbleWonByPlayer = (graph:Graph): number => {
     }
   }
   
-  return null;
+  return -1;
 };
 
-export const renderScoreBoard = (): void => {
-  
+export const renderScoreBoard = (players: Player[]): void => {
+  console.log('----------------');
+  console.log('Scoreboard')
+  for (const player of players) {
+    let playerScore = `Player ${player.playerNumber} :`;
+    for (const marble of player.marblesWon) {
+      playerScore += marbleValuetoANSIColorCode(marble) + ' ';
+    }
+
+    console.log(playerScore);
+  }
+  console.log('----------------');
 }
+

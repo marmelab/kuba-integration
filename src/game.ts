@@ -1,5 +1,9 @@
 import { Player, Board, UserMove, Graph } from "./types";
-import { renderToConsole, renderBoard, marbleValuetoANSIColorCode } from "./renderBoard";
+import {
+  renderToConsole,
+  renderBoard,
+  marbleValuetoANSIColorCode,
+} from "./renderBoard";
 import { askUserMove, close } from "./userInput";
 import { moveMarble } from "./board";
 import { graphToBoard } from "./graph";
@@ -34,6 +38,12 @@ export const startNewGame = async (initialBoard: Board) => {
       continue;
     }
 
+    if (checkIfPlayerWon(thisTurnPlayer)) {
+      renderScoreBoard(players);
+      renderWinnerScreen(thisTurnPlayer);
+      break;
+    }
+
     thisTurnPlayer = switchToNextPlayer(thisTurnPlayer, players);
   }
   close();
@@ -65,7 +75,7 @@ export const switchToNextPlayer = (
   return players[nextPlayerIndex];
 };
 
-export const marbleWonByPlayer = (graph:Graph): number => {
+export const marbleWonByPlayer = (graph: Graph): number => {
   if (!graph) {
     return -1;
   }
@@ -75,21 +85,34 @@ export const marbleWonByPlayer = (graph:Graph): number => {
       return node.value;
     }
   }
-  
+
   return -1;
 };
 
 export const renderScoreBoard = (players: Player[]): void => {
-  console.log('----------------');
-  console.log('Scoreboard')
+  console.log("----------------");
+  console.log("Scoreboard");
   for (const player of players) {
     let playerScore = `Player ${player.playerNumber} :`;
     for (const marble of player.marblesWon) {
-      playerScore += marbleValuetoANSIColorCode(marble) + ' ';
+      playerScore += marbleValuetoANSIColorCode(marble) + " ";
     }
 
     console.log(playerScore);
   }
-  console.log('----------------');
-}
+  console.log("----------------");
+};
 
+export const checkIfPlayerWon = (player: Player) => {
+  return player.marblesWon.length === 7;
+};
+
+export const renderWinnerScreen = (player: Player): void => {
+  console.log("\n\n----------------");
+  console.log("----------------");
+
+  console.log(`Congratulations, the player ${player.playerNumber} has won the Kuba game`)
+
+  console.log("\n\n----------------");
+  console.log("----------------");
+};

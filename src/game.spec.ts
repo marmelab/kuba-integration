@@ -1,6 +1,6 @@
 import expect from "expect";
 import { Player } from "./types";
-import { switchToNextPlayer, marbleWonByPlayer } from "./game";
+import { switchToNextPlayer, marbleWonByPlayer, checkIfPlayerWon } from "./game";
 
 const GRAPH = {
   nodes: {
@@ -51,5 +51,31 @@ describe("Checks if the player has won a marble", () => {
     const playerHasWinMarble = marbleWonByPlayer(GRAPH_WITH_MARBLE_IN_EXIT);
 
     expect(playerHasWinMarble).toBe(1);
+  });
+});
+
+describe("Checks if the player has won the game", () => {
+
+  it("should return false if a player has less than 7 marbles", () => {
+    const player: Player = {
+      playerNumber: 1,
+      marbleColor: 1,
+      marblesWon: []
+    };
+
+    const playerWon = checkIfPlayerWon(player);
+
+    expect(playerWon).toBe(false);
+  });
+  it("should return true if a player has 7 marbles", () => {
+    const player: Player = {
+      playerNumber: 1,
+      marbleColor: 1,
+      marblesWon: [2, 3, 1, 1, 2, 3, 3]
+    };
+
+    const playerWon = checkIfPlayerWon(player);
+
+    expect(playerWon).toBe(true);
   });
 });

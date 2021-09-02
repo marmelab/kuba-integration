@@ -29,7 +29,6 @@ export async function askUserMove(): Promise<UserMove> {
     marblePosition: marblePosition,
     direction: marbleDirection,
   };
-  console.log(`userMove : `, userMove);
   return userMove;
 }
 

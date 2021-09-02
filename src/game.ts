@@ -16,8 +16,15 @@ export const startNewGame = async (initialBoard: Board) => {
   while (!gameOver) {
     const graphicalBoard = renderBoard(board);
     renderToConsole(graphicalBoard, thisTurnPlayer);
-    let userMove: UserMove = await askUserMove();
-    let graphs: Array<Graph> = moveMarble(board, userMove, thisTurnPlayer);
+    let graphs: Array<Graph>;
+
+    try {
+      let userMove: UserMove = await askUserMove();
+      graphs = moveMarble(board, userMove, thisTurnPlayer);
+    } catch {
+      continue;
+    }
+
     board = graphToBoard(graphs[1]);
 
     thisTurnPlayer = switchToNextPlayer(thisTurnPlayer, players);

@@ -20,6 +20,8 @@ import {
 
 import { INVERSE_DIRECTION, INITIAL_BOARD } from "./constants";
 
+import { CantMoveError } from "./error";
+
 enum Mode {
   initial = "1",
   custom = "2",
@@ -47,18 +49,34 @@ export function getInitialBoard(): Board {
   return INITIAL_BOARD;
 }
 
-export function canMoveMarbleInDirection(
+export function checkMoveMarbleInDirection(
   boardGraph: Graph,
   marblePosition: string,
   direction: string,
   player: Player
-): Boolean {
-  const marbleColor = boardGraph.nodes[marblePosition].value;
-  return (
-    positionExistsInBoard(boardGraph, marblePosition) &&
-    hasFreeSpotBeforeToMove(boardGraph, marblePosition, direction) &&
-    isOfMyMarbleColor(player, marbleColor)
+): void {
+  const existInBoard = positionExistsInBoard(boardGraph, marblePosition);
+  if (!existInBoard) {
+    throw new CantMoveError("This position does not exist in the board");
+  }
+
+  const freeSpotBeforeToMove = hasFreeSpotBeforeToMove(
+    boardGraph,
+    marblePosition,
+    direction
   );
+  if (!freeSpotBeforeToMove) {
+    throw new CantMoveError("This marble can't move in this direction");
+  }
+
+  const marbleColor = boardGraph.nodes[marblePosition].value;
+  const myMarbleColor = isOfMyMarbleColor(player, marbleColor);
+
+  if (!myMarbleColor) {
+    throw new CantMoveError(
+      "This marble can't be moved because it is not your color"
+    );
+  }
 }
 
 function positionExistsInBoard(
@@ -99,17 +117,12 @@ export function moveMarble(
   const coordinate = positionToCoordinate(userMove.marblePosition);
   const stringCoordinate = `${coordinate.y},${coordinate.x}`;
   const boardGraph = boardToGraph(board);
-  const canMove = canMoveMarbleInDirection(
+  const canMove = checkMoveMarbleInDirection(
     boardGraph,
     stringCoordinate,
     userMove.direction,
     player
   );
-
-  if (!canMove) {
-    console.log("This movement is not possible");
-    return [boardGraph, boardGraph];
-  }
 
   const movedGraph = moveMarbleInDirection(
     boardGraph,

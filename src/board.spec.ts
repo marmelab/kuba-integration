@@ -2,12 +2,13 @@ import expect from "expect";
 import {
   getInitialBoard,
   getBoardFromFile,
-  canMoveMarbleInDirection,
+  checkMoveMarbleInDirection,
 } from "./board";
 import { boardToGraph } from "./graph";
 import { Player } from "./types";
 import { close } from "./userInput";
 import { INITIAL_BOARD } from "./constants";
+import { CantMoveError } from "./error";
 
 describe("Board test", () => {
   let firstBoard;
@@ -41,8 +42,8 @@ describe("Board test", () => {
     expect(board).toStrictEqual([]);
   });
 
-  describe("canMoveMarbleInDirection", () => {
-    it("should return true or false when a position, a direction and a Graph is passed as parameter with the canMoveMarbleInDirection function", () => {
+  describe("checkMoveMarbleInDirection", () => {
+    it("should return true or false when a position, a direction and a Graph is passed as parameter with the checkMoveMarbleInDirection function", () => {
       const graph = boardToGraph(firstBoard);
       let player1: Player = {
         playerNumber: 1,
@@ -52,10 +53,30 @@ describe("Board test", () => {
         playerNumber: 2,
         marbleColor: 2,
       };
-      expect(canMoveMarbleInDirection(graph, "0,0", "E", player1)).toBe(true);
-      expect(canMoveMarbleInDirection(graph, "1,0", "E", player1)).toBe(false);
-      expect(canMoveMarbleInDirection(graph, "5,0", "S", player2)).toBe(true);
-      expect(canMoveMarbleInDirection(graph, "0,0", "S", player2)).toBe(false);
+
+      const errorDirection = new CantMoveError(
+        "This position does not exist in the board"
+      );
+      const errorPosition = new CantMoveError(
+        "This marble can't move in this direction"
+      );
+
+      const errorColor = new CantMoveError(
+        "This marble can't be moved because it is not your color"
+      );
+
+      expect(() => {
+        checkMoveMarbleInDirection(graph, "1,0", "E", player1);
+      }).toThrowError(errorPosition);
+      expect(() => {
+        checkMoveMarbleInDirection(graph, "0,0", "S", player2);
+      }).toThrowError(errorColor);
+      expect(() => {
+        checkMoveMarbleInDirection(graph, "1,25", "E", player1);
+      }).toThrowError(errorDirection);
+      expect(() => {
+        checkMoveMarbleInDirection(graph, "1,25", "E", player1);
+      }).toThrowError(errorDirection);
     });
   });
 });

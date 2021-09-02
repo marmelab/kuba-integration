@@ -24,11 +24,13 @@ describe("switch player trun", () => {
     const player1: Player = {
       playerNumber: 1,
       marbleColor: 1,
+      marblesWon: []
     };
 
     const player2: Player = {
       playerNumber: 2,
       marbleColor: 2,
+      marblesWon: []
     };
 
     const players: Array<Player> = [player1, player2];

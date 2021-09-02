@@ -16,6 +16,7 @@ export const startNewGame = async (initialBoard: Board) => {
   while (!gameOver) {
     const graphicalBoard = renderBoard(board);
     renderToConsole(graphicalBoard, thisTurnPlayer);
+    renderScoreBoard(players);
     let graphs: Array<Graph>;
 
     try {
@@ -28,6 +29,11 @@ export const startNewGame = async (initialBoard: Board) => {
     board = graphToBoard(graphs[1]);
     const marbleWon = marbleWonByPlayer(graphs[1]);
 
+    if (marbleWon) {
+      thisTurnPlayer.marblesWon.push(marbleWon);
+      continue;
+    }
+
     thisTurnPlayer = switchToNextPlayer(thisTurnPlayer, players);
   }
   close();
@@ -37,11 +43,13 @@ const initializePlayers = () => {
   const player1: Player = {
     playerNumber: 1,
     marbleColor: 1,
+    marblesWon: [],
   };
 
   const player2: Player = {
     playerNumber: 2,
     marbleColor: 2,
+    marblesWon: [],
   };
 
   return [player1, player2];
@@ -70,3 +78,7 @@ export const marbleWonByPlayer = (graph:Graph): number => {
   
   return null;
 };
+
+export const renderScoreBoard = (): void => {
+  
+}

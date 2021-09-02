@@ -1,4 +1,4 @@
-import { Graph, Node, Board, DirectionInBoard, Derivation } from "./Types";
+import { Graph, Node, Board, DirectionInBoard, Derivation, Direction } from "./Types";
 import { readFileSync } from "fs";
 import { askUserBoardPath } from "./UserInput";
 
@@ -124,7 +124,7 @@ function hasFreeSpotBeforeToMove(
 
 export function moveMarble(
   board: Board,
-  userMove: { marblePosition: string; marbleDirection: string }
+  userMove: { marblePosition: string; marbleDirection: Direction }
 ): void {
 
   const coordinate = positionToCoordinate(userMove.marblePosition);

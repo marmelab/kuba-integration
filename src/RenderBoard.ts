@@ -6,6 +6,8 @@ export const WHITE_MARBLE: string = `\u001b[37m \u2022 \u001b[0m`;
 export const EMPTY_MARBLE: string = `   `;
 const MARBLE_COLORS = [EMPTY_MARBLE, RED_MARBLE, BLUE_MARBLE, WHITE_MARBLE];
 
+const MARBLE_INT_COLORS: string[] = ["empty", "red", "blue", "white"];
+
 const ALPHABET: string = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 export function renderBoard(board: Board): string {
@@ -31,5 +33,10 @@ function marbleValuetoANSIColorCode(marble: number): string {
 }
 
 export function renderToConsole(graphicalBoard: string, player: Player) {
+  console.log(
+    ` \n player ${player.playerNumber} (${
+      MARBLE_INT_COLORS[player.marbleColor]
+    } marbles) turn to play`
+  );
   console.log(graphicalBoard);
 }

@@ -3,15 +3,20 @@ import { Graph, Board } from "./Types";
 import { getInitialBoard } from "./Board";
 import { boardToGraph } from "./Graph";
 
-const INITAL_BOARD: Board = [
+const INITIAL_BOARD: Board = [
   [1, 1, 1],
   [2, 0, 1],
+  [1, 1, 1],
+  [1, 1, 1],
+  [1, 1, 1],
+  [1, 1, 1],
+  [1, 1, 1],
   [1, 1, 1],
 ];
 
 describe("boardToGraph", () => {
   it("should return a well formed Graph when a Board is passed as argument with the boardToGraph method", () => {
-    const GRAPH: Graph = boardToGraph(INITAL_BOARD);
+    const GRAPH: Graph = boardToGraph(INITIAL_BOARD);
 
     expect(GRAPH.nodes).toBeTruthy();
     expect(GRAPH.nodes["0,0"].value).toBe(1);

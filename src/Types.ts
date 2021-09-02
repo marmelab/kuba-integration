@@ -37,3 +37,8 @@ export type Player = {
   playerNumber: number;
   marbleColor: number;
 };
+
+export type UserMove = {
+  marblePosition: string;
+  direction: string;
+};

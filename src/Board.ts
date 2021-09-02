@@ -99,7 +99,7 @@ export function canMoveMarbleInDirection(
 
     const freeSpotBeforeToMove = hasFreeSpotBeforeToMove(boardGraph, marblePosition, direction);
     if (!freeSpotBeforeToMove) {
-      throw new CantMoveError('This move is not allowed')
+      throw new CantMoveError('This marble cant move in this direction')
     }
 
     return existInBoard && freeSpotBeforeToMove;

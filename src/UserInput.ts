@@ -2,6 +2,8 @@ import { Direction } from "./Types";
 
 const readline = require("readline");
 
+// The readline module provides an interface for reading data from a Readable stream (such as process.stdin) one line at a time. 
+// This is used to manage the communication between our player and the application
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout,

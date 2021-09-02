@@ -88,8 +88,6 @@ export function positionToCoordinate(position: string): {
   const x = ALPHABET.indexOf(positionSplit[0]);
   const y = parseInt(positionSplit[1] + positionSplit[2]);
 
-  console.log(`X form input : ${x}, Y form input : ${y}`);
-
   if (x === -1 || y < 0) {
     throw new UserPositionError("This position is not well formatted");
   }

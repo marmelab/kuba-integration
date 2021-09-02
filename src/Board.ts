@@ -1,6 +1,14 @@
-import { Graph, Node, Board, DirectionInBoard, Derivation } from "./Types";
+import { Graph, Node, Board, DirectionInBoard, Derivation, Direction } from "./Types";
 import { readFileSync } from "fs";
 import { askUserBoardPath } from "./UserInput";
+
+import {
+  positionToCoordinate,
+  boardToGraph,
+  moveMarbleInDirection,
+  graphToBoard
+} from "./Graph";
+import { renderToConsole, renderBoard } from "./RenderBoard";
 
 const DIRECTIONS: DirectionInBoard = {
   E: {
@@ -101,7 +109,7 @@ function hasFreeSpotBeforeToMove(
   direction: string
 ): Boolean {
   const basePosition: Node = boardGraph.nodes[marblePosition];
-
+  
   let hIndex: number = basePosition.x;
   let vIndex: number = basePosition.y;
 
@@ -111,4 +119,35 @@ function hasFreeSpotBeforeToMove(
   vIndex += DERIVATION.y;
 
   return !positionExistsInBoard(boardGraph, `${hIndex},${vIndex}`);
+}
+
+
+export function moveMarble(
+  board: Board,
+  userMove: { marblePosition: string; marbleDirection: Direction }
+): void {
+
+  const coordinate = positionToCoordinate(userMove.marblePosition);
+  const stringCoordinate = `${coordinate.y},${coordinate.x}`;
+  const boardGraph = boardToGraph(board);
+  const canMove = canMoveMarbleInDirection(
+    boardGraph,
+    stringCoordinate,
+    userMove.marbleDirection
+  );
+
+  if (!canMove) {
+    console.log("This movement is not possible");
+  }
+
+  const movedGraph = moveMarbleInDirection(
+    boardGraph,
+    coordinate,
+    userMove.marbleDirection
+  );
+
+  const newBoard = graphToBoard(movedGraph);
+  const graphicalBoard = renderBoard(newBoard);
+  renderToConsole(graphicalBoard);
+
 }

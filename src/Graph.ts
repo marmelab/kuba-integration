@@ -88,7 +88,7 @@ export function positionToCoordinate(position: string): {
   const x = ALPHABET.indexOf(positionSplit[0]);
   const y = parseInt(positionSplit[1] + positionSplit[2]);
 
-  if (!x || x === -1 || !y) {
+  if (x === -1 || y < 0) {
     return { x: -1, y: -1 };
   }
 

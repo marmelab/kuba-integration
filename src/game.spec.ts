@@ -11,7 +11,7 @@ const GRAPH = {
   nodes: {
     "0,0": { x: 0, y: 0, value: 1, isExit: false },
     "0,1": { x: 0, y: 1, value: 1, isExit: false },
-    "0,2": { x: 0, y: 2, isExit: true },
+    "0,2": { x: 0, y: 2, value: -1, isExit: true },
   },
   edges: [],
 };

@@ -119,6 +119,37 @@ describe("graphToBoard", () => {
     expect(graphMoved).toStrictEqual(movedGraph);
   });
 
+  it("should move marbles from start position and vertical direction on exit", () => {
+    const coordinate = { x: 0, y: 0 };
+    const direction = "E";
+    const graph: Graph = {
+      nodes: {
+        "0,0": { x: 0, y: 0, value: 1, isExit: false },
+        "1,0": { x: 1, y: 0, value: 1, isExit: false },
+        "2,0": { x: 2, y: 0, isExit: true },
+      },
+      edges: [
+        { from: "0,0", to: "1,0", direction: "E" },
+        { from: "1,0", to: "2,0", direction: "E" },
+      ],
+    };
+    const movedGraph = {
+      nodes: {
+        "0,0": { x: 0, y: 0, value: 0, isExit: false },
+        "1,0": { x: 1, y: 0, value: 1, isExit: false },
+        "2,0": { x: 2, y: 0, value: 1, isExit: true },
+      },
+      edges: [
+        { from: "0,0", to: "1,0", direction: "E" },
+        { from: "1,0", to: "2,0", direction: "E" },
+      ],
+    };
+
+    const graphMoved = moveMarbleInDirection(graph, coordinate, direction);
+
+    expect(graphMoved).toStrictEqual(movedGraph);
+  });
+
   it("should move marbles from start position and horizontal direction", () => {
     const coordinate = { x: 0, y: 3 };
     const direction = "N";

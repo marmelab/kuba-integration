@@ -137,7 +137,7 @@ export function moveMarbleInDirection(
 
   let previousValue = 0;
   nodes.map((node) => {
-    const tmpValue = node.value;
+    const tmpValue = node.value || 0;
     node.value = previousValue;
     previousValue = tmpValue;
   });
@@ -151,7 +151,7 @@ export const graphToBoard = (graph: Graph): Board => {
     if (!board[node.y]) {
       board.push([]);
     }
-    board[node.y][node.x] = node.value;
+    board[node.y][node.x] = node.value || 0;
   }
   return board;
 };

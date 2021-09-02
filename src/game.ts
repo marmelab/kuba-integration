@@ -26,6 +26,7 @@ export const startNewGame = async (initialBoard: Board) => {
     }
 
     board = graphToBoard(graphs[1]);
+    const marbleWon = marbleWonByPlayer(graphs[1]);
 
     thisTurnPlayer = switchToNextPlayer(thisTurnPlayer, players);
   }
@@ -56,7 +57,16 @@ export const switchToNextPlayer = (
   return players[nextPlayerIndex];
 };
 
-/* const graphicalBoard = renderBoard(board);
-renderToConsole(graphicalBoard); //TODO: Add player to params
-const userMove: UserMove = await askUserMove();
-moveMarble(board, userMove); */
+export const marbleWonByPlayer = (graph:Graph): number => {
+  if (!graph) {
+    return null;
+  }
+
+  for (const node of Object.values(graph.nodes)) {
+    if (node.isExit && node.value) {
+      return node.value;
+    }
+  }
+  
+  return null;
+};

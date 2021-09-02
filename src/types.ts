@@ -1,7 +1,7 @@
 export type Node = {
   x: number;
   y: number;
-  value: number;
+  value?: number;
   isExit: Boolean;
 };
 

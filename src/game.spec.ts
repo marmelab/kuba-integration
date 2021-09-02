@@ -1,11 +1,6 @@
 import expect from "expect";
-import {
-  RED_MARBLE,
-  BLUE_MARBLE,
-  EMPTY_MARBLE,
-  WHITE_MARBLE,
-} from "./constants";
 import { Player } from "./types";
+import { close } from "./userInput";
 
 import { switchToNextPlayer } from "./game";
 

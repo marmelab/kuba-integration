@@ -1,3 +1,5 @@
+import { Direction } from "./Types";
+
 const readline = require("readline");
 
 // The readline module provides an interface for reading data from a Readable stream (such as process.stdin) one line at a time. 
@@ -19,7 +21,7 @@ export function askUserBoardPath(): Promise<string> {
   });
 }
 
-export async function askUserMove(): Promise<{marblePosition: string, marbleDirection: string}> {
+export async function askUserMove(): Promise<{marblePosition: string, marbleDirection: Direction}> {
   const marblePosition = await marble();
   const marbleDirection = await direction();
   close();
@@ -32,7 +34,7 @@ function marble(): Promise<string> {
   });
 }
 
-function direction(): Promise<string> {
+function direction(): Promise<Direction> {
   return new Promise((resolve) => {
     rl.question("Direction (e.g W) ", resolve);
   });

@@ -86,23 +86,21 @@ export function getInitialBoard(): Board {
   return INITIAL_BOARD;
 }
 
-export function canMoveMarbleInDirection(
+export function checkMoveMarbleInDirection(
   boardGraph: Graph,
   marblePosition: string,
   direction: string
-): Boolean {
+): void {
   
     const existInBoard = positionExistsInBoard(boardGraph, marblePosition);
     if (!existInBoard) {
-        throw new CantMoveError('This position does not exist in board')
+        throw new CantMoveError('This position does not exist in the board')
     }
 
     const freeSpotBeforeToMove = hasFreeSpotBeforeToMove(boardGraph, marblePosition, direction);
     if (!freeSpotBeforeToMove) {
       throw new CantMoveError("This marble can't move in this direction")
     }
-
-    return existInBoard && freeSpotBeforeToMove;
   ;
 }
 

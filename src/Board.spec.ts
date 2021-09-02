@@ -3,7 +3,7 @@ import {
   getInitialBoard,
   getBoardFromFile,
   INITIAL_BOARD,
-  canMoveMarbleInDirection,
+  checkMoveMarbleInDirection,
 } from "./Board";
 import { boardToGraph } from "./Graph";
 import { close } from "./UserInput";
@@ -41,13 +41,14 @@ describe("Board test", () => {
     expect(board).toStrictEqual([]);
   });
 
-  describe("canMoveMarbleInDirection", () => {
-    it("should return true or false when a position, a direction and a Graph is passed as parameter with the canMoveMarbleInDirection function", () => {
+  describe("checkMoveMarbleInDirection", () => {
+    it("should return true or false when a position, a direction and a Graph is passed as parameter with the checkMoveMarbleInDirection function", () => {
       const graph = boardToGraph(firstBoard);
-      const error = new CantMoveError("This marble can't move in this direction");
+      const errorDirection = new CantMoveError("This position does not exist in the board");
+      const errorPosition = new CantMoveError("This marble can't move in this direction");
 
-      expect(canMoveMarbleInDirection(graph, "0,0", "E")).toBe(true);
-      expect(() => {canMoveMarbleInDirection(graph, "1,0", "E")}).toThrowError(error);
+      expect(() => {checkMoveMarbleInDirection(graph, "1,0", "E")}).toThrowError(errorPosition);
+      expect(() => {checkMoveMarbleInDirection(graph, "1,25", "E")}).toThrowError(errorDirection);
     });
   });
 });

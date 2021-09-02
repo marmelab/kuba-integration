@@ -66,7 +66,7 @@ export function checkMoveMarbleInDirection(
     direction
   );
   if (!freeSpotBeforeToMove) {
-    throw new CantMoveError("This marble can't move in this direction");
+    throw new CantMoveError("No free space before the marble");
   }
 
   const marbleColor = boardGraph.nodes[marblePosition].value;
@@ -90,7 +90,7 @@ function positionExistsInBoard(
   marblePosition: string
 ): Boolean {
   let node = boardGraph.nodes[marblePosition];
-  if (node) return node.value !== 0;
+  if (node) return node.value >= 1;
   return !!node;
 }
 
@@ -108,6 +108,7 @@ function hasFreeSpotBeforeToMove(
 
   hIndex += derivation.x;
   vIndex += derivation.y;
+
   return !positionExistsInBoard(boardGraph, `${hIndex},${vIndex}`);
 }
 
@@ -121,8 +122,10 @@ export function moveMarble(
   player: Player
 ): Array<Graph> {
   const coordinate = positionToCoordinate(userMove.marblePosition);
-  const stringCoordinate = `${coordinate.y},${coordinate.x}`;
+  const stringCoordinate = `${coordinate.x},${coordinate.y}`;
+  console.log(board);
   const boardGraph = boardToGraph(board);
+  console.log(boardGraph);
   const canMove = checkMoveMarbleInDirection(
     boardGraph,
     stringCoordinate,

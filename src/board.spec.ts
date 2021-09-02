@@ -48,19 +48,20 @@ describe("Board test", () => {
       let player1: Player = {
         playerNumber: 1,
         marbleColor: 1,
+        marblesWon:[]
       };
       let player2: Player = {
         playerNumber: 2,
         marbleColor: 2,
+        marblesWon:[]
       };
 
       const errorDirection = new CantMoveError(
         "This position does not exist in the board"
       );
       const errorPosition = new CantMoveError(
-        "This marble can't move in this direction"
+        "No free space before the marble"
       );
-
       const errorColor = new CantMoveError(
         "This marble can't be moved because it is not your color"
       );

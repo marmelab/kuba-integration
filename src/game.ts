@@ -32,6 +32,7 @@ export const startNewGame = async (initialBoard: Board) => {
 
     board = graphToBoard(graphs[1]);
     const marbleWon = marbleWonByPlayer(graphs[1]);
+    console.log(marbleWon);
 
     if (marbleWon > -1) {
       thisTurnPlayer.marblesWon.push(marbleWon);
@@ -39,6 +40,7 @@ export const startNewGame = async (initialBoard: Board) => {
     }
 
     if (checkIfPlayerWon(thisTurnPlayer)) {
+      consoleClear();
       renderScoreBoard(players);
       renderWinnerScreen(thisTurnPlayer);
       break;
@@ -111,8 +113,14 @@ export const renderWinnerScreen = (player: Player): void => {
   console.log("\n\n----------------");
   console.log("----------------");
 
-  console.log(`Congratulations, the player ${player.playerNumber} has won the Kuba game`)
+  console.log(
+    `Congratulations, the player ${player.playerNumber} has won the Kuba game`
+  );
 
   console.log("\n\n----------------");
   console.log("----------------");
 };
+
+const consoleClear = (): void => {
+  console.clear();
+}

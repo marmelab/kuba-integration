@@ -44,7 +44,7 @@ describe("Board test", () => {
   describe("canMoveMarbleInDirection", () => {
     it("should return true or false when a position, a direction and a Graph is passed as parameter with the canMoveMarbleInDirection function", () => {
       const graph = boardToGraph(firstBoard);
-      const error = new CantMoveError('This marble cant move in this direction');
+      const error = new CantMoveError("This marble can't move in this direction");
 
       expect(canMoveMarbleInDirection(graph, "0,0", "E")).toBe(true);
       expect(() => {canMoveMarbleInDirection(graph, "1,0", "E")}).toThrowError(error);

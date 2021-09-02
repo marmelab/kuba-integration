@@ -1,8 +1,8 @@
-import { Direction } from "./Types";
+import { Direction, UserMove } from "./types";
 
 const readline = require("readline");
 
-// The readline module provides an interface for reading data from a Readable stream (such as process.stdin) one line at a time. 
+// The readline module provides an interface for reading data from a Readable stream (such as process.stdin) one line at a time.
 // This is used to manage the communication between our player and the application
 const rl = readline.createInterface({
   input: process.stdin,
@@ -21,10 +21,15 @@ export function askUserBoardPath(): Promise<string> {
   });
 }
 
-export async function askUserMove(): Promise<{marblePosition: string, marbleDirection: Direction}> {
+export async function askUserMove(): Promise<UserMove> {
   const marblePosition = await marble();
   const marbleDirection = await direction();
-  return {marblePosition, marbleDirection}
+
+  const userMove: UserMove = {
+    marblePosition: marblePosition,
+    direction: marbleDirection,
+  };
+  return userMove;
 }
 
 function marble(): Promise<string> {

@@ -1,5 +1,5 @@
-import { Graph, Board, Edge, Node } from "./Types";
-import { ALPHABET } from "./RenderBoard";
+import { Graph, Board, Edge, Node } from "./types";
+import { ALPHABET } from "./constants";
 import { UserPositionError } from "./error";
 
 export function boardToGraph(board: Board): Graph {
@@ -10,8 +10,8 @@ export function boardToGraph(board: Board): Graph {
 
   let graph: Graph = newBlankGraph();
 
-  for (let hIndex = 0; hIndex < horizontalLines; hIndex++) {
-    for (let vIndex = 0; vIndex < verticalLines; vIndex++) {
+  for (let hIndex = -1; hIndex < horizontalLines + 1; hIndex++) {
+    for (let vIndex = -1; vIndex < verticalLines + 1; vIndex++) {
       graph = {
         nodes: {
           ...graph.nodes,
@@ -31,11 +31,10 @@ function newBlankGraph(): Graph {
     edges: [],
   };
 }
-
 const makeNode = (hIndex: number, vIndex: number, board: Board): Node => ({
   x: hIndex,
   y: vIndex,
-  value: board[vIndex][hIndex],
+  value: isAnExit(board, hIndex, vIndex) ? -1 : board[vIndex][hIndex],
   isExit: isAnExit(board, hIndex, vIndex),
 });
 
@@ -63,16 +62,16 @@ const makeEdges = (hIndex: number, vIndex: number): Edge[] => [
 ];
 
 function isAnExit(board: Board, x: number, y: number) {
-  const firstColumnIndex: number = 0;
-  const firstRowIndex: number = 0;
-  const lastColumnIndex: number = board[0].length - 1;
-  const lastRowIndex: number = board.length - 1;
+  const beforeFirstColumnIndex: number = -1;
+  const beforeFirstRowIndex: number = -1;
+  const afterLastColumnIndex: number = board[0].length;
+  const afterLastRowIndex: number = board.length;
 
   return (
-    x === firstColumnIndex ||
-    y === firstRowIndex ||
-    x === lastColumnIndex ||
-    y === lastRowIndex
+    x === beforeFirstColumnIndex ||
+    y === beforeFirstRowIndex ||
+    x === afterLastColumnIndex ||
+    y === afterLastRowIndex
   );
 }
 
@@ -81,7 +80,7 @@ export function positionToCoordinate(position: string): {
   y: number;
 } {
   if (position.length > 3) {
-    throw new UserPositionError('This position is longer than 3 characters')
+    throw new UserPositionError("This position is longer than 3 characters");
   }
 
   const positionSplit = position.split("");
@@ -90,7 +89,7 @@ export function positionToCoordinate(position: string): {
   const y = parseInt(positionSplit[1] + positionSplit[2]);
 
   if (x === -1 || y < 0) {
-    throw new UserPositionError('This position is not well formatted')
+    throw new UserPositionError("This position is not well formatted");
   }
 
   return { x, y };
@@ -116,19 +115,21 @@ export function moveMarbleInDirection(
 
   const nodes = [currentNode];
   while (true) {
-
     const edge = graph.edges.find((edge) => {
-      return edge.direction === direction && edge.from === `${currentNode.x},${currentNode.y}`;
+      return (
+        edge.direction === direction &&
+        edge.from === `${currentNode.x},${currentNode.y}`
+      );
     });
 
     if (!edge || !graph.nodes[edge.to]) {
       break;
-    };
+    }
 
     currentNode = graph.nodes[edge.to];
     nodes.push(currentNode);
 
-    if (currentNode.value == 0){
+    if (currentNode.value == 0) {
       break;
     }
   }
@@ -138,7 +139,7 @@ export function moveMarbleInDirection(
     const tmpValue = node.value;
     node.value = previousValue;
     previousValue = tmpValue;
-  })
+  });
 
   return graph;
 }
@@ -146,10 +147,12 @@ export const graphToBoard = (graph: Graph): Board => {
   const board: Board = [[]];
   for (const index in graph.nodes) {
     const node: Node = graph.nodes[index];
-    if (!board[node.y]) {
-      board.push([]);
+    if (node.value >= 0) {
+      if (!board[node.y]) {
+        board.push([]);
+      }
+      board[node.y][node.x] = node.value;
     }
-    board[node.y][node.x] = node.value;
   }
   return board;
 };

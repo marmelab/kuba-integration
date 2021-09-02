@@ -1,7 +1,7 @@
-import { getBoard, moveMarble } from "./Board";
-import { renderBoard, renderToConsole } from "./RenderBoard";
-import { askWhichBoard, askUserMove } from "./UserInput";
-import { close } from "./UserInput";
+import { getBoard, moveMarble } from "./board";
+import { askWhichBoard } from "./userInput";
+import { close } from "./userInput";
+import { startNewGame } from "./game";
 
 async function main() {
   const wichBoard = await askWhichBoard();
@@ -11,19 +11,8 @@ async function main() {
     close();
     return;
   }
-  const graphicalBoard = renderBoard(board);
-  renderToConsole(graphicalBoard);
 
-  let userMove = await askUserMove();
-
-  try {
-    moveMarble(board, userMove);
-  }catch {
-    userMove = await askUserMove();
-    moveMarble(board, userMove);
-  }
-  
-  close();
+  startNewGame(board);
 }
 
 main();

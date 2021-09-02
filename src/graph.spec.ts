@@ -1,29 +1,28 @@
 import expect from "expect";
-import { Graph, Board } from "./Types";
-import { getInitialBoard } from "./Board";
+import { Graph, Board } from "./types";
 import {
   boardToGraph,
   positionToCoordinate,
   moveMarbleInDirection,
-  graphToBoard
-} from "./Graph";
+  graphToBoard,
+} from "./graph";
 import { UserPositionError } from "./error";
 
-const INITIAL_BOARD: Board = [
+const initialBoard: Board = [
   [1, 1, 1],
-  [2, 0, 1],
-  [1, 1, 1],
+  [1, 0, 2],
+  [1, 2, 2],
 ];
 
 describe("graph test", () => {
   it("should return a well formed Graph when a Board is passed as argument with the boardToGraph function", () => {
-    const graph: Graph = boardToGraph(INITIAL_BOARD);
+    const graph: Graph = boardToGraph(initialBoard);
 
     expect(graph.nodes).toBeTruthy();
     expect(graph.nodes["0,0"].value).toBe(1);
     expect(graph.nodes["1,1"].isExit).toBe(false);
-    expect(graph.nodes["0,1"].isExit).toBe(true);
-    expect(graph.edges[0].from).toBe("0,0");
+    expect(graph.nodes["-1,1"].isExit).toBe(true);
+    expect(graph.edges[0].from).toBe("-1,-1");
     expect(graph);
   });
 });
@@ -54,9 +53,11 @@ describe("graphToBoard", () => {
 
   it("should throw an error if position not match pattern", () => {
     const position = "13D";
-    const error = new UserPositionError('This position is not well formatted');
+    const error = new UserPositionError("This position is not well formatted");
 
-    expect(() => {positionToCoordinate(position)}).toThrowError(error)
+    expect(() => {
+      positionToCoordinate(position);
+    }).toThrowError(error);
   });
 
   it("should not move marbles because start on value 0", () => {

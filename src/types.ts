@@ -20,7 +20,7 @@ export type Graph = {
   edges: Array<Edge>;
 };
 
-export type Board = Array<Array<number>>;
+export type Board = number[][];
 
 export type Derivation = {
   x: number;
@@ -32,3 +32,13 @@ export type DirectionInBoard = {
 };
 
 export type Coordinates = string;
+
+export type Player = {
+  playerNumber: number;
+  marbleColor: number;
+};
+
+export type UserMove = {
+  marblePosition: string;
+  direction: string;
+};

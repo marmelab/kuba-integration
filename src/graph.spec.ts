@@ -1,12 +1,12 @@
 import expect from "expect";
-import { Graph, Board } from "./Types";
-import { getInitialBoard } from "./Board";
+import { Graph, Board } from "./types";
+import { getInitialBoard } from "./board";
 import {
   boardToGraph,
   positionToCoordinate,
   moveMarbleInDirection,
   graphToBoard,
-} from "./Graph";
+} from "./graph";
 
 const INITIAL_BOARD: Board = [
   [1, 1, 1],

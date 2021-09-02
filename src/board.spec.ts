@@ -4,10 +4,10 @@ import {
   getBoardFromFile,
   INITIAL_BOARD,
   canMoveMarbleInDirection,
-} from "./Board";
-import { boardToGraph } from "./Graph";
-import { Player } from "./Types";
-import { close } from "./UserInput";
+} from "./board";
+import { boardToGraph } from "./graph";
+import { Player } from "./types";
+import { close } from "./userInput";
 
 describe("Board test", () => {
   let firstBoard;

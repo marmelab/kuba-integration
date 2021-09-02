@@ -1,4 +1,4 @@
-import { Board, Player } from "./Types";
+import { Board, Player } from "./types";
 
 export const RED_MARBLE: string = `\u001b[31m \u2022 \u001b[0m`;
 export const BLUE_MARBLE: string = `\u001b[34m \u2022 \u001b[0m`;

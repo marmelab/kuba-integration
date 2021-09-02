@@ -1,8 +1,8 @@
-import { getBoard, moveMarble } from "./Board";
-import { renderBoard, renderToConsole } from "./RenderBoard";
-import { askWhichBoard, askUserMove } from "./UserInput";
-import { close } from "./UserInput";
-import { UserMove } from './Types'
+import { getBoard, moveMarble } from "./board";
+import { renderBoard, renderToConsole } from "./renderBoard";
+import { askWhichBoard, askUserMove } from "./userInput";
+import { close } from "./userInput";
+import { UserMove } from './types'
 
 async function main() {
   const wichBoard = await askWhichBoard();

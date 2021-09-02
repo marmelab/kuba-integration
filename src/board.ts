@@ -7,17 +7,17 @@ import {
   Direction,
   Player,
   UserMove,
-} from "./Types";
+} from "./types";
 import { readFileSync } from "fs";
-import { askUserBoardPath } from "./UserInput";
+import { askUserBoardPath } from "./userInput";
 
 import {
   positionToCoordinate,
   boardToGraph,
   moveMarbleInDirection,
   graphToBoard,
-} from "./Graph";
-import { renderToConsole, renderBoard } from "./RenderBoard";
+} from "./graph";
+import { renderToConsole, renderBoard } from "./renderBoard";
 
 const DIRECTIONS: DirectionInBoard = {
   E: {

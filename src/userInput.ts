@@ -1,4 +1,4 @@
-import { Direction, UserMove } from "./Types";
+import { Direction, UserMove } from "./types";
 
 const readline = require("readline");
 

@@ -4,9 +4,9 @@
 // Change player after a move
 // except when the previous move exists a marble.
 
-import { Player, Board } from "./Types";
-import { renderToConsole, renderBoard } from "./RenderBoard";
-import { askUserMove } from "./UserInput";
+import { Player, Board } from "./types";
+import { renderToConsole, renderBoard } from "./renderBoard";
+import { askUserMove } from "./userInput";
 
 export const startNewGame = (board: Board) => {
   let players: Array<Player> = [];

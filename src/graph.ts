@@ -1,5 +1,5 @@
-import { Graph, Board, Edge, Node } from "./Types";
-import { ALPHABET } from "./RenderBoard";
+import { Graph, Board, Edge, Node } from "./types";
+import { ALPHABET } from "./renderBoard";
 
 export function boardToGraph(board: Board): Graph {
   if (board.length < 1) return newBlankGraph();
@@ -115,19 +115,21 @@ export function moveMarbleInDirection(
 
   const nodes = [currentNode];
   while (true) {
-
     const edge = graph.edges.find((edge) => {
-      return edge.direction === direction && edge.from === `${currentNode.x},${currentNode.y}`;
+      return (
+        edge.direction === direction &&
+        edge.from === `${currentNode.x},${currentNode.y}`
+      );
     });
 
     if (!edge || !graph.nodes[edge.to]) {
       break;
-    };
+    }
 
     currentNode = graph.nodes[edge.to];
     nodes.push(currentNode);
 
-    if (currentNode.value == 0){
+    if (currentNode.value == 0) {
       break;
     }
   }
@@ -137,7 +139,7 @@ export function moveMarbleInDirection(
     const tmpValue = node.value;
     node.value = previousValue;
     previousValue = tmpValue;
-  })
+  });
 
   return graph;
 }

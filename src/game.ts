@@ -1,18 +1,9 @@
-import { Player, Board, UserMove, Graph, GameState } from "./types";
-import {
-  renderToConsole,
-  renderBoard,
-  marbleValuetoANSIColorCode,
-} from "./renderBoard";
-import { askUserMove, close } from "./userInput";
+import { Player, Board, Graph, GameState } from "./types";
+
+import { close } from "./userInput";
 import { moveMarble } from "./board";
-import { graphToBoard, sanitizeGraph, boardToGraph } from "./graph";
-import { MARBLE_INT_COLORS } from "./constants";
+import { sanitizeGraph, boardToGraph } from "./graph";
 import { initScreenView, renderScreenView } from "./blessed";
-
-const blessed = require("blessed");
-
-let gameState: GameState;
 
 export const startNewGame = async (initialBoard: Board) => {
   let board = initialBoard;
@@ -23,12 +14,10 @@ export const startNewGame = async (initialBoard: Board) => {
 
   let thisTurnPlayer: Player = players[0];
 
-  let gameOver: Boolean = false;
-
   // render graph
   const graph = boardToGraph(board);
 
-  const gameState = {
+  const gameState: GameState = {
     graph,
     currentPlayer: thisTurnPlayer,
     players,
@@ -87,9 +76,9 @@ export const checkIfPlayerWon = (player: Player) => {
   for (const marble of player.marblesWon) {
     if (marble !== player.marbleColor) {
       if (marble === 3) {
-        neutralMarbles ++;
+        neutralMarbles++;
       } else {
-        otherPlayerMarbles ++;
+        otherPlayerMarbles++;
       }
     }
   }

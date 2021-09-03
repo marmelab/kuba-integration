@@ -133,7 +133,7 @@ export const renderScreenView = (gameState: GameState) => {
     left: 0,
     height: 2,
     width: 40,
-    content: "Blues get : ",
+    content: "Blues get  ",
   });
 
   let marblesWonByBlue = gameState.players[1].marblesWon;

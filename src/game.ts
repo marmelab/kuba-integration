@@ -38,8 +38,7 @@ export const startNewGame = async (initialBoard: Board) => {
   };
 
   renderScreenView(gameState);
-}
-
+};
 
 const initializePlayers = () => {
   const player1: Player = {
@@ -102,6 +101,8 @@ export const setGameStateOnDirectionSelected = (
     }
     return;
   }
-
-  gameState.currentPlayer = switchToNextPlayer(gameState.currentPlayer, gameState.players);
+  gameState.currentPlayer = switchToNextPlayer(
+    gameState.currentPlayer,
+    gameState.players
+  );
 };

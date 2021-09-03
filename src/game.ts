@@ -14,7 +14,6 @@ export const startNewGame = async (initialBoard: Board) => {
 
   let thisTurnPlayer: Player = players[0];
 
-  // render graph
   const graph = boardToGraph(board);
 
   const gameState: GameState = {

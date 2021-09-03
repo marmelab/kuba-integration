@@ -123,7 +123,7 @@ export const renderScreenView = (gameState: GameState) => {
       style: {
         fg: MARBLE_INT_COLORS[marblesWonByRed[i]],
       },
-      content: "{center}\u2022{/center}",
+      content: "{center}\u25CF{/center}",
     });
     playerOneCatchMarblesContainer.append(marbleBox);
   }
@@ -148,7 +148,7 @@ export const renderScreenView = (gameState: GameState) => {
       style: {
         fg: MARBLE_INT_COLORS[marblesWonByBlue[i]],
       },
-      content: "{center}\u2022{/center}",
+      content: "{center}\u25CF{/center}",
     });
     playerTwoCatchMarblesContainer.append(marbleBox);
   }
@@ -162,7 +162,7 @@ export const renderScreenView = (gameState: GameState) => {
         left: node.x * 8,
         width: 7,
         height: 3,
-        content: node.value === 0 ? "" : "{center}\n\u2022{/center}",
+        content: node.value === 0 ? "" : "{center}\n\u25CF{/center}",
         tags: true,
         style: {
           fg: MARBLE_INT_COLORS[node.value],

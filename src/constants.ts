@@ -19,25 +19,6 @@ export const INVERSE_DIRECTION: DirectionInBoard = {
   },
 };
 
-const DIRECTION_BEFORE = {
-  E: {
-    x: -1,
-    y: 0,
-  },
-  S: {
-    x: 0,
-    y: -1,
-  },
-  W: {
-    x: 1,
-    y: 0,
-  },
-  N: {
-    x: 0,
-    y: 1,
-  },
-};
-
 export const INITIAL_BOARD: Board = [
   [1, 1, 0, 0, 0, 2, 2],
   [1, 1, 0, 3, 0, 2, 2],
@@ -60,4 +41,9 @@ export const MARBLE_COLORS = [
 ];
 
 export const ALPHABET: string = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-export const MARBLE_INT_COLORS: string[] = ["empty", "red", "blue", "white"];
+export const MARBLE_INT_COLORS: string[] = [
+  "transparent",
+  "red",
+  "blue",
+  "white",
+];

@@ -1,22 +1,8 @@
-import {
-  Graph,
-  Node,
-  Board,
-  DirectionInBoard,
-  Derivation,
-  Direction,
-  Player,
-  UserMove,
-} from "./types";
+import { Graph, Node, Board, Derivation, Player, GameState } from "./types";
 import { readFileSync } from "fs";
 import { askUserBoardPath } from "./userInput";
 
-import {
-  positionToCoordinate,
-  boardToGraph,
-  moveMarbleInDirection,
-  graphToBoard,
-} from "./graph";
+import { moveMarbleInDirection } from "./graph";
 
 import { INVERSE_DIRECTION, INITIAL_BOARD } from "./constants";
 
@@ -71,9 +57,7 @@ export function checkMoveMarbleInDirection(
 
   const marbleColor = boardGraph.nodes[marblePosition].value;
   if (!marbleColor) {
-    throw new Error(
-      "No marble at this position"
-    );
+    throw new Error("No marble at this position");
   }
 
   const myMarbleColor = isOfMyMarbleColor(player, marbleColor);
@@ -116,26 +100,24 @@ function isOfMyMarbleColor(player: Player, marbleColor: number) {
   return player.marbleColor === marbleColor;
 }
 
-export function moveMarble(
-  board: Board,
-  userMove: UserMove,
-  player: Player
-): Array<Graph> {
-  const coordinate = positionToCoordinate(userMove.marblePosition);
-  const stringCoordinate = `${coordinate.x},${coordinate.y}`;
-  const boardGraph = boardToGraph(board);
+export function moveMarble(gameState: GameState): Graph {
+  const coordinate = {
+    x: gameState.marbleClicked?.x,
+    y: gameState.marbleClicked?.y,
+  };
+  const stringCoordinate = `${gameState.marbleClicked?.x},${gameState.marbleClicked?.y}`;
   const canMove = checkMoveMarbleInDirection(
-    boardGraph,
+    gameState.graph,
     stringCoordinate,
-    userMove.direction,
-    player
+    gameState.directionSelected,
+    gameState.currentPlayer
   );
 
   const movedGraph = moveMarbleInDirection(
-    boardGraph,
+    gameState.graph,
     coordinate,
-    userMove.direction
+    gameState.directionSelected
   );
 
-  return [boardGraph, movedGraph];
+  return movedGraph;
 }

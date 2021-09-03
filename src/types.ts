@@ -50,4 +50,5 @@ export type GameState = {
   players: Player[];
   marbleClicked: Node;
   directionSelected: string;
+  hasWinner: boolean;
 };

@@ -188,5 +188,28 @@ export const renderScreenView = (gameState: GameState) => {
 
   SCREEN.append(playerTurnText);
 
+  if (gameState.hasWinner) {
+    const winnerColor =
+      gameState.currentPlayer.playerNumber === 1
+        ? `\u001b[31m REDS \u001b[0m`
+        : `\u001b[34m BLUES \u001b[0m`;
+    const winnerString = `{center}Congratulations to the ${winnerColor} for the nice victory !{/center}`;
+
+    const winBox = blessed.box({
+      top: "center",
+      left: "center",
+      width: 70,
+      height: 2,
+      tags: true,
+      content: winnerString,
+      style: {
+        fg: "White",
+      },
+    });
+
+    SCREEN.append(outerBoard);
+    outerBoard.append(winBox);
+  }
+
   SCREEN.render();
 };

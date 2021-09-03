@@ -94,8 +94,6 @@ export const checkIfPlayerWon = (player: Player) => {
     }
   }
 
-  console.log(neutralMarbles);
-  console.log(otherPlayerMarbles);
   return neutralMarbles === 7 || otherPlayerMarbles === 8;
 };
 

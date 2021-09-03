@@ -80,11 +80,24 @@ describe("Checks if the player has won the game", () => {
 
     expect(playerWon).toBe(false);
   });
-  it("should return true if a player has 7 marbles", () => {
+
+  it("should return true if a player has 7 neutral marbles", () => {
     const player: Player = {
       playerNumber: 1,
       marbleColor: 1,
-      marblesWon: [2, 3, 1, 1, 2, 3, 3],
+      marblesWon: [2, 3, 3, 3, 3, 3, 3, 1, 2, 3],
+    };
+
+    const playerWon = checkIfPlayerWon(player);
+
+    expect(playerWon).toBe(true);
+  });
+
+  it("should return true if a player has 8 other player marbles", () => {
+    const player: Player = {
+      playerNumber: 1,
+      marbleColor: 1,
+      marblesWon: [2, 3, 3, 3, 3, 3, 1, 2, 3, 2, 2, 2, 2, 2, 2],
     };
 
     const playerWon = checkIfPlayerWon(player);

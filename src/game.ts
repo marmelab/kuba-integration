@@ -81,7 +81,22 @@ export const marbleWonByPlayer = (graph: Graph): number => {
 };
 
 export const checkIfPlayerWon = (player: Player) => {
-  return player.marblesWon.length === 7;
+  let otherPlayerMarbles = 0;
+  let neutralMarbles = 0;
+
+  for (const marble of player.marblesWon) {
+    if (marble !== player.marbleColor) {
+      if (marble === 3) {
+        neutralMarbles ++;
+      } else {
+        otherPlayerMarbles ++;
+      }
+    }
+  }
+
+  console.log(neutralMarbles);
+  console.log(otherPlayerMarbles);
+  return neutralMarbles === 7 || otherPlayerMarbles === 8;
 };
 
 export const setGameStateOnDirectionSelected = (

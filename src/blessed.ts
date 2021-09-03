@@ -68,8 +68,8 @@ export const renderScreenView = (gameState: GameState) => {
   const board = blessed.box({
     top: "center",
     left: "center",
-    width: 56, //*8
-    height: 28, // *4
+    width: 57, //*8
+    height: 29, // *4
     tags: true,
     border: {
       type: "line",
@@ -87,9 +87,9 @@ export const renderScreenView = (gameState: GameState) => {
       let tmpBox = blessed.box({
         top: node.y * 4,
         left: node.x * 8,
-        width: 6,
-        height: 2,
-        content: node.value === 0 ? "" : "{center}\u2022{/center}",
+        width: 7,
+        height: 3,
+        content: node.value === 0 ? "" : "{center}\n\u2022{/center}",
         tags: true,
         style: {
           fg: MARBLE_INT_COLORS[node.value],

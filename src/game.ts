@@ -99,8 +99,8 @@ export const setGameStateOnDirectionSelected = (
     gameState.currentPlayer.marblesWon.push(marbleWon);
     if (checkIfPlayerWon(gameState.currentPlayer)) {
       gameState.hasWinner = true;
-      return;
     }
+    return;
   }
 
   gameState.currentPlayer = switchToNextPlayer(gameState.currentPlayer, gameState.players);

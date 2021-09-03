@@ -84,7 +84,10 @@ export const renderScreenView = (gameState: GameState) => {
     top: "center",
     left: "80%",
     tags: true,
-    content: `Player turn : ${gameState.currentPlayer.playerNumber}`,
+    content: `Player turn : \u25CF`,
+    style: {
+      fg: MARBLE_INT_COLORS[gameState.currentPlayer.playerNumber],
+    },
   });
 
   const board = blessed.box({
@@ -104,10 +107,10 @@ export const renderScreenView = (gameState: GameState) => {
   });
 
   const playerOneCatchMarblesContainer = blessed.box({
-    top: 0,
+    top: 2,
     left: 0,
     height: 2,
-    width: 40,
+    width: "100%",
     content: "Reds get : ",
   });
 
@@ -129,11 +132,11 @@ export const renderScreenView = (gameState: GameState) => {
   }
 
   const playerTwoCatchMarblesContainer = blessed.box({
-    top: 38,
+    top: 37,
     left: 0,
     height: 2,
-    width: 40,
-    content: "Blues get  ",
+    width: "100%",
+    content: "Blues get : ",
   });
 
   let marblesWonByBlue = gameState.players[1].marblesWon;

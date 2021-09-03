@@ -16,6 +16,7 @@ let gameState: GameState;
 
 export const startNewGame = async (initialBoard: Board) => {
   let board = initialBoard;
+  close();
   initScreenView();
 
   let players: Array<Player> = initializePlayers();

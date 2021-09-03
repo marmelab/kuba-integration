@@ -1,7 +1,8 @@
 const blessed = require("blessed");
 
-import { genericTypeAnnotation } from "@babel/types";
+import { moveMarble } from "./board";
 import { MARBLE_INT_COLORS } from "./constants";
+import { setGameStateOnDirectionSelected } from "./game";
 import { GameState, Graph } from "./types";
 
 let SCREEN: any;
@@ -38,6 +39,11 @@ export const renderScreenView = (gameState: GameState) => {
     content: "\u25bA",
   });
 
+  cardinalEastBox.on("click", function () {
+    setGameStateOnDirectionSelected(gameState, "E");
+    renderScreenView(gameState);
+  });
+
   const cardinalWestBox = blessed.box({
     top: "50%",
     left: "10%",
@@ -46,7 +52,12 @@ export const renderScreenView = (gameState: GameState) => {
     height: 1,
   });
 
-  const cardinalNorthBox = blessed.box({
+  cardinalWestBox.on("click", function () {
+    setGameStateOnDirectionSelected(gameState, "W");
+    renderScreenView(gameState);
+  });
+
+  const cardinalSouthBox = blessed.box({
     top: "90%",
     left: "50%",
     content: "\u25bc",
@@ -54,12 +65,22 @@ export const renderScreenView = (gameState: GameState) => {
     height: 1,
   });
 
-  const cardinalSouthBox = blessed.box({
+  cardinalSouthBox.on("click", function () {
+    setGameStateOnDirectionSelected(gameState, "S");
+    renderScreenView(gameState);
+  });
+
+  const cardinalNorthBox = blessed.box({
     top: "10%",
     left: "50%",
     content: "\u25b2",
     width: 2,
     height: 1,
+  });
+
+  cardinalNorthBox.on("click", function () {
+    setGameStateOnDirectionSelected(gameState, "N");
+    renderScreenView(gameState);
   });
 
   const playerTurnText = blessed.box({
@@ -134,7 +155,7 @@ export const renderScreenView = (gameState: GameState) => {
   const nodes = gameState.graph.nodes;
   Object.keys(nodes).forEach((key) => {
     const node = nodes[key];
-    if (node.value >= 1) {
+    if (node.value >= 1 && !node.isExit) {
       let tmpBox = blessed.box({
         top: node.y * 4,
         left: node.x * 8,

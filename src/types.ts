@@ -48,6 +48,6 @@ export type GameState = {
   graph: Graph,
   currentPlayer: Player;
   players: Player[];
-  marbleClicked: Node | null;
-  directionSelected: Direction | null;
+  marbleClicked: Node;
+  directionSelected: string;
 };

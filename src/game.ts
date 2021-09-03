@@ -32,8 +32,8 @@ export const startNewGame = async (initialBoard: Board) => {
     graph,
     currentPlayer: thisTurnPlayer,
     players,
-    marbleClicked: null,
-    directionSelected: null,
+    marbleClicked: {x: -1, y: -1, value: -1, isExit: false},
+    directionSelected: '',
   };
 
   renderScreenView(gameState);
@@ -46,7 +46,7 @@ export const startNewGame = async (initialBoard: Board) => {
 
   //   try {
   //     let userMove: UserMove = await askUserMove();
-  //     graphs = moveMarble(board, userMove, thisTurnPlayer);
+          // graphs = moveMarble(board, userMove, thisTurnPlayer);
   //   } catch {
   //     continue;
   //   }
@@ -145,3 +145,8 @@ export const renderWinnerScreen = (player: Player): void => {
 const renderClear = (): void => {
   console.clear();
 };
+
+export const setGameStateOnDirectionSelected = (gameState: GameState, direction: string) :void => {
+  gameState.directionSelected = direction;
+  gameState.graph = moveMarble(gameState);
+}

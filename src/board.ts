@@ -7,6 +7,7 @@ import {
   Direction,
   Player,
   UserMove,
+  GameState,
 } from "./types";
 import { readFileSync } from "fs";
 import { askUserBoardPath } from "./userInput";
@@ -116,26 +117,22 @@ function isOfMyMarbleColor(player: Player, marbleColor: number) {
   return player.marbleColor === marbleColor;
 }
 
-export function moveMarble(
-  board: Board,
-  userMove: UserMove,
-  player: Player
-): Array<Graph> {
-  const coordinate = positionToCoordinate(userMove.marblePosition);
-  const stringCoordinate = `${coordinate.x},${coordinate.y}`;
-  const boardGraph = boardToGraph(board);
+export function moveMarble(gameState: GameState
+): Graph {
+  const coordinate = {x: gameState.marbleClicked?.x, y: gameState.marbleClicked?.y};
+  const stringCoordinate = `${gameState.marbleClicked?.x},${gameState.marbleClicked?.y}`;
   const canMove = checkMoveMarbleInDirection(
-    boardGraph,
+    gameState.graph,
     stringCoordinate,
-    userMove.direction,
-    player
+    gameState.directionSelected,
+    gameState.currentPlayer
   );
 
   const movedGraph = moveMarbleInDirection(
-    boardGraph,
+    gameState.graph,
     coordinate,
-    userMove.direction
+    gameState.directionSelected
   );
 
-  return [boardGraph, movedGraph];
+  return movedGraph;
 }

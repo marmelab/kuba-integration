@@ -6,7 +6,7 @@ import { GameState, Graph } from "./types";
 let SCREEN: any;
 
 export const initScreenView = (): void => {
-    SCREEN = blessed.screen({
+  SCREEN = blessed.screen({
     smartCSR: true,
   });
 
@@ -30,7 +30,7 @@ export const renderScreenView = (gameState: GameState) => {
     top: "center",
     left: "90%",
     tags: true,
-    content: "Player turn : ",
+    content: `Player turn : ${gameState.currentPlayer.playerNumber}`,
   });
 
   const board = blessed.box({
@@ -60,12 +60,13 @@ export const renderScreenView = (gameState: GameState) => {
         content: node.value === 0 ? "" : "\u2022",
         style: {
           fg: MARBLE_INT_COLORS[node.value],
+          bg: (gameState.marbleClicked === node) ? 'yellow' : '',
         },
       });
-      //   tmpBox.on("click", function (data: any) {
-      //     delete nodes[key];
-      //     launchScreenView(graph);
-      //   });
+      tmpBox.on("click", function () {
+        gameState.marbleClicked = node;
+        renderScreenView(gameState);
+      });
       board.append(tmpBox);
     }
   });

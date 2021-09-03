@@ -1,5 +1,6 @@
 const blessed = require("blessed");
 
+import { genericTypeAnnotation } from "@babel/types";
 import { MARBLE_INT_COLORS } from "./constants";
 import { GameState, Graph } from "./types";
 
@@ -24,6 +25,9 @@ export const renderScreenView = (gameState: GameState) => {
     left: "center",
     width: 80,
     height: 40,
+    style: {
+      bg: "yellow",
+    },
   });
 
   const cardinalEastBox = blessed.box({
@@ -80,6 +84,53 @@ export const renderScreenView = (gameState: GameState) => {
       },
     },
   });
+
+  const playerOneCatchMarblesContainer = blessed.box({
+    top: 0,
+    left: 0,
+    height: 2,
+    width: 40,
+    style: {
+      bg: "grey",
+    },
+    content: "Reds get : ",
+  });
+
+  let marblesWonByRed = gameState.players[0].marblesWon;
+  marblesWonByRed = [2, 2, 2, 3];
+
+  for (let i = 0; i < marblesWonByRed.length; i++) {
+    const marbleBox = blessed.box({
+      top: 0,
+      left: i * 2 + 10,
+      width: 1,
+      height: 1,
+      tags: true,
+      style: {
+        fg: MARBLE_INT_COLORS[marblesWonByRed[i]],
+        bg: "grey",
+      },
+      content: "{center}\u2022{/center}",
+    });
+    playerOneCatchMarblesContainer.append(marbleBox);
+  }
+
+  const playerTwoCatchMarblesContainer = blessed.box({
+    top: 38,
+    left: 0,
+    height: 2,
+    width: 40,
+    style: {
+      bg: "grey",
+    },
+    content: "Blues get : ",
+  });
+
+  const playerTwoCatchMarbles = blessed.box({
+    top: 0,
+    left: 0,
+  });
+
   const nodes = gameState.graph.nodes;
   Object.keys(nodes).forEach((key) => {
     const node = nodes[key];
@@ -93,7 +144,7 @@ export const renderScreenView = (gameState: GameState) => {
         tags: true,
         style: {
           fg: MARBLE_INT_COLORS[node.value],
-          bg: (gameState.marbleClicked === node) ? 'yellow' : '',
+          bg: gameState.marbleClicked === node ? "yellow" : "",
         },
       });
       tmpBox.on("click", function () {
@@ -110,10 +161,10 @@ export const renderScreenView = (gameState: GameState) => {
   outerBoard.append(cardinalWestBox);
   outerBoard.append(cardinalNorthBox);
   outerBoard.append(cardinalSouthBox);
-
+  outerBoard.append(playerOneCatchMarblesContainer);
+  outerBoard.append(playerTwoCatchMarblesContainer);
 
   SCREEN.append(playerTurnText);
-  
-  
+
   SCREEN.render();
 };

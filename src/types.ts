@@ -43,3 +43,11 @@ export type UserMove = {
   marblePosition: string;
   direction: string;
 };
+
+export type GameState = {
+  graph: Graph,
+  currentPlayer: Player;
+  players: Player[];
+  marbleClicked: Node | null;
+  directionSelected: Direction | null;
+};

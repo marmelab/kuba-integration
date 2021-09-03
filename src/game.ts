@@ -1,4 +1,4 @@
-import { Player, Board, UserMove, Graph } from "./types";
+import { Player, Board, UserMove, Graph, GameState } from "./types";
 import {
   renderToConsole,
   renderBoard,
@@ -8,11 +8,15 @@ import { askUserMove, close } from "./userInput";
 import { moveMarble } from "./board";
 import { graphToBoard, sanitizeGraph, boardToGraph } from "./graph";
 import { MARBLE_INT_COLORS } from "./constants";
+import { initScreenView, renderScreenView } from "./blessed";
 
 const blessed = require('blessed');
 
+let gameState: GameState;
+
 export const startNewGame = async (initialBoard: Board) => {
   let board = initialBoard;
+  initScreenView();
 
   let players: Array<Player> = initializePlayers();
 
@@ -20,54 +24,18 @@ export const startNewGame = async (initialBoard: Board) => {
 
   let gameOver: Boolean = false;
 
-  // Create a screen object.
-  const screen = blessed.screen({
-    smartCSR: true
-  });
-
-  const outerBox = blessed.box({
-    parent: screen,
-    top: 'center',
-    width: '50%',
-    height: '100%',
-    border: {
-      type: 'line'
-    },
-    style: {
-      fg: 'white',
-      border: {
-        fg: '#f0f0f0'
-      },
-    }
-  });
-
-  // Append our box to the screen.
-  screen.append(outerBox);
-
   // render graph
   const graph = boardToGraph(board);
-  const nodes = Object.values(graph.nodes);
-  nodes.filter(n => n.value !== -1).forEach(node => {
-    const marbleBox = blessed.box({
-      top: `${node.y * 10}%`,
-      left: `${node.x * 15}%`,
-      width: 2,
-      height: 2,
-      content: node.value === 0 ? '' : '\u2022',
-      style: {
-        fg: MARBLE_INT_COLORS[node.value],
-      }
-    });
 
-    // If our box is clicked, change the content.
-    marbleBox.on('click', function (data: any) {});
+  const gameState = {
+    graph,
+    currentPlayer: thisTurnPlayer,
+    players,
+    marbleClicked: null,
+    directionSelected: null,
+  };
 
-    outerBox.append(marbleBox);
-  });
-
-  // Render the screen.
-  screen.render();
-
+  renderScreenView(gameState);
 
   // while (!gameOver) {
   //   const graphicalBoard = renderBoard(board);

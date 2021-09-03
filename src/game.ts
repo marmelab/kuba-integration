@@ -10,7 +10,7 @@ import { graphToBoard, sanitizeGraph, boardToGraph } from "./graph";
 import { MARBLE_INT_COLORS } from "./constants";
 import { initScreenView, renderScreenView } from "./blessed";
 
-const blessed = require('blessed');
+const blessed = require("blessed");
 
 let gameState: GameState;
 
@@ -32,45 +32,14 @@ export const startNewGame = async (initialBoard: Board) => {
     graph,
     currentPlayer: thisTurnPlayer,
     players,
-    marbleClicked: {x: -1, y: -1, value: -1, isExit: false},
-    directionSelected: '',
+    marbleClicked: { x: -1, y: -1, value: -1, isExit: false },
+    directionSelected: "",
+    hasWinner: false,
   };
 
   renderScreenView(gameState);
+}
 
-  // while (!gameOver) {
-  //   const graphicalBoard = renderBoard(board);
-  //   renderToConsole(graphicalBoard, thisTurnPlayer);
-  //   renderScoreBoard(players);
-  //   let graphs: Array<Graph>;
-
-  //   try {
-  //     let userMove: UserMove = await askUserMove();
-          // graphs = moveMarble(board, userMove, thisTurnPlayer);
-  //   } catch {
-  //     continue;
-  //   }
-
-  //   const marbleWon = marbleWonByPlayer(graphs[1]);
-  //   sanitizeGraph(graphs[1]);
-  //   board = graphToBoard(graphs[1]);
-
-  //   if (marbleWon > -1) {
-  //     thisTurnPlayer.marblesWon.push(marbleWon);
-  //     renderClear();
-  //     if (checkIfPlayerWon(thisTurnPlayer)) {
-  //       renderScoreBoard(players);
-  //       renderWinnerScreen(thisTurnPlayer);
-  //       break;
-  //     }
-  //     continue;
-  //   }
-
-  //   thisTurnPlayer = switchToNextPlayer(thisTurnPlayer, players);
-  //   renderClear();
-  // }
-  // close();
-};
 
 const initializePlayers = () => {
   const player1: Player = {
@@ -112,41 +81,27 @@ export const marbleWonByPlayer = (graph: Graph): number => {
   return -1;
 };
 
-export const renderScoreBoard = (players: Player[]): void => {
-  console.log("----------------");
-  console.log("Scoreboard");
-  for (const player of players) {
-    let playerScore = `Player ${player.playerNumber} :`;
-    for (const marble of player.marblesWon) {
-      playerScore += marbleValuetoANSIColorCode(marble) + " ";
-    }
-
-    console.log(playerScore);
-  }
-  console.log("----------------");
-};
-
 export const checkIfPlayerWon = (player: Player) => {
   return player.marblesWon.length === 7;
 };
 
-export const renderWinnerScreen = (player: Player): void => {
-  console.log("\n\n----------------");
-  console.log("----------------");
-
-  console.log(
-    `\n\nCongratulations, the player ${player.playerNumber} has won the Kuba game`
-  );
-
-  console.log("\n\n----------------");
-  console.log("----------------");
-};
-
-const renderClear = (): void => {
-  console.clear();
-};
-
-export const setGameStateOnDirectionSelected = (gameState: GameState, direction: string) :void => {
+export const setGameStateOnDirectionSelected = (
+  gameState: GameState,
+  direction: string
+): void => {
   gameState.directionSelected = direction;
   gameState.graph = moveMarble(gameState);
-}
+
+  const marbleWon = marbleWonByPlayer(gameState.graph);
+  sanitizeGraph(gameState.graph);
+
+  if (marbleWon > -1) {
+    gameState.currentPlayer.marblesWon.push(marbleWon);
+    if (checkIfPlayerWon(gameState.currentPlayer)) {
+      gameState.hasWinner = true;
+    }
+    return;
+  }
+
+  gameState.currentPlayer = switchToNextPlayer(gameState.currentPlayer, gameState.players);
+};

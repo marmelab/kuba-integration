@@ -30,6 +30,8 @@ export class AppService {
         direction,
         player,
       );
+
+      return true;
     } catch (error) {
       return false;
     }

@@ -8,7 +8,6 @@ import {
 } from '@nestjs/common';
 import { AppService } from './app.service';
 import { GameState, Node } from './types';
-
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService) {}

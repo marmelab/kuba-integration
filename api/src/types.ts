@@ -51,4 +51,5 @@ export type GameState = {
   marbleClicked: Node | null;
   directionSelected: string | null;
   hasWinner: boolean;
+  started: boolean;
 };

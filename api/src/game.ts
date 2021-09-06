@@ -11,9 +11,14 @@ export const gameState: GameState = {
   marbleClicked: null,
   directionSelected: null,
   hasWinner: false,
+  started: false,
 };
 
 export const startNewGame = (playerNumber: number): GameState => {
+  if (gameState.started) {
+    return gameState;
+  }
+
   let board = INITIAL_BOARD;
 
   const players: Player[] = initializePlayers();
@@ -25,6 +30,7 @@ export const startNewGame = (playerNumber: number): GameState => {
   gameState.currentPlayer = players[0];
   gameState.marbleClicked = { x: -1, y: -1, value: -1, isExit: false };
   gameState.directionSelected = '';
+  gameState.started = true;
 
   return gameState;
 };

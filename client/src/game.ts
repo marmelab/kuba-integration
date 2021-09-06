@@ -12,8 +12,12 @@ export const startNewGame = async (numberPlayer: number) => {
   renderScreenView(gameState);
 };
 
-export const pullNewGame = (playerNumber: number): any => {
-  const gameState = fetch(`${URL}/startgame/${playerNumber}`)
+export const pullNewGame = (playerNumber: number): Promise<GameState> => {
+  const gameState = fetch(`${URL}/startgame`, {
+    method: 'POST',
+    body: JSON.stringify({playernumber: playerNumber}),
+    headers: { 'Content-Type': 'application/json' }
+  })
     .then(function (response) {
       return response.json();
     })
@@ -21,7 +25,7 @@ export const pullNewGame = (playerNumber: number): any => {
       console.log("parsing failed", ex);
     });
 
-  return gameState;
+  return (gameState as Promise<GameState>);
 };
 
 export const pullGameState = (): any => {

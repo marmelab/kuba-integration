@@ -1,3 +1,5 @@
+import { pullGameState, pullNewGame } from "./game";
+import { GameState } from "./types";
 import { close } from "./userInput";
 
 const GRAPH = {
@@ -23,6 +25,24 @@ describe("game", () => {
   });
 
   describe("Get gameState from API", () => {
-    it("should get a initial gameState", () => {});
+    it("should get a initial gameState", async () => {
+      const gameState: GameState = await pullNewGame(1);
+
+      expect(gameState).toHaveProperty("graph");
+      expect(gameState).toHaveProperty("currentPlayer");
+      expect(gameState).toHaveProperty("players");
+      expect(gameState).toHaveProperty("marbleClicked");
+      expect(gameState).toHaveProperty("directionSelected");
+    });
+
+    it("should get a gameState from gameState API", async () => {
+      const gameState: GameState = await pullGameState();
+
+      expect(gameState).toHaveProperty("graph");
+      expect(gameState).toHaveProperty("currentPlayer");
+      expect(gameState).toHaveProperty("players");
+      expect(gameState).toHaveProperty("marbleClicked");
+      expect(gameState).toHaveProperty("directionSelected");
+    });
   });
 });

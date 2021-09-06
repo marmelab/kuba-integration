@@ -14,6 +14,7 @@ export class AppController {
 
   @Post('startgame')
   startGame(@Body() body): GameState {
+    console.log(`player : `, body.playerNumber);
     if (!body.playerNumber) {
       throw new HttpException('Argument is missing', 500);
     }

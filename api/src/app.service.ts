@@ -1,6 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { GameState, Graph, Player, Coordinates } from './types';
-import { startNewGame, gameState, switchToNextPlayer } from './game';
+import {
+  startNewGame,
+  gameState,
+  switchToNextPlayer,
+  setGameState,
+} from './game';
 import { checkMoveMarbleInDirection } from './board';
 import { moveMarbleInDirection } from './graph';
 
@@ -40,8 +45,6 @@ export class AppService {
     direction: string,
     player: Player,
   ): GameState {
-    console.log(`postMoveMarble`);
-
     if (gameState.currentPlayer.playerNumber !== player.playerNumber) {
       throw new Error('This is the other player turn, please be patient');
     }
@@ -53,6 +56,8 @@ export class AppService {
       gameState.currentPlayer,
       gameState.players,
     );
+
+    setGameState(newGameState);
 
     return newGameState;
   }

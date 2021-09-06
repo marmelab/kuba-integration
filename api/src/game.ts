@@ -4,7 +4,7 @@ import { moveMarble } from './board';
 import { sanitizeGraph, boardToGraph } from './graph';
 import { INITIAL_BOARD } from './constants';
 
-export const gameState: GameState = {
+export let gameState: GameState = {
   graph: null,
   currentPlayer: null,
   players: null,
@@ -15,6 +15,7 @@ export const gameState: GameState = {
 };
 
 export const startNewGame = (playerNumber: number): GameState => {
+  console.log(gameState);
   if (gameState.started) {
     return gameState;
   }
@@ -113,4 +114,8 @@ export const setGameStateOnDirectionSelected = (
     gameState.currentPlayer,
     gameState.players,
   );
+};
+
+export const setGameState = (newGameState: GameState) => {
+  gameState = { ...newGameState };
 };

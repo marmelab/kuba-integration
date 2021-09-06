@@ -1,6 +1,7 @@
 import { Player, Board, Graph, GameState } from "./types";
 
 import { close } from "./userInput";
+import { PLAYER_ID } from "./index";
 import { initScreenView, renderScreenView } from "./blessed";
 import { URL } from "./constants";
 require("isomorphic-fetch");
@@ -42,9 +43,14 @@ export const pullGameState = (): any => {
 
 export const pullCanMoveMarblePlayable = (
   gameState: GameState,
-  direction: string
+  direction: string,
+  player: Player
 ): any => {
-  const canMoveMarble = fetch(`${URL}/marbleplayable`)
+  const canMoveMarble = fetch(`${URL}/marbleplayable`, {
+    method: "POST",
+    body: JSON.stringify({ gameState, direction, player }),
+    headers: { "Content-Type": "application/json" },
+  })
     .then(function (response) {
       return response.json();
     })
@@ -71,7 +77,16 @@ export const pullActions = async (
   gameState: GameState,
   direction: string
 ): Promise<void> => {
-  const canMoveMarble = await pullCanMoveMarblePlayable(gameState, direction);
+  const player = gameState.players.find((item) => {
+    return PLAYER_ID === item.playerNumber;
+  });
+
+  const canMoveMarble = await pullCanMoveMarblePlayable(
+    gameState,
+    direction,
+    player
+  );
+
   if (canMoveMarble) {
     await moveMarble(gameState, direction);
   }

@@ -6,7 +6,7 @@ import { moveMarbleInDirection } from './graph';
 
 @Injectable()
 export class AppService {
-  postStartGame(playerNumber: number): GameState {
+  startGame(playerNumber: number): GameState {
     return startNewGame(playerNumber);
   }
 

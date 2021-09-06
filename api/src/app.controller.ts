@@ -14,11 +14,11 @@ export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Post('startgame')
-  postStartGame(@Body() body): GameState {
+  startGame(@Body() body): GameState {
     if (!body.playerNumber) {
       throw new HttpException('Argument is missing', 500);
     }
-    return this.appService.postStartGame(body.playerNumber);
+    return this.appService.startGame(body.playerNumber);
   }
 
   @Get('gamestate')
@@ -27,13 +27,13 @@ export class AppController {
   }
 
   @Get('marbleplayable')
-  getMarblePlayable(): Boolean {
+  isMarblePlayable(): Boolean {
     // return this.appService.getIsMarblePlayable();
     return false;
   }
 
   @Post('movemarble')
-  postMoveMarble(): void {}
+  moveMarble(): void {}
 
   @Put('stopgame')
   putStopGame(): void {}

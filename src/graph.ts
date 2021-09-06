@@ -8,7 +8,6 @@ export function boardToGraph(board: Board): Graph {
   const verticalLines: number = board.length;
   const horizontalLines: number = board[0].length;
 
-
   let graph: Graph = newBlankGraph();
 
   for (let hIndex = -1; hIndex < horizontalLines + 1; hIndex++) {
@@ -164,4 +163,36 @@ export const sanitizeGraph = (graph: Graph) => {
       node.value = -1;
     }
   }
-}
+};
+
+export const willExitAnOwnMarble = (
+  graph: Graph,
+  marblePosition: string,
+  direction: string
+): Boolean => {
+  const node = graph.nodes[marblePosition];
+  const playerValue = node.value;
+
+  let nodeToSearch = node;
+  let exitFound = false;
+  let willExitOwnMarble = false;
+
+  while (!exitFound) {
+    graph.edges.forEach((edge) => {
+      if (
+        edge.from === `${nodeToSearch.x},${nodeToSearch.y}` &&
+        edge.direction === direction &&
+        nodeToSearch.value >= 0
+      ) {
+        const nextNode = graph.nodes[edge.to];
+        if (nextNode.isExit) {
+          exitFound = true;
+          if (nodeToSearch.value === playerValue) willExitOwnMarble = true;
+          return false;
+        }
+        nodeToSearch = nextNode;
+      }
+    });
+  }
+  return willExitOwnMarble;
+};

@@ -43,11 +43,21 @@ export class AppController {
       throw new HttpException('Argument is missing', 500);
     }
 
-    return this.appService.moveMarble(
-      body.gameState.graph,
-      body.direction,
-      body.player,
-    );
+    const coordinates = {
+      x: body.gameState.marbleClicked.x,
+      y: body.gameState.marbleClicked.y,
+    };
+
+    try {
+      return this.appService.moveMarble(
+        body.gameState.graph,
+        coordinates,
+        body.direction,
+        body.player,
+      );
+    } catch (error) {
+      throw new HttpException(error.message, 500);
+    }
   }
 
   @Put('stopgame')

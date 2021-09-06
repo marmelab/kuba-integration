@@ -28,56 +28,53 @@ export const pullNewGame = async (playerNumber: number): Promise<GameState> => {
   }
 };
 
-export const pullGameState = (): Promise<GameState> => {
-  const gameState = fetch(`${URL}/gamestate`)
-    .then(function (response) {
-      return response.json();
-    })
-    .catch(function (ex) {
-      console.log("parsing failed", ex);
-    });
-
-  return gameState;
+export const pullGameState = async (): Promise<GameState> => {
+  try {
+    const response = await fetch(`${URL}/gamestate`);
+    const gameState: GameState = (await response.json()) as GameState;
+    return gameState;
+  } catch (ex) {
+    console.log(`parsing failed`, ex);
+  }
 };
 
-export const pullCanMoveMarblePlayable = (
+export const pullCanMoveMarblePlayable = async (
   gameState: GameState,
   direction: string,
   player: Player
-): any => {
-  const canMoveMarble = fetch(`${URL}/marbleplayable`, {
-    method: "POST",
-    body: JSON.stringify({ gameState, direction, player }),
-    headers: { "Content-Type": "application/json" },
-  })
-    .then(function (response) {
-      return response.json();
-    })
-    .catch(function (ex) {
-      console.log("parsing failed", ex);
+): Promise<boolean> => {
+  try {
+    const response = await fetch(`${URL}/marbleplayable`, {
+      method: "POST",
+      body: JSON.stringify({ gameState, direction, player }),
+      headers: { "Content-Type": "application/json" },
     });
+    const canMove: boolean = (await response.json()) as boolean;
 
-  return canMoveMarble;
+    return canMove;
+  } catch (ex) {
+    console.log(`parsing has failed`, ex);
+  }
 };
 
-const moveMarble = (
+const moveMarble = async (
   gameState: GameState,
   direction: string,
   player: Player
-): any => {
-  const moveMarble = fetch(`${URL}/movemarble`, {
-    method: "POST",
-    body: JSON.stringify({ gameState, direction, player }),
-    headers: { "Content-Type": "application/json" },
-  })
-    .then(function (response) {
-      return response.json();
-    })
-    .catch(function (ex) {
-      console.log("parsing failed", ex);
+): Promise<GameState> => {
+  try {
+    const response = await fetch(`${URL}/movemarble`, {
+      method: "POST",
+      body: JSON.stringify({ gameState, direction, player }),
+      headers: { "Content-Type": "application/json" },
     });
 
-  return moveMarble;
+    const gameStateAfterMove: GameState = (await response.json()) as GameState;
+
+    return gameStateAfterMove;
+  } catch (ex) {
+    console.log(`parsing has failed`, ex);
+  }
 };
 
 export const pullActions = async (
@@ -95,8 +92,7 @@ export const pullActions = async (
   );
 
   if (canMoveMarble) {
-    moveMarble(gameState, direction, player).then((gameState) => {
-      console.log(gameState);
-    });
+    const newGameState = await moveMarble(gameState, direction, player);
+    renderScreenView(newGameState);
   }
 };

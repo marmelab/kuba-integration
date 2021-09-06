@@ -38,8 +38,13 @@ export class AppService {
     graph: Graph,
     coordinates: { x: number; y: number },
     direction: string,
+    player: Player,
   ): GameState {
     console.log(`postMoveMarble`);
+
+    if (gameState.currentPlayer.playerNumber !== player.playerNumber) {
+      throw new Error('This is the other player turn, please be patient');
+    }
     const newGraph = moveMarbleInDirection(graph, coordinates, direction);
 
     const newGameState = { ...gameState };

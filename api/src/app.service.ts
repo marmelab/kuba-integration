@@ -1,15 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { GameState, Graph, Player } from './types';
-import { startNewGame, gameState } from './game';
+import { GameState, Graph, Player, Coordinates } from './types';
+import { startNewGame, gameState, switchToNextPlayer } from './game';
 import { checkMoveMarbleInDirection } from './board';
+import { moveMarbleInDirection } from './graph';
 
 @Injectable()
 export class AppService {
-  getHello(): string {
-    return 'Hello World!';
-  }
-
-  postStartGame(playerNumber: number): GameState {
+  startGame(playerNumber: number): GameState {
     return startNewGame(playerNumber);
   }
 
@@ -30,17 +27,28 @@ export class AppService {
         direction,
         player,
       );
+
+      return true;
     } catch (error) {
       return false;
     }
   }
 
-  getMarblePossibleMoves(): Node[] {
-    return;
-  }
+  postMoveMarble(
+    graph: Graph,
+    coordinates: { x: number; y: number },
+    direction: string,
+  ): GameState {
+    const newGraph = moveMarbleInDirection(graph, coordinates, direction);
 
-  putMoveMarble(): GameState {
-    return;
+    const newGameState = { ...gameState };
+    newGameState.graph = newGraph;
+    newGameState.currentPlayer = switchToNextPlayer(
+      gameState.currentPlayer,
+      gameState.players,
+    );
+
+    return newGameState;
   }
 
   putStopGame() {}

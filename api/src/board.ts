@@ -1,6 +1,5 @@
 import { Graph, Node, Board, Derivation, Player, GameState } from "./types";
 import { readFileSync } from "fs";
-import { askUserBoardPath } from "./userInput";
 
 import { moveMarbleInDirection, willExitAnOwnMarble } from "./graph";
 
@@ -11,24 +10,6 @@ import { CantMoveError } from "./error";
 enum Mode {
   initial = "1",
   custom = "2",
-}
-
-export async function getBoard(mode: string): Promise<Board> {
-  if (mode === Mode.initial) {
-    return getInitialBoard();
-  }
-
-  const boardPath = await askUserBoardPath();
-  return getBoardFromFile(boardPath);
-}
-
-export function getBoardFromFile(customPath: string): Board {
-  try {
-    const data = readFileSync(customPath, { encoding: "utf8" });
-    return JSON.parse(data).board;
-  } catch (err) {
-    return [];
-  }
 }
 
 export function getInitialBoard(): Board {

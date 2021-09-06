@@ -11,7 +11,7 @@ async function main() {
     const wichBoard = await askWhichBoard();
     board = await getBoard(wichBoard);
   }
-  
+
   if (!board || !board.length) {
     close();
     return;

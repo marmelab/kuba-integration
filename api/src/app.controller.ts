@@ -6,11 +6,6 @@ import { GameState, Node } from './types';
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
-  @Get()
-  getHello(): string {
-    return this.appService.getHello();
-  }
-
   @Post('startgame')
   startgame(){
     throw new HttpException('Argument is missing', 500)

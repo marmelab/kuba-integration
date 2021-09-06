@@ -5,10 +5,6 @@ import { checkMoveMarbleInDirection } from './board';
 
 @Injectable()
 export class AppService {
-  getHello(): string {
-    return 'Hello World!';
-  }
-
   postStartGame(playerNumber: number): GameState {
     return startNewGame(playerNumber);
   }
@@ -33,10 +29,6 @@ export class AppService {
     } catch (error) {
       return false;
     }
-  }
-
-  getMarblePossibleMoves(): Node[] {
-    return;
   }
 
   putMoveMarble(): GameState {

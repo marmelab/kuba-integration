@@ -26,6 +26,11 @@ export class AppController {
     return this.appService.getGameState();
   }
 
+  @Post('gamestatehaschanged')
+  getGameStateHasChanged(@Body() body): boolean {
+    return this.appService.ganeStateHasChanged(body.gameState);
+  }
+
   @Post('marbleplayable')
   getMarblePlayable(@Body() body): Boolean {
     if (!body.gameState || !body.player || !body.direction) {

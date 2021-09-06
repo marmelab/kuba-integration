@@ -19,6 +19,14 @@ export class AppService {
     return gameState;
   }
 
+  ganeStateHasChanged(playerGameState: GameState) {
+    console.log(
+      `hasChanged ? `,
+      JSON.stringify(playerGameState) === JSON.stringify(gameState),
+    );
+    return JSON.stringify(playerGameState) !== JSON.stringify(gameState);
+  }
+
   getIsMarblePlayable(
     gameState: GameState,
     direction: string,

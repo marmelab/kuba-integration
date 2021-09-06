@@ -6,12 +6,24 @@ import { initScreenView, renderScreenView } from "./blessed";
 import { URL } from "./constants";
 require("isomorphic-fetch");
 
+let currentState: GameState;
+
 export const startNewGame = async (numberPlayer: number) => {
   close();
   initScreenView();
   const gameState = await pullNewGame(numberPlayer);
-
   renderScreenView(gameState);
+
+  currentState = gameState;
+
+  setInterval(async () => {
+    const hasChanged = await pullGameStateChanged(currentState);
+    if (hasChanged) {
+      const gameState = await pullGameState();
+      renderScreenView(gameState);
+      currentState = gameState;
+    }
+  }, 5000);
 };
 
 export const pullNewGame = async (playerNumber: number): Promise<GameState> => {
@@ -35,6 +47,22 @@ export const pullGameState = async (): Promise<GameState> => {
     return gameState;
   } catch (ex) {
     console.log(`parsing failed`, ex);
+  }
+};
+
+export const pullGameStateChanged = async (
+  playerGameState: GameState
+): Promise<boolean> => {
+  try {
+    const response = await fetch(`${URL}/gamestatehaschanged`, {
+      method: "POST",
+      body: JSON.stringify({ playerGameState }),
+      headers: { "Content-Type": "application/json" },
+    });
+    const gameStateHasChanged = (await response.json()) as boolean;
+    return gameStateHasChanged;
+  } catch (ex) {
+    console.log("parsing failed", ex);
   }
 };
 
@@ -70,7 +98,7 @@ const moveMarble = async (
     });
 
     const gameStateAfterMove: GameState = (await response.json()) as GameState;
-
+    currentState = gameStateAfterMove;
     return gameStateAfterMove;
   } catch (ex) {
     console.log(`parsing has failed`, ex);

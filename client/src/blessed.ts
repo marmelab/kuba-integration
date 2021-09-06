@@ -2,7 +2,7 @@ const blessed = require("blessed");
 
 import { moveMarble } from "./board";
 import { MARBLE_INT_COLORS } from "./constants";
-import { setGameStateOnDirectionSelected } from "./game";
+import { pullActions } from "./game";
 import { GameState, Graph } from "./types";
 
 let SCREEN: any;
@@ -37,7 +37,7 @@ export const renderScreenView = (gameState: GameState) => {
   });
 
   cardinalEastBox.on("click", function () {
-    setGameStateOnDirectionSelected(gameState, "E");
+    pullActions(gameState, "E");
     renderScreenView(gameState);
   });
 
@@ -50,7 +50,7 @@ export const renderScreenView = (gameState: GameState) => {
   });
 
   cardinalWestBox.on("click", function () {
-    setGameStateOnDirectionSelected(gameState, "W");
+    pullActions(gameState, "W");
     renderScreenView(gameState);
   });
 
@@ -63,7 +63,7 @@ export const renderScreenView = (gameState: GameState) => {
   });
 
   cardinalSouthBox.on("click", function () {
-    setGameStateOnDirectionSelected(gameState, "S");
+    pullActions(gameState, "S");
     renderScreenView(gameState);
   });
 
@@ -76,7 +76,7 @@ export const renderScreenView = (gameState: GameState) => {
   });
 
   cardinalNorthBox.on("click", function () {
-    setGameStateOnDirectionSelected(gameState, "N");
+    pullActions(gameState, "N");
     renderScreenView(gameState);
   });
 

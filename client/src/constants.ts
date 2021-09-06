@@ -47,3 +47,6 @@ export const MARBLE_INT_COLORS: string[] = [
   "blue",
   "white",
 ];
+
+
+export const URL: string = "http://localhost:3000";

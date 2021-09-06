@@ -1,109 +1,71 @@
 import { Player, Board, Graph, GameState } from "./types";
 
 import { close } from "./userInput";
-import { moveMarble } from "./board";
-import { sanitizeGraph, boardToGraph } from "./graph";
 import { initScreenView, renderScreenView } from "./blessed";
+import { URL } from "./constants";
+require("isomorphic-fetch");
 
-export const startNewGame = async (initialBoard: Board) => {
-  let board = initialBoard;
+export const startNewGame = async (numberPlayer: number) => {
   close();
   initScreenView();
-
-  let players: Array<Player> = initializePlayers();
-
-  let thisTurnPlayer: Player = players[0];
-
-  const graph = boardToGraph(board);
-
-  const gameState: GameState = {
-    graph,
-    currentPlayer: thisTurnPlayer,
-    players,
-    marbleClicked: { x: -1, y: -1, value: -1, isExit: false },
-    directionSelected: "",
-    hasWinner: false,
-  };
-
+  const gameState = await pullNewGame(numberPlayer);
   renderScreenView(gameState);
 };
 
-const initializePlayers = () => {
-  const player1: Player = {
-    playerNumber: 1,
-    marbleColor: 1,
-    marblesWon: [],
-  };
+export const pullNewGame = (playerNumber: number): any => {
+  const gameState = fetch(`${URL}/startgame/${playerNumber}`)
+    .then(function (response) {
+      return response.json();
+    })
+    .catch(function (ex) {
+      console.log("parsing failed", ex);
+    });
 
-  const player2: Player = {
-    playerNumber: 2,
-    marbleColor: 2,
-    marblesWon: [],
-  };
-
-  return [player1, player2];
+  return gameState;
 };
 
-export const switchToNextPlayer = (
-  actualPlayer: Player,
-  players: Array<Player>
-): Player => {
-  let nextPlayerIndex = players.indexOf(actualPlayer) + 1;
+export const pullGameState = (): any => {
+  const gameState = fetch(`${URL}/gamestate`)
+    .then(function (response) {
+      return response.json();
+    })
+    .catch(function (ex) {
+      console.log("parsing failed", ex);
+    });
 
-  if (nextPlayerIndex > players.length - 1) return players[0];
-  return players[nextPlayerIndex];
+  return gameState;
 };
 
-export const marbleWonByPlayer = (graph: Graph): number => {
-  if (!graph) {
-    return -1;
-  }
+export const pullCanMoveMarblePlayable = (gameState: GameState, direction: string): any => {
+  const canMoveMarble = fetch(`${URL}/marbleplayable`)
+    .then(function (response) {
+      return response.json();
+    })
+    .catch(function (ex) {
+      console.log("parsing failed", ex);
+    });
 
-  for (const node of Object.values(graph.nodes)) {
-    if (node.isExit && node.value > -1) {
-      return node.value;
-    }
-  }
-
-  return -1;
+  return canMoveMarble;
 };
 
-export const checkIfPlayerWon = (player: Player) => {
-  let otherPlayerMarbles = 0;
-  let neutralMarbles = 0;
+const moveMarble = (gameState: GameState, direction: string): any => {
+  const canMoveMarble = fetch(`${URL}/movemarble`)
+    .then(function (response) {
+      return response.json();
+    })
+    .catch(function (ex) {
+      console.log("parsing failed", ex);
+    });
 
-  for (const marble of player.marblesWon) {
-    if (marble !== player.marbleColor) {
-      if (marble === 3) {
-        neutralMarbles++;
-      } else {
-        otherPlayerMarbles++;
-      }
-    }
-  }
-
-  return neutralMarbles === 7 || otherPlayerMarbles === 8;
+  return canMoveMarble;
 };
 
-export const setGameStateOnDirectionSelected = (
+export const pullActions = async (
   gameState: GameState,
   direction: string
-): void => {
-  gameState.directionSelected = direction;
-  gameState.graph = moveMarble(gameState);
-
-  const marbleWon = marbleWonByPlayer(gameState.graph);
-  sanitizeGraph(gameState.graph);
-
-  if (marbleWon > -1) {
-    gameState.currentPlayer.marblesWon.push(marbleWon);
-    if (checkIfPlayerWon(gameState.currentPlayer)) {
-      gameState.hasWinner = true;
-    }
-    return;
-  }
-  gameState.currentPlayer = switchToNextPlayer(
-    gameState.currentPlayer,
-    gameState.players
-  );
+): Promise<void> => {
+  const canMoveMarble = await pullCanMoveMarblePlayable(gameState, direction);
+  if (canMoveMarble) {
+    await moveMarble(gameState, direction);
+  }   
 };

@@ -28,15 +28,20 @@ export class AppController {
 
   @Post('marbleplayable')
   getMarblePlayable(@Body() body): Boolean {
-    console.log(body.player)
     if (!body.gameState || !body.player || !body.direction) {
       throw new HttpException('Argument is missing', 500);
     }
-    return this.appService.getIsMarblePlayable(body.gameState, body.direction, body.player);
+    return this.appService.getIsMarblePlayable(
+      body.gameState,
+      body.direction,
+      body.player,
+    );
   }
 
   @Post('movemarble')
-  postMoveMarble(): void {}
+  postMoveMarble(): void {
+    return this.appService.postMoveMarble();
+  }
 
   @Put('stopgame')
   putStopGame(): void {}

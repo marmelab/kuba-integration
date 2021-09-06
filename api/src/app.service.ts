@@ -19,7 +19,6 @@ export class AppService {
     direction: string,
     player: Player,
   ): Boolean {
-    console.log(player)
     const marbleClickedCoordinates = `${gameState.marbleClicked.x},${gameState.marbleClicked.y}`;
     try {
       checkMoveMarbleInDirection(
@@ -40,6 +39,7 @@ export class AppService {
     coordinates: { x: number; y: number },
     direction: string,
   ): GameState {
+    console.log(`postMoveMarble`);
     const newGraph = moveMarbleInDirection(graph, coordinates, direction);
 
     const newGameState = { ...gameState };

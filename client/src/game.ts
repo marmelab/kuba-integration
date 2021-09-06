@@ -10,6 +10,7 @@ export const startNewGame = async (numberPlayer: number) => {
   close();
   initScreenView();
   const gameState = await pullNewGame(numberPlayer);
+
   renderScreenView(gameState);
 };
 
@@ -62,7 +63,7 @@ export const pullCanMoveMarblePlayable = (
 };
 
 const moveMarble = (gameState: GameState, direction: string): any => {
-  const canMoveMarble = fetch(`${URL}/movemarble`)
+  const moveMarble = fetch(`${URL}/movemarble`)
     .then(function (response) {
       return response.json();
     })
@@ -70,7 +71,7 @@ const moveMarble = (gameState: GameState, direction: string): any => {
       console.log("parsing failed", ex);
     });
 
-  return canMoveMarble;
+  return moveMarble;
 };
 
 export const pullActions = async (
@@ -86,8 +87,10 @@ export const pullActions = async (
     direction,
     player
   );
-
+  console.log(`canMoveMarble ? `, canMoveMarble);
   if (canMoveMarble) {
-    await moveMarble(gameState, direction);
+    moveMarble(gameState, direction).then((gameState) => {
+      console.log(gameState);
+    });
   }
 };

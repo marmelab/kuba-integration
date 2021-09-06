@@ -8,17 +8,16 @@ import {
 } from '@nestjs/common';
 import { AppService } from './app.service';
 import { GameState, Node } from './types';
-
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Post('startgame')
-  postStartGame(@Body() body): GameState {
+  startGame(@Body() body): GameState {
     if (!body.playerNumber) {
       throw new HttpException('Argument is missing', 500);
     }
-    return this.appService.postStartGame(body.playerNumber);
+    return this.appService.startGame(body.playerNumber);
   }
 
   @Get('gamestate')

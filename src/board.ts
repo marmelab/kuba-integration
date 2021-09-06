@@ -2,7 +2,7 @@ import { Graph, Node, Board, Derivation, Player, GameState } from "./types";
 import { readFileSync } from "fs";
 import { askUserBoardPath } from "./userInput";
 
-import { moveMarbleInDirection } from "./graph";
+import { moveMarbleInDirection, willExitAnOwnMarble } from "./graph";
 
 import { INVERSE_DIRECTION, INITIAL_BOARD } from "./constants";
 
@@ -66,6 +66,15 @@ export function checkMoveMarbleInDirection(
     throw new CantMoveError(
       "This marble can't be moved because it is not your color"
     );
+  }
+
+  const itWillExitAnOwnMarble = willExitAnOwnMarble(
+    boardGraph,
+    marblePosition,
+    direction
+  );
+  if (itWillExitAnOwnMarble) {
+    throw new CantMoveError("You can't exit one of your own marbles");
   }
 }
 

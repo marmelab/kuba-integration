@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { GameState, Graph, Player } from './types';
-import { startNewGame, gameState } from './game';
+import { GameState, Graph, Player, Coordinates } from './types';
+import { startNewGame, gameState, switchToNextPlayer } from './game';
 import { checkMoveMarbleInDirection } from './board';
+import { moveMarbleInDirection } from './graph';
 
 @Injectable()
 export class AppService {
@@ -31,8 +32,21 @@ export class AppService {
     }
   }
 
-  putMoveMarble(): GameState {
-    return;
+  postMoveMarble(
+    graph: Graph,
+    coordinates: { x: number; y: number },
+    direction: string,
+  ): GameState {
+    const newGraph = moveMarbleInDirection(graph, coordinates, direction);
+
+    const newGameState = { ...gameState };
+    newGameState.graph = newGraph;
+    newGameState.currentPlayer = switchToNextPlayer(
+      gameState.currentPlayer,
+      gameState.players,
+    );
+
+    return newGameState;
   }
 
   putStopGame() {}

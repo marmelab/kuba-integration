@@ -1,4 +1,12 @@
-import { Controller, Get, HttpException, Post, Put } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  HttpException,
+  Param,
+  Post,
+  Put,
+  Req,
+} from '@nestjs/common';
 import { AppService } from './app.service';
 import { GameState, Node } from './types';
 
@@ -7,41 +15,35 @@ export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Post('startgame')
-  startgame(){
-    throw new HttpException('Argument is missing', 500)
+  startgame() {
+    throw new HttpException('Argument is missing', 500);
   }
 
-  @POST('startgame/:playernumber')
-  postStartGame('playernumber'): GameState {
-    return this.appService.postStartGame()
+  @Post('startgame/:playernumber')
+  postStartGame(@Param('playernumber') playernumber: number): GameState {
+    return this.appService.postStartGame(playernumber);
   }
 
   @Get('gamestate')
   getGameState(): GameState {
-    return
+    return;
   }
 
   @Get('marbleplayable')
-    getMarblePlayable(): Boolean {
-      return this.appService.getIsMarblePlayable();
-    }
-  
+  getMarblePlayable(@Req() request: Request): Boolean {
+    const params = request.body;
+
+    return this.appService.getIsMarblePlayable();
+  }
 
   @Get('marblepossiblemoves')
-    getMarblePossibleMoves() :Node[] {
-      return
-    }
-  
-    
+  getMarblePossibleMoves(): Node[] {
+    return;
+  }
 
-  @Put('movemarble')
-    putMoveMarble(): GameState{
-
-    }
+  @Post('movemarble')
+  postMoveMarble(): GameState {}
 
   @Put('stopgame')
-    putStopGame(): void {
-
-    }
-
+  putStopGame(): void {}
 }

@@ -34,7 +34,7 @@ export class AppService {
     }
   }
 
-  postMoveMarble(
+  moveMarble(
     graph: Graph,
     coordinates: { x: number; y: number },
     direction: string,

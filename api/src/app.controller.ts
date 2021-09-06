@@ -39,8 +39,16 @@ export class AppController {
   }
 
   @Post('movemarble')
-  postMoveMarble(): void {
-    return this.appService.postMoveMarble();
+  postMoveMarble(@Body() body): GameState {
+    if (!body.gameState || !body.player || !body.direction) {
+      throw new HttpException('Argument is missing', 500);
+    }
+
+    return this.appService.moveMarble(
+      body.gameState.graph,
+      body.direction,
+      body.player,
+    );
   }
 
   @Put('stopgame')

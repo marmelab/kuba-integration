@@ -62,8 +62,16 @@ export const pullCanMoveMarblePlayable = (
   return canMoveMarble;
 };
 
-const moveMarble = (gameState: GameState, direction: string): any => {
-  const moveMarble = fetch(`${URL}/movemarble`)
+const moveMarble = (
+  gameState: GameState,
+  direction: string,
+  player: Player
+): any => {
+  const moveMarble = fetch(`${URL}/movemarble`, {
+    method: "POST",
+    body: JSON.stringify({ gameState, direction, player }),
+    headers: { "Content-Type": "application/json" },
+  })
     .then(function (response) {
       return response.json();
     })
@@ -87,9 +95,9 @@ export const pullActions = async (
     direction,
     player
   );
-  console.log(`canMoveMarble ? `, canMoveMarble);
+
   if (canMoveMarble) {
-    moveMarble(gameState, direction).then((gameState) => {
+    moveMarble(gameState, direction, player).then((gameState) => {
       console.log(gameState);
     });
   }

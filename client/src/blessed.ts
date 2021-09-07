@@ -1,9 +1,14 @@
-const blessed = require("blessed");
+const blessed = require('blessed');
 
-import { moveMarble } from "./board";
-import { MARBLE_INT_COLORS } from "./constants";
-import { pullActions } from "./game";
-import { GameState, Graph } from "./types";
+import { moveMarble } from './board';
+import { MARBLE_INT_COLORS } from './constants';
+import {
+  postGameState,
+  pullActions,
+  currentState,
+  setCurrentState,
+} from './game';
+import { GameState, Graph } from './types';
 
 let SCREEN: any;
 
@@ -12,8 +17,8 @@ export const initScreenView = (): void => {
     smartCSR: true,
   });
 
-  SCREEN.title = "Kuba Konsole";
-  SCREEN.key(["escape", "q", "C-c"], function (ch: any, key: any) {
+  SCREEN.title = 'Kuba Konsole';
+  SCREEN.key(['escape', 'q', 'C-c'], function (ch: any, key: any) {
     return process.exit(0);
   });
 
@@ -22,67 +27,67 @@ export const initScreenView = (): void => {
 
 export const renderScreenView = (gameState: GameState) => {
   const outerBoard = blessed.box({
-    top: "center",
-    left: "center",
+    top: 'center',
+    left: 'center',
     width: 80,
     height: 40,
   });
 
   const cardinalEastBox = blessed.box({
-    top: "50%",
-    left: "90%",
+    top: '50%',
+    left: '90%',
     width: 2,
     height: 1,
-    content: "\u25bA",
+    content: '\u25bA',
   });
 
-  cardinalEastBox.on("click", function () {
-    pullActions(gameState, "E");
+  cardinalEastBox.on('click', function () {
+    pullActions(gameState, 'E');
     renderScreenView(gameState);
   });
 
   const cardinalWestBox = blessed.box({
-    top: "50%",
-    left: "10%",
-    content: "\u25c4",
+    top: '50%',
+    left: '10%',
+    content: '\u25c4',
     width: 2,
     height: 1,
   });
 
-  cardinalWestBox.on("click", function () {
-    pullActions(gameState, "W");
+  cardinalWestBox.on('click', function () {
+    pullActions(gameState, 'W');
     renderScreenView(gameState);
   });
 
   const cardinalSouthBox = blessed.box({
-    top: "90%",
-    left: "50%",
-    content: "\u25bc",
+    top: '90%',
+    left: '50%',
+    content: '\u25bc',
     width: 2,
     height: 1,
   });
 
-  cardinalSouthBox.on("click", function () {
-    pullActions(gameState, "S");
+  cardinalSouthBox.on('click', function () {
+    pullActions(gameState, 'S');
     renderScreenView(gameState);
   });
 
   const cardinalNorthBox = blessed.box({
-    top: "10%",
-    left: "50%",
-    content: "\u25b2",
+    top: '10%',
+    left: '50%',
+    content: '\u25b2',
     width: 2,
     height: 1,
   });
 
-  cardinalNorthBox.on("click", function () {
-    pullActions(gameState, "N");
+  cardinalNorthBox.on('click', function () {
+    pullActions(gameState, 'N');
     renderScreenView(gameState);
   });
 
   const playerTurnText = blessed.box({
-    top: "center",
-    left: "80%",
+    top: 'center',
+    left: '80%',
     tags: true,
     content: `Player turn : \u25CF`,
     style: {
@@ -91,17 +96,17 @@ export const renderScreenView = (gameState: GameState) => {
   });
 
   const board = blessed.box({
-    top: "center",
-    left: "center",
+    top: 'center',
+    left: 'center',
     width: 57, //*8
     height: 29, // *4
     tags: true,
     border: {
-      type: "line",
+      type: 'line',
     },
     style: {
       border: {
-        fg: "white",
+        fg: 'white',
       },
     },
   });
@@ -110,8 +115,8 @@ export const renderScreenView = (gameState: GameState) => {
     top: 2,
     left: 0,
     height: 2,
-    width: "100%",
-    content: "Reds get : ",
+    width: '100%',
+    content: 'Reds get : ',
   });
 
   let marblesWonByRed = gameState.players[0].marblesWon;
@@ -126,7 +131,7 @@ export const renderScreenView = (gameState: GameState) => {
       style: {
         fg: MARBLE_INT_COLORS[marblesWonByRed[i]],
       },
-      content: "{center}\u25CF{/center}",
+      content: '{center}\u25CF{/center}',
     });
     playerOneCatchMarblesContainer.append(marbleBox);
   }
@@ -135,8 +140,8 @@ export const renderScreenView = (gameState: GameState) => {
     top: 37,
     left: 0,
     height: 2,
-    width: "100%",
-    content: "Blues get : ",
+    width: '100%',
+    content: 'Blues get : ',
   });
 
   let marblesWonByBlue = gameState.players[1].marblesWon;
@@ -151,7 +156,7 @@ export const renderScreenView = (gameState: GameState) => {
       style: {
         fg: MARBLE_INT_COLORS[marblesWonByBlue[i]],
       },
-      content: "{center}\u25CF{/center}",
+      content: '{center}\u25CF{/center}',
     });
     playerTwoCatchMarblesContainer.append(marbleBox);
   }
@@ -165,15 +170,18 @@ export const renderScreenView = (gameState: GameState) => {
         left: node.x * 8,
         width: 7,
         height: 3,
-        content: node.value === 0 ? "" : "{center}\n\u25CF{/center}",
+        content: node.value === 0 ? '' : '{center}\n\u25CF{/center}',
         tags: true,
         style: {
           fg: MARBLE_INT_COLORS[node.value],
-          bg: gameState.marbleClicked === node ? "yellow" : "",
+          bg: gameState.marbleClicked === node ? 'yellow' : '',
         },
       });
-      tmpBox.on("click", function () {
+      tmpBox.on('click', async function () {
         gameState.marbleClicked = node;
+        setCurrentState(gameState);
+
+        await postGameState(gameState);
         renderScreenView(gameState);
       });
       board.append(tmpBox);
@@ -199,14 +207,14 @@ export const renderScreenView = (gameState: GameState) => {
     const winnerString = `{center}Congratulations to the ${winnerColor} for the nice victory !{/center}`;
 
     const winBox = blessed.box({
-      top: "center",
-      left: "center",
+      top: 'center',
+      left: 'center',
       width: 70,
       height: 2,
       tags: true,
       content: winnerString,
       style: {
-        fg: "White",
+        fg: 'White',
       },
     });
 

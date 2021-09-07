@@ -15,7 +15,6 @@ export let gameState: GameState = {
 };
 
 export const startNewGame = (playerNumber: number): GameState => {
-  console.log(gameState);
   if (gameState.started) {
     return gameState;
   }
@@ -116,6 +115,7 @@ export const setGameStateOnDirectionSelected = (
   );
 };
 
-export const setGameState = (newGameState: GameState) => {
+export const setGameState = (newGameState: GameState): GameState => {
   gameState = { ...newGameState };
+  return gameState;
 };

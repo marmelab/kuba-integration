@@ -1,4 +1,4 @@
-import { DirectionInBoard, Board } from "./types";
+import { DirectionInBoard, Board } from './types';
 
 export const INVERSE_DIRECTION: DirectionInBoard = {
   E: {
@@ -40,14 +40,13 @@ export const MARBLE_COLORS = [
   WHITE_MARBLE,
 ];
 
-export const ALPHABET: string = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+export const ALPHABET: string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 export const MARBLE_INT_COLORS: string[] = [
-  "transparent",
-  "red",
-  "blue",
-  "white",
+  'transparent',
+  'red',
+  'blue',
+  'white',
 ];
 
-
 // export const URL: string = "http://192.168.86.189:3000";
-export const URL: string = "localhost:3000";
+export const URL: string = 'http://localhost:3000';

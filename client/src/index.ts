@@ -11,7 +11,7 @@ async function main() {
   try {
     await startNewGame(PLAYER_ID);
   } catch (e) {
-    console.log("Game can't be started")
+    console.log("Game can't be started");
   }
 }
 

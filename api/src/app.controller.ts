@@ -7,6 +7,7 @@ import {
   Put,
 } from '@nestjs/common';
 import { AppService } from './app.service';
+import { setGameState } from './game';
 import { GameState, Node } from './types';
 @Controller()
 export class AppController {
@@ -14,7 +15,6 @@ export class AppController {
 
   @Post('startgame')
   startGame(@Body() body): GameState {
-    console.log(`player : `, body.playerNumber);
     if (!body.playerNumber) {
       throw new HttpException('Argument is missing', 500);
     }
@@ -28,7 +28,7 @@ export class AppController {
 
   @Post('gamestatehaschanged')
   getGameStateHasChanged(@Body() body): boolean {
-    return this.appService.ganeStateHasChanged(body.gameState);
+    return this.appService.gameStateHasChanged(body);
   }
 
   @Post('marbleplayable')
@@ -64,6 +64,11 @@ export class AppController {
     } catch (error) {
       throw new HttpException(error.message, 500);
     }
+  }
+
+  @Post('setgamestate')
+  postSetGameState(@Body() body: GameState) {
+    return setGameState(body);
   }
 
   @Put('stopgame')

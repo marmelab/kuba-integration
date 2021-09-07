@@ -19,11 +19,7 @@ export class AppService {
     return gameState;
   }
 
-  ganeStateHasChanged(playerGameState: GameState) {
-    console.log(
-      `hasChanged ? `,
-      JSON.stringify(playerGameState) === JSON.stringify(gameState),
-    );
+  gameStateHasChanged(playerGameState: GameState) {
     return JSON.stringify(playerGameState) !== JSON.stringify(gameState);
   }
 

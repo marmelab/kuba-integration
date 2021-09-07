@@ -7,12 +7,12 @@ import { URL } from './constants';
 import { GameError } from './error';
 require('isomorphic-fetch');
 
-let currentState: GameState;
+export let currentState: GameState;
 
 export const startNewGame = async (numberPlayer: number) => {
   close();
   initScreenView();
-  
+
   const gameState = await pullNewGame(numberPlayer);
   renderScreenView(gameState);
 
@@ -20,6 +20,7 @@ export const startNewGame = async (numberPlayer: number) => {
 
   setInterval(async () => {
     const hasChanged = await pullGameStateChanged(currentState);
+
     if (hasChanged) {
       const gameState = await pullGameState();
       renderScreenView(gameState);
@@ -58,7 +59,7 @@ export const pullGameStateChanged = async (
   try {
     const response = await fetch(`${URL}/gamestatehaschanged`, {
       method: 'POST',
-      body: JSON.stringify({ playerGameState }),
+      body: JSON.stringify(playerGameState),
       headers: { 'Content-Type': 'application/json' },
     });
     const gameStateHasChanged = (await response.json()) as boolean;
@@ -115,14 +116,39 @@ export const pullActions = async (
     return PLAYER_ID === item.playerNumber;
   });
 
-  const canMoveMarble = await pullCanMoveMarblePlayable(
-    gameState,
-    direction,
-    player,
-  );
+  try {
+    const canMoveMarble = await pullCanMoveMarblePlayable(
+      gameState,
+      direction,
+      player,
+    );
 
-  if (canMoveMarble) {
-    const newGameState = await moveMarble(gameState, direction, player);
-    renderScreenView(newGameState);
+    if (canMoveMarble) {
+      const newGameState = await moveMarble(gameState, direction, player);
+      renderScreenView(newGameState);
+    }
+  } catch (e) {
+    console.log(e);
   }
+};
+
+export const postGameState = async (
+  gameState: GameState,
+): Promise<GameState> => {
+  try {
+    const response = await fetch(`${URL}/setgamestate`, {
+      method: 'POST',
+      body: JSON.stringify(gameState),
+      headers: { 'Content-Type': 'application/json' },
+    });
+    const newGameState: GameState = (await response.json()) as GameState;
+
+    return newGameState;
+  } catch (ex) {
+    throw new GameError('Unable to call the function postGameState');
+  }
+};
+
+export const setCurrentState = (gameState: GameState) => {
+  currentState = gameState;
 };

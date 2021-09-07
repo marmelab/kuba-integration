@@ -1,6 +1,5 @@
 require('dotenv').config({
-  path:
-    process.env.NODE_ENV === 'local' ? '.env' : `.env.${process.env.NODE_ENV}`,
+  path: `.env.${process.env.NODE_ENV}`,
 });
 import { startNewGame } from './api';
 

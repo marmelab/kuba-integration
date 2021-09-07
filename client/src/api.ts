@@ -40,9 +40,6 @@ export const pullNewGame = async (playerNumber: number): Promise<GameState> => {
     const gameState: GameState = jsonResp as GameState;
     return gameState;
   } catch (ex) {
-    console.log("BIMMMMMM")
-    console.log(ex.message);
-    console.log(ex);
     throw new GameError("The game can't be launched");
   }
 };

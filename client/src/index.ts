@@ -1,4 +1,4 @@
-import { startNewGame } from './game';
+import { startNewGame } from './apiCalls';
 
 export let PLAYER_ID: number | undefined = null;
 async function main() {

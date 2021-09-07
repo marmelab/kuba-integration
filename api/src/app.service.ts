@@ -65,7 +65,6 @@ export class AppService {
       gameState.currentPlayer,
       gameState.players,
     );
-
     setGameState(newGameState);
 
     return newGameState;

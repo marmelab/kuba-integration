@@ -1,4 +1,4 @@
-import { Player, Board, Graph, GameState } from './types';
+import { Player, GameState } from './types';
 
 import { close } from './userInput';
 import { PLAYER_ID } from './index';

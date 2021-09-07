@@ -1,15 +1,13 @@
 const blessed = require('blessed');
-
-import { red } from 'chalk';
-import { moveMarble } from './board';
 import { MARBLE_INT_COLORS } from './constants';
 import {
   postGameState,
   pullActions,
   setCurrentState,
   restartGame
-} from './game';
-import { GameState, Graph } from './types';
+} from './apiCalls';
+import { GameState } from './types';
+import { PLAYER_ID } from './index';
 
 let SCREEN: any;
 
@@ -112,12 +110,21 @@ export const renderScreenView = (gameState: GameState) => {
     },
   });
 
+  const iOrOpponentRed: string =
+    PLAYER_ID === 1
+      ? `I (\u001b[31m RED \u001b[0m) have captured `
+      : `The opponent (\u001b[31m RED \u001b[0m) has captured `;
+  const iOrOpponentBlue: string =
+    PLAYER_ID === 1
+      ? `The Opponent (\u001b[34m BLUE \u001b[0m) has captured `
+      : `I (\u001b[34m BLUE \u001b[0m) have captured `;
+
   const playerOneCatchMarblesContainer = blessed.box({
     top: 2,
     left: 0,
     height: 2,
     width: '100%',
-    content: 'Reds get : ',
+    content: iOrOpponentRed,
   });
 
   let marblesWonByRed = gameState.players[0].marblesWon;
@@ -142,7 +149,7 @@ export const renderScreenView = (gameState: GameState) => {
     left: 0,
     height: 2,
     width: '100%',
-    content: 'Blues get : ',
+    content: iOrOpponentBlue,
   });
 
   let marblesWonByBlue = gameState.players[1].marblesWon;

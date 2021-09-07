@@ -3,7 +3,7 @@ import { Player } from './types';
 import { close } from './userInput';
 import {
   switchToNextPlayer,
-  marbleColorExited,
+  getMarbleWonByPlayer,
   checkIfPlayerWon,
 } from './game';
 
@@ -57,12 +57,12 @@ describe('game', () => {
 
 describe('Checks if the player has won a marble', () => {
   it('should return -1 if no marble has been won', () => {
-    const playerHasWinMarble = marbleColorExited(GRAPH);
+    const playerHasWinMarble = getMarbleWonByPlayer(GRAPH);
 
     expect(playerHasWinMarble).toBe(-1);
   });
   it('should return true if a marble has been won', () => {
-    const playerHasWinMarble = marbleColorExited(GRAPH_WITH_MARBLE_IN_EXIT);
+    const playerHasWinMarble = getMarbleWonByPlayer(GRAPH_WITH_MARBLE_IN_EXIT);
 
     expect(playerHasWinMarble).toBe(1);
   });

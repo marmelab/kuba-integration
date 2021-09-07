@@ -63,7 +63,7 @@ export const switchToNextPlayer = (
   return players[0];
 };
 
-export const marbleColorExited = (graph: Graph): number => {
+export const getMarbleWonByPlayer = (graph: Graph): number => {
   if (!graph) {
     return -1;
   }
@@ -101,7 +101,7 @@ export const setGameStateOnDirectionSelected = (
   gameState.directionSelected = direction;
   gameState.graph = moveMarble(gameState);
 
-  const marbleWon = marbleColorExited(gameState.graph);
+  const marbleWon = getMarbleWonByPlayer(gameState.graph);
   sanitizeGraph(gameState.graph);
 
   if (marbleWon > -1) {

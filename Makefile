@@ -17,4 +17,4 @@ ssh:
 deploy:
 	rsync --delete -r -e "ssh -i ${pem}" --filter=':- .gitignore' \
 	./ ${user}@${host}:~/kuba
-	#ssh -i ${pem} ${user}@${host} 'cd kuba && make install && make run &' 
+	ssh -i ${pem} ${user}@${host} 'cd kuba && make install && make run &' 

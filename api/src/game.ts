@@ -4,16 +4,25 @@ import { moveMarble } from './board';
 import { sanitizeGraph, boardToGraph } from './graph';
 import { INITIAL_BOARD } from './constants';
 
-export const gameState: GameState = {
+export let gameState: GameState = {
   graph: null,
   currentPlayer: null,
   players: null,
   marbleClicked: null,
   directionSelected: null,
   hasWinner: false,
+  started: false,
 };
 
 export const startNewGame = (playerNumber: number): GameState => {
+  if (gameState.started) {
+    return gameState;
+  }
+
+  return createNewGameState();
+};
+
+export const createNewGameState = (): GameState => {
   let board = INITIAL_BOARD;
 
   const players: Player[] = initializePlayers();
@@ -25,6 +34,7 @@ export const startNewGame = (playerNumber: number): GameState => {
   gameState.currentPlayer = players[0];
   gameState.marbleClicked = { x: -1, y: -1, value: -1, isExit: false };
   gameState.directionSelected = '';
+  gameState.started = true;
 
   return gameState;
 };
@@ -49,13 +59,11 @@ export const switchToNextPlayer = (
   actualPlayer: Player,
   players: Array<Player>,
 ): Player => {
-  let nextPlayerIndex = players.indexOf(actualPlayer) + 1;
-
-  if (nextPlayerIndex > players.length - 1) return players[0];
-  return players[nextPlayerIndex];
+  if (actualPlayer.playerNumber === 1) return players[1];
+  return players[0];
 };
 
-export const marbleWonByPlayer = (graph: Graph): number => {
+export const getMarbleWonByPlayer = (graph: Graph): number => {
   if (!graph) {
     return -1;
   }
@@ -93,7 +101,7 @@ export const setGameStateOnDirectionSelected = (
   gameState.directionSelected = direction;
   gameState.graph = moveMarble(gameState);
 
-  const marbleWon = marbleWonByPlayer(gameState.graph);
+  const marbleWon = getMarbleWonByPlayer(gameState.graph);
   sanitizeGraph(gameState.graph);
 
   if (marbleWon > -1) {
@@ -107,4 +115,10 @@ export const setGameStateOnDirectionSelected = (
     gameState.currentPlayer,
     gameState.players,
   );
+};
+
+export const setGameState = (newGameState: GameState): GameState => {
+  gameState = { ...newGameState };
+
+  return gameState;
 };

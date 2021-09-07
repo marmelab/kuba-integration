@@ -1,13 +1,18 @@
-import { startNewGame } from "./game";
+import { startNewGame } from './api';
 
+export let PLAYER_ID: number | undefined = null;
 async function main() {
-  let numberPlayer;
   if (process.argv.slice(2).length > 0) {
-    numberPlayer = process.argv.slice(2)[0];
+    PLAYER_ID = +process.argv.slice(2)[0];
   } else {
-    numberPlayer = 1;
+    PLAYER_ID = 1;
   }
-  startNewGame(numberPlayer);
+
+  try {
+    await startNewGame(PLAYER_ID);
+  } catch (e) {
+    console.log("Game can't be started");
+  }
 }
 
 main();

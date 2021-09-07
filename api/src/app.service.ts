@@ -1,6 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { GameState, Graph, Player, Coordinates } from './types';
-import { startNewGame, gameState, switchToNextPlayer } from './game';
+import {
+  startNewGame,
+  gameState,
+  switchToNextPlayer,
+  setGameState,
+  createNewGameState,
+} from './game';
 import { checkMoveMarbleInDirection } from './board';
 import { moveMarbleInDirection } from './graph';
 
@@ -12,6 +18,14 @@ export class AppService {
 
   getGameState(): GameState {
     return gameState;
+  }
+
+  restartGame(): GameState {
+    return createNewGameState();
+  }
+
+  hasGameStateChanged(playerGameState: GameState) {
+    return JSON.stringify(playerGameState) !== JSON.stringify(gameState);
   }
 
   getIsMarblePlayable(
@@ -34,11 +48,15 @@ export class AppService {
     }
   }
 
-  postMoveMarble(
+  moveMarble(
     graph: Graph,
     coordinates: { x: number; y: number },
     direction: string,
+    player: Player,
   ): GameState {
+    if (gameState.currentPlayer.playerNumber !== player.playerNumber) {
+      throw new Error('This is the other player turn, please be patient');
+    }
     const newGraph = moveMarbleInDirection(graph, coordinates, direction);
 
     const newGameState = { ...gameState };
@@ -48,7 +66,17 @@ export class AppService {
       gameState.players,
     );
 
-    return newGameState;
+    return setGameState({
+      ...gameState,
+      graph: moveMarbleInDirection(graph, coordinates, direction),
+      currentPlayer: switchToNextPlayer(
+        gameState.currentPlayer,
+        gameState.players,
+      ),
+    });
+    /* setGameState(newGameState);
+
+    return newGameState; */
   }
 
   putStopGame() {}

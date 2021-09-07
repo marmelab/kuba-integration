@@ -1,12 +1,13 @@
 const blessed = require('blessed');
 
+import { red } from 'chalk';
 import { moveMarble } from './board';
 import { MARBLE_INT_COLORS } from './constants';
 import {
   postGameState,
   pullActions,
-  currentState,
   setCurrentState,
+  restartGame
 } from './game';
 import { GameState, Graph } from './types';
 
@@ -188,6 +189,29 @@ export const renderScreenView = (gameState: GameState) => {
     }
   });
 
+  const restartGameBox = blessed.box({
+    top: 0,
+    left: 75,
+    height: 3,
+    width: 20,
+    tags: true,
+    content: '{center}Restart Game{/center}',
+    border: {
+      type: 'line',
+    },
+    style: {
+      bg: 'red',
+      border: {
+        fg: 'white',
+      },
+    },
+  });
+  restartGameBox.on('click', async () => {
+    const newGameState = await restartGame();
+    setCurrentState(newGameState);
+    renderScreenView(newGameState);
+  });
+
   SCREEN.append(outerBoard);
   outerBoard.append(board);
   outerBoard.append(cardinalEastBox);
@@ -196,6 +220,7 @@ export const renderScreenView = (gameState: GameState) => {
   outerBoard.append(cardinalSouthBox);
   outerBoard.append(playerOneCatchMarblesContainer);
   outerBoard.append(playerTwoCatchMarblesContainer);
+  outerBoard.append(restartGameBox);
 
   SCREEN.append(playerTurnText);
 

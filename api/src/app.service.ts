@@ -5,6 +5,7 @@ import {
   gameState,
   switchToNextPlayer,
   setGameState,
+  createNewGameState
 } from './game';
 import { checkMoveMarbleInDirection } from './board';
 import { moveMarbleInDirection } from './graph';
@@ -17,6 +18,10 @@ export class AppService {
 
   getGameState(): GameState {
     return gameState;
+  }
+
+  getRestartGame(): GameState {
+    return createNewGameState();
   }
 
   gameStateHasChanged(playerGameState: GameState) {

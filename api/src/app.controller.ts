@@ -26,6 +26,11 @@ export class AppController {
     return this.appService.getGameState();
   }
 
+  @Get('restartgame')
+  getRestartGame(): GameState {
+    return this.appService.getRestartGame();
+  }
+
   @Post('gamestatehaschanged')
   getGameStateHasChanged(@Body() body): boolean {
     return this.appService.gameStateHasChanged(body);

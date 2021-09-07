@@ -18,7 +18,11 @@ export const startNewGame = (playerNumber: number): GameState => {
   if (gameState.started) {
     return gameState;
   }
+  
+  return createNewGameState();
+};
 
+export const createNewGameState = (): GameState => {
   let board = INITIAL_BOARD;
 
   const players: Player[] = initializePlayers();

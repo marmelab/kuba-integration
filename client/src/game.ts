@@ -152,3 +152,13 @@ export const postGameState = async (
 export const setCurrentState = (gameState: GameState) => {
   currentState = gameState;
 };
+
+export const restartGame = async (): Promise<GameState> => {
+  try {
+    const response = await fetch(`${URL}/restartgame`);
+    const newGameState: GameState = (await response.json()) as GameState;
+    return newGameState;
+  } catch (ex) {
+    throw new GameError('Unable to call the function restartgame');
+  }
+};

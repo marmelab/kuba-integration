@@ -55,10 +55,8 @@ export const switchToNextPlayer = (
   actualPlayer: Player,
   players: Array<Player>,
 ): Player => {
-  let nextPlayerIndex = players.indexOf(actualPlayer) + 1;
-
-  if (nextPlayerIndex > players.length - 1) return players[0];
-  return players[nextPlayerIndex];
+  if (actualPlayer.playerNumber === 1) return players[1];
+  return players[0];
 };
 
 export const marbleWonByPlayer = (graph: Graph): number => {

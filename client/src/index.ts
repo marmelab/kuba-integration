@@ -2,7 +2,7 @@ require('dotenv').config({
   path:
     process.env.NODE_ENV === 'local' ? '.env' : `.env.${process.env.NODE_ENV}`,
 });
-import { startNewGame } from './apiCalls';
+import { startNewGame } from './api';
 
 export let PLAYER_ID: number | undefined = null;
 async function main() {

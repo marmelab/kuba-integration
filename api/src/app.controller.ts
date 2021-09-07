@@ -28,15 +28,15 @@ export class AppController {
 
   @Get('restartgame')
   getRestartGame(): GameState {
-    return this.appService.getRestartGame();
+    return this.appService.restartGame();
   }
 
-  @Post('gamestatehaschanged')
+  @Get('gamestatehaschanged')
   getGameStateHasChanged(@Body() body): boolean {
-    return this.appService.gameStateHasChanged(body);
+    return this.appService.hasGameStateChanged(body);
   }
 
-  @Post('marbleplayable')
+  @Get('marbleplayable')
   getMarblePlayable(@Body() body): Boolean {
     if (!body.gameState || !body.player || !body.direction) {
       throw new HttpException('Argument is missing', 500);

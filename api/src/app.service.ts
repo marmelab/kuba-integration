@@ -5,7 +5,7 @@ import {
   gameState,
   switchToNextPlayer,
   setGameState,
-  createNewGameState
+  createNewGameState,
 } from './game';
 import { checkMoveMarbleInDirection } from './board';
 import { moveMarbleInDirection } from './graph';
@@ -20,11 +20,11 @@ export class AppService {
     return gameState;
   }
 
-  getRestartGame(): GameState {
+  restartGame(): GameState {
     return createNewGameState();
   }
 
-  gameStateHasChanged(playerGameState: GameState) {
+  hasGameStateChanged(playerGameState: GameState) {
     return JSON.stringify(playerGameState) !== JSON.stringify(gameState);
   }
 
@@ -65,9 +65,18 @@ export class AppService {
       gameState.currentPlayer,
       gameState.players,
     );
-    setGameState(newGameState);
 
-    return newGameState;
+    return setGameState({
+      ...gameState,
+      graph: moveMarbleInDirection(graph, coordinates, direction),
+      currentPlayer: switchToNextPlayer(
+        gameState.currentPlayer,
+        gameState.players,
+      ),
+    });
+    /* setGameState(newGameState);
+
+    return newGameState; */
   }
 
   putStopGame() {}

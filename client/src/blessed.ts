@@ -4,8 +4,8 @@ import {
   postGameState,
   pullActions,
   setCurrentState,
-  restartGame
-} from './apiCalls';
+  restartGame,
+} from './api';
 import { GameState } from './types';
 import { PLAYER_ID } from './index';
 

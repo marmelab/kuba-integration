@@ -1,4 +1,4 @@
-import { pullGameState, pullNewGame } from './apiCalls';
+import { pullGameState, pullNewGame } from './api';
 import { GameState } from './types';
 import { close } from './userInput';
 

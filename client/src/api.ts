@@ -36,7 +36,8 @@ export const pullNewGame = async (playerNumber: number): Promise<GameState> => {
       body: JSON.stringify({ playerNumber }),
       headers: { 'Content-Type': 'application/json' },
     });
-    const gameState = (await response.json()) as GameState;
+    const jsonResp = await response.json();
+    const gameState: GameState = jsonResp as GameState;
     return gameState;
   } catch (ex) {
     throw new GameError("The game can't be launched");
@@ -46,7 +47,8 @@ export const pullNewGame = async (playerNumber: number): Promise<GameState> => {
 export const pullGameState = async (): Promise<GameState> => {
   try {
     const response = await fetch(`${URL}/gamestate`);
-    const gameState: GameState = (await response.json()) as GameState;
+    const jsonResp = await response.json();
+    const gameState: GameState = jsonResp as GameState;
     return gameState;
   } catch (ex) {
     throw new GameError("The game state can't be laoaded");
@@ -62,7 +64,9 @@ export const pullGameStateChanged = async (
       body: JSON.stringify(playerGameState),
       headers: { 'Content-Type': 'application/json' },
     });
-    const gameStateHasChanged = (await response.json()) as boolean;
+
+    const jsonResp = await response.json();
+    const gameStateHasChanged: boolean = jsonResp as boolean;
     return gameStateHasChanged;
   } catch (ex) {
     throw new GameError("The game state can't be compared");
@@ -80,7 +84,8 @@ export const pullCanMoveMarblePlayable = async (
       body: JSON.stringify({ gameState, direction, player }),
       headers: { 'Content-Type': 'application/json' },
     });
-    const canMove: boolean = (await response.json()) as boolean;
+    const jsonResp = await response.json();
+    const canMove: boolean = jsonResp as boolean;
 
     return canMove;
   } catch (ex) {
@@ -100,7 +105,9 @@ const moveMarble = async (
       headers: { 'Content-Type': 'application/json' },
     });
 
-    const gameStateAfterMove: GameState = (await response.json()) as GameState;
+    const jsonResp = await response.json();
+    const gameStateAfterMove: GameState = jsonResp as GameState;
+
     currentState = gameStateAfterMove;
     return gameStateAfterMove;
   } catch (ex) {
@@ -141,7 +148,9 @@ export const postGameState = async (
       body: JSON.stringify(gameState),
       headers: { 'Content-Type': 'application/json' },
     });
-    const newGameState: GameState = (await response.json()) as GameState;
+
+    const jsonResp = await response.json();
+    const newGameState: GameState = jsonResp as GameState;
 
     return newGameState;
   } catch (ex) {
@@ -156,7 +165,8 @@ export const setCurrentState = (gameState: GameState) => {
 export const restartGame = async (): Promise<GameState> => {
   try {
     const response = await fetch(`${URL}/restartgame`);
-    const newGameState: GameState = (await response.json()) as GameState;
+    const jsonResp = await response.json();
+    const newGameState: GameState = jsonResp as GameState;
     return newGameState;
   } catch (ex) {
     throw new GameError('Unable to call the function restartgame');

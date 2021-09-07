@@ -1,4 +1,4 @@
-import { startNewGame } from "./game";
+import { startNewGame } from './game';
 
 export let PLAYER_ID: number | undefined = null;
 async function main() {
@@ -7,7 +7,12 @@ async function main() {
   } else {
     PLAYER_ID = 1;
   }
-  startNewGame(PLAYER_ID);
+
+  try {
+    await startNewGame(PLAYER_ID);
+  } catch (e) {
+    console.log("Game can't be started")
+  }
 }
 
 main();

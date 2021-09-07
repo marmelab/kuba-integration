@@ -131,7 +131,7 @@ describe("graphToBoard", () => {
       nodes: {
         "0,0": { x: 0, y: 0, value: 1, isExit: false },
         "1,0": { x: 1, y: 0, value: 1, isExit: false },
-        "2,0": { x: 2, y: 0, isExit: true },
+        "2,0": { x: 2, y: 0, value: -1, isExit: true },
       },
       edges: [
         { from: "0,0", to: "1,0", direction: "E" },

@@ -1,16 +1,18 @@
-import { Player, Board, Graph, GameState } from "./types";
+import { Player, Board, Graph, GameState } from './types';
 
-import { close } from "./userInput";
-import { PLAYER_ID } from "./index";
-import { initScreenView, renderScreenView } from "./blessed";
-import { URL } from "./constants";
-require("isomorphic-fetch");
+import { close } from './userInput';
+import { PLAYER_ID } from './index';
+import { initScreenView, renderScreenView } from './blessed';
+import { URL } from './constants';
+import { GameError } from './error';
+require('isomorphic-fetch');
 
 let currentState: GameState;
 
 export const startNewGame = async (numberPlayer: number) => {
   close();
   initScreenView();
+  
   const gameState = await pullNewGame(numberPlayer);
   renderScreenView(gameState);
 
@@ -29,14 +31,14 @@ export const startNewGame = async (numberPlayer: number) => {
 export const pullNewGame = async (playerNumber: number): Promise<GameState> => {
   try {
     const response = await fetch(`${URL}/startgame`, {
-      method: "POST",
+      method: 'POST',
       body: JSON.stringify({ playerNumber }),
-      headers: { "Content-Type": "application/json" },
+      headers: { 'Content-Type': 'application/json' },
     });
     const gameState = (await response.json()) as GameState;
     return gameState;
   } catch (ex) {
-    console.log("parsing failed", ex);
+    throw new GameError("The game can't be launched");
   }
 };
 
@@ -46,68 +48,68 @@ export const pullGameState = async (): Promise<GameState> => {
     const gameState: GameState = (await response.json()) as GameState;
     return gameState;
   } catch (ex) {
-    console.log(`parsing failed`, ex);
+    throw new GameError("The game state can't be laoaded");
   }
 };
 
 export const pullGameStateChanged = async (
-  playerGameState: GameState
+  playerGameState: GameState,
 ): Promise<boolean> => {
   try {
     const response = await fetch(`${URL}/gamestatehaschanged`, {
-      method: "POST",
+      method: 'POST',
       body: JSON.stringify({ playerGameState }),
-      headers: { "Content-Type": "application/json" },
+      headers: { 'Content-Type': 'application/json' },
     });
     const gameStateHasChanged = (await response.json()) as boolean;
     return gameStateHasChanged;
   } catch (ex) {
-    console.log("parsing failed", ex);
+    throw new GameError("The game state can't be compared");
   }
 };
 
 export const pullCanMoveMarblePlayable = async (
   gameState: GameState,
   direction: string,
-  player: Player
+  player: Player,
 ): Promise<boolean> => {
   try {
     const response = await fetch(`${URL}/marbleplayable`, {
-      method: "POST",
+      method: 'POST',
       body: JSON.stringify({ gameState, direction, player }),
-      headers: { "Content-Type": "application/json" },
+      headers: { 'Content-Type': 'application/json' },
     });
     const canMove: boolean = (await response.json()) as boolean;
 
     return canMove;
   } catch (ex) {
-    console.log(`parsing has failed`, ex);
+    throw new GameError('Unable to call the function can move marble');
   }
 };
 
 const moveMarble = async (
   gameState: GameState,
   direction: string,
-  player: Player
+  player: Player,
 ): Promise<GameState> => {
   try {
     const response = await fetch(`${URL}/movemarble`, {
-      method: "POST",
+      method: 'POST',
       body: JSON.stringify({ gameState, direction, player }),
-      headers: { "Content-Type": "application/json" },
+      headers: { 'Content-Type': 'application/json' },
     });
 
     const gameStateAfterMove: GameState = (await response.json()) as GameState;
     currentState = gameStateAfterMove;
     return gameStateAfterMove;
   } catch (ex) {
-    console.log(`parsing has failed`, ex);
+    throw new GameError('Unable to call the function move marble');
   }
 };
 
 export const pullActions = async (
   gameState: GameState,
-  direction: string
+  direction: string,
 ): Promise<void> => {
   const player = gameState.players.find((item) => {
     return PLAYER_ID === item.playerNumber;
@@ -116,7 +118,7 @@ export const pullActions = async (
   const canMoveMarble = await pullCanMoveMarblePlayable(
     gameState,
     direction,
-    player
+    player,
   );
 
   if (canMoveMarble) {

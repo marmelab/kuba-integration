@@ -13,3 +13,11 @@ export class UserPositionError extends Error {
     console.log(`\u001b[31m${message} \u001b[0m`);
   }
 }
+
+export class GameError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "GameError";
+    console.log(`\u001b[31m${message} \u001b[0m`);
+  }
+}

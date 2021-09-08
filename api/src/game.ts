@@ -1,4 +1,4 @@
-import { Player, Board, Graph, GameState } from './types';
+import { Player, Graph, GameState } from './types';
 
 import { moveMarble } from './board';
 import { sanitizeGraph, boardToGraph } from './graph';

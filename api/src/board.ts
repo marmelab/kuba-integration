@@ -1,15 +1,14 @@
-import { Graph, Node, Board, Derivation, Player, GameState } from "./types";
-import { readFileSync } from "fs";
+import { Graph, Node, Board, Derivation, Player, GameState } from './types';
 
-import { moveMarbleInDirection, willExitAnOwnMarble } from "./graph";
+import { moveMarbleInDirection, willExitAnOwnMarble } from './graph';
 
-import { INVERSE_DIRECTION, INITIAL_BOARD } from "./constants";
+import { INVERSE_DIRECTION, INITIAL_BOARD } from './constants';
 
-import { CantMoveError } from "./error";
+import { CantMoveError } from './error';
 
 enum Mode {
-  initial = "1",
-  custom = "2",
+  initial = '1',
+  custom = '2',
 }
 
 export function getInitialBoard(): Board {
@@ -20,39 +19,39 @@ export function checkMoveMarbleInDirection(
   boardGraph: Graph,
   marblePosition: string,
   direction: string,
-  player: Player
+  player: Player,
 ): void {
   const existInBoard = positionExistsInBoard(boardGraph, marblePosition);
   if (!existInBoard) {
-    throw new CantMoveError("This position does not exist in the board");
+    throw new CantMoveError('This position does not exist in the board');
   }
 
   const freeSpotBeforeToMove = hasFreeSpotBeforeToMove(
     boardGraph,
     marblePosition,
-    direction
+    direction,
   );
   if (!freeSpotBeforeToMove) {
-    throw new CantMoveError("No free space before the marble");
+    throw new CantMoveError('No free space before the marble');
   }
 
   const marbleColor = boardGraph.nodes[marblePosition].value;
   if (!marbleColor) {
-    throw new Error("No marble at this position");
+    throw new Error('No marble at this position');
   }
 
   const myMarbleColor = isOfMyMarbleColor(player, marbleColor);
 
   if (!myMarbleColor) {
     throw new CantMoveError(
-      "This marble can't be moved because it is not your color"
+      "This marble can't be moved because it is not your color",
     );
   }
 
   const itWillExitAnOwnMarble = willExitAnOwnMarble(
     boardGraph,
     marblePosition,
-    direction
+    direction,
   );
   if (itWillExitAnOwnMarble) {
     throw new CantMoveError("You can't exit one of your own marbles");
@@ -61,7 +60,7 @@ export function checkMoveMarbleInDirection(
 
 function positionExistsInBoard(
   boardGraph: Graph,
-  marblePosition: string
+  marblePosition: string,
 ): Boolean {
   let node = boardGraph.nodes[marblePosition];
   if (node) return node.value >= 1;
@@ -71,7 +70,7 @@ function positionExistsInBoard(
 function hasFreeSpotBeforeToMove(
   boardGraph: Graph,
   marblePosition: string,
-  direction: string
+  direction: string,
 ): Boolean {
   const basePosition: Node = boardGraph.nodes[marblePosition];
 
@@ -100,13 +99,13 @@ export function moveMarble(gameState: GameState): Graph {
     gameState.graph,
     stringCoordinate,
     gameState.directionSelected,
-    gameState.currentPlayer
+    gameState.currentPlayer,
   );
 
   const movedGraph = moveMarbleInDirection(
     gameState.graph,
     coordinate,
-    gameState.directionSelected
+    gameState.directionSelected,
   );
 
   return movedGraph;

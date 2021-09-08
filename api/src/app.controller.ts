@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { AppService } from './app.service';
 import { setGameState, initializePlayers } from './game';
-import { GameState, N } from './types';
+import { GameState } from './types';
 import { GameService } from './game.service';
 import { INITIAL_BOARD } from './constants';
 @Controller()
@@ -97,7 +97,7 @@ export class AppController {
   }
 
   @Post('setgamestate')
-  async postSetGameState(@Body() gameState: GameState): GameState {
+  async postSetGameState(@Body() gameState: GameState): Promise<GameState> {
     const res = await this.gameService.updateGame({
       where: { id: gameState.id },
       data: {

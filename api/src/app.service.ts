@@ -1,11 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { GameState, Graph, Player, Coordinates } from './types';
+import { GameState, Graph, Player } from './types';
 import {
   startNewGame,
   gameState,
   switchToNextPlayer,
   setGameState,
-  createNewGameState,
 } from './game';
 import { checkMoveMarbleInDirection } from './board';
 import { moveMarbleInDirection } from './graph';
@@ -19,10 +18,6 @@ export class AppService {
   getGameState(): GameState {
     return gameState;
   }
-
-  /* restartGame(): GameState {
-
-  } */
 
   hasGameStateChanged(playerGameState: GameState) {
     return JSON.stringify(playerGameState) !== JSON.stringify(gameState);

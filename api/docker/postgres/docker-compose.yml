@@ -6,6 +6,6 @@ services:
     image: postgres
     restart: always
     env_file:
-      - /home/kuba/kubapostgres.env
+      - ../../../../kubapostgres.env
     ports:
       - '5432:5432'

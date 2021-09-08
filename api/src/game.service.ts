@@ -62,7 +62,7 @@ export class GameService {
     });
   }
 
-  bddEntryToGameState(bddEntry: Game): GameState {
+  deserializer(bddEntry: Game): GameState {
     const board = JSON.parse(bddEntry.board as string);
     const graph = boardToGraph(board);
     const players = JSON.parse(bddEntry.players as string);
@@ -81,7 +81,7 @@ export class GameService {
     return gameState;
   }
 
-  gameStateToBddEntry(gameState: GameState): Prisma.GameUpdateInput {
+  serializer(gameState: GameState): Prisma.GameUpdateInput {
     const game: Game = {
       id: gameState.id,
       board: JSON.stringify(graphToBoard(gameState.graph)),

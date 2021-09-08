@@ -8,7 +8,7 @@ import {
   Put,
 } from '@nestjs/common';
 import { AppService } from './app.service';
-import { setGameState, initializePlayers } from './game';
+import { initializePlayers } from './game';
 import { GameState } from './types';
 import { GameService } from './game.service';
 import { INITIAL_BOARD } from './constants';
@@ -22,13 +22,13 @@ export class AppController {
   @Get('startgame')
   async createGame(): Promise<GameState> {
     const res = await this.gameService.createGame();
-    return this.gameService.bddEntryToGameState(res);
+    return this.gameService.deserializer(res);
   }
 
   @Get('gamestate/:id')
   async getGameState(@Param('id') id: string): Promise<GameState> {
     const res = await this.gameService.getGame({ id: Number(id) });
-    return this.gameService.bddEntryToGameState(res);
+    return this.gameService.deserializer(res);
   }
 
   @Post('restartgame/:id')
@@ -44,7 +44,7 @@ export class AppController {
         players: JSON.stringify(clearedPlayers),
       },
     });
-    return this.gameService.bddEntryToGameState(res);
+    return this.gameService.deserializer(res);
   }
 
   @Get('gamestatehaschanged')
@@ -86,7 +86,7 @@ export class AppController {
       const res = await this.gameService.updateGame({
         where: { id: newGameState.id },
         data: {
-          ...this.gameService.gameStateToBddEntry(newGameState),
+          ...this.gameService.serializer(newGameState),
         },
       });
 
@@ -101,11 +101,11 @@ export class AppController {
     const res = await this.gameService.updateGame({
       where: { id: gameState.id },
       data: {
-        ...this.gameService.gameStateToBddEntry(gameState),
+        ...this.gameService.serializer(gameState),
       },
     });
 
-    return this.gameService.bddEntryToGameState(res);
+    return this.gameService.deserializer(res);
   }
 
   @Put('stopgame')
@@ -115,6 +115,6 @@ export class AppController {
   async getGameById(@Param('id') id: string): Promise<GameState> {
     const res = await this.gameService.getGame({ id: Number(id) });
 
-    return this.gameService.bddEntryToGameState(res);
+    return this.gameService.deserializer(res);
   }
 }

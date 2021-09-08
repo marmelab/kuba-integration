@@ -128,7 +128,6 @@ export const renderScreenView = (gameState: GameState) => {
   });
 
   let marblesWonByRed = gameState.players[0].marblesWon;
-  console.log(gameState.currentPlayer);
 
   for (let i = 0; i < marblesWonByRed.length; i++) {
     const marbleBox = blessed.box({

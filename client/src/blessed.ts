@@ -8,6 +8,7 @@ import {
 } from './api';
 import { GameState } from './types';
 import { PLAYER_ID } from './index';
+import { cpuUsage } from 'process';
 
 let SCREEN: any;
 
@@ -128,6 +129,7 @@ export const renderScreenView = (gameState: GameState) => {
   });
 
   let marblesWonByRed = gameState.players[0].marblesWon;
+  console.log(gameState.currentPlayer);
 
   for (let i = 0; i < marblesWonByRed.length; i++) {
     const marbleBox = blessed.box({
@@ -153,6 +155,7 @@ export const renderScreenView = (gameState: GameState) => {
   });
 
   let marblesWonByBlue = gameState.players[1].marblesWon;
+  console.log(gameState.players);
 
   for (let i = 0; i < marblesWonByBlue.length; i++) {
     const marbleBox = blessed.box({
@@ -189,8 +192,10 @@ export const renderScreenView = (gameState: GameState) => {
         gameState.marbleClicked = node;
         setCurrentState(gameState);
 
-        await postGameState(gameState);
-        renderScreenView(gameState);
+        if (PLAYER_ID === gameState.currentPlayer.playerNumber) {
+          await postGameState(gameState);
+          renderScreenView(gameState);
+        }
       });
       board.append(tmpBox);
     }

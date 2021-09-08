@@ -6,12 +6,16 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
+import { AppGateway } from './app.gateway';
 import { AppService } from './app.service';
 import { setGameState } from './game';
 import { GameState, Node } from './types';
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  constructor(
+    private readonly appService: AppService,
+    private gatewayService: AppGateway,
+  ) {}
 
   @Post('startgame')
   startGame(@Body() body): GameState {
@@ -28,7 +32,9 @@ export class AppController {
 
   @Get('restartgame')
   getRestartGame(): GameState {
-    return this.appService.restartGame();
+    const gameState = this.appService.restartGame();
+    this.gatewayService.emitGameState(gameState);
+    return gameState;
   }
 
   @Get('gamestatehaschanged')
@@ -60,12 +66,14 @@ export class AppController {
     };
 
     try {
-      return this.appService.moveMarble(
+      const gameState = this.appService.moveMarble(
         body.gameState.graph,
         coordinates,
         body.direction,
         body.player,
       );
+      this.gatewayService.emitGameState(gameState);
+      return gameState;
     } catch (error) {
       throw new HttpException(error.message, 500);
     }
@@ -73,7 +81,9 @@ export class AppController {
 
   @Post('setgamestate')
   postSetGameState(@Body() body: GameState) {
-    return setGameState(body);
+    const gameState = setGameState(body);
+    this.gatewayService.emitGameState(gameState);
+    return setGameState(gameState);
   }
 
   @Put('stopgame')

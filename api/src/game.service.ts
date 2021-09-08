@@ -62,7 +62,7 @@ export class GameService {
     });
   }
 
-  bddEntryToGameState(bddEntry): GameState {
+  bddEntryToGameState(bddEntry: Game): GameState {
     const board = JSON.parse(bddEntry.board as string);
     const graph = boardToGraph(board);
     const players = JSON.parse(bddEntry.players as string);
@@ -79,5 +79,20 @@ export class GameService {
       started: bddEntry.started,
     };
     return gameState;
+  }
+
+  gameStateToBddEntry(gameState: GameState): Prisma.GameUpdateInput {
+    const game: Game = {
+      id: gameState.id,
+      board: JSON.stringify(graphToBoard(gameState.graph)),
+      currentPlayer: gameState.currentPlayer.playerNumber,
+      players: JSON.stringify(gameState.players),
+      marbleClicked: JSON.stringify(gameState.marbleClicked),
+      directionSelected: gameState.directionSelected,
+      hasWinner: gameState.hasWinner,
+      started: gameState.started,
+    };
+
+    return game;
   }
 }

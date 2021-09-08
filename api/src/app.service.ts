@@ -20,9 +20,9 @@ export class AppService {
     return gameState;
   }
 
-  restartGame(): GameState {
-    return createNewGameState();
-  }
+  /* restartGame(): GameState {
+
+  } */
 
   hasGameStateChanged(playerGameState: GameState) {
     return JSON.stringify(playerGameState) !== JSON.stringify(gameState);

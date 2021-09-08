@@ -40,7 +40,7 @@ export const createNewGameState = (): GameState => {
   return gameState;
 };
 
-const initializePlayers = () => {
+export const initializePlayers = () => {
   const player1: Player = {
     playerNumber: 1,
     marbleColor: 1,

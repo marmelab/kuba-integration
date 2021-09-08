@@ -8,11 +8,10 @@ import {
   Put,
 } from '@nestjs/common';
 import { AppService } from './app.service';
-import { setGameState } from './game';
-import { GameState, Node, Graph } from './types';
-import { Game as GameModel } from '@prisma/client';
+import { setGameState, initializePlayers } from './game';
+import { GameState, N } from './types';
 import { GameService } from './game.service';
-import { boardToGraph } from './graph';
+import { INITIAL_BOARD } from './constants';
 @Controller()
 export class AppController {
   constructor(
@@ -20,20 +19,32 @@ export class AppController {
     private readonly gameService: GameService,
   ) {}
 
-  @Post('startgame')
+  @Get('startgame')
   async createGame(): Promise<GameState> {
     const res = await this.gameService.createGame();
     return this.gameService.bddEntryToGameState(res);
   }
 
-  @Get('gamestate')
-  getGameState(): GameState {
-    return this.appService.getGameState();
+  @Get('gamestate/:id')
+  async getGameState(@Param('id') id: string): Promise<GameState> {
+    const res = await this.gameService.getGame({ id: Number(id) });
+    return this.gameService.bddEntryToGameState(res);
   }
 
-  @Get('restartgame')
-  getRestartGame(): GameState {
-    return this.appService.restartGame();
+  @Post('restartgame/:id')
+  async getRestartGame(@Param('id') id: string): Promise<GameState> {
+    if (!Number(id)) {
+      throw new HttpException('Please give a valid id', 400);
+    }
+    const clearedPlayers = initializePlayers();
+    const res = await this.gameService.updateGame({
+      where: { id: Number(id) },
+      data: {
+        board: JSON.stringify(INITIAL_BOARD),
+        players: JSON.stringify(clearedPlayers),
+      },
+    });
+    return this.gameService.bddEntryToGameState(res);
   }
 
   @Get('gamestatehaschanged')
@@ -54,7 +65,7 @@ export class AppController {
   }
 
   @Post('movemarble')
-  postMoveMarble(@Body() body): GameState {
+  async postMoveMarble(@Body() body): Promise<GameState> {
     if (!body.gameState || !body.player || !body.direction) {
       throw new HttpException('Argument is missing', 400);
     }
@@ -65,20 +76,36 @@ export class AppController {
     };
 
     try {
-      return this.appService.moveMarble(
+      const newGameState = this.appService.moveMarble(
         body.gameState.graph,
         coordinates,
         body.direction,
         body.player,
       );
+
+      const res = await this.gameService.updateGame({
+        where: { id: newGameState.id },
+        data: {
+          ...this.gameService.gameStateToBddEntry(newGameState),
+        },
+      });
+
+      return newGameState;
     } catch (error) {
       throw new HttpException(error.message, 500);
     }
   }
 
   @Post('setgamestate')
-  postSetGameState(@Body() body: GameState) {
-    return setGameState(body);
+  async postSetGameState(@Body() gameState: GameState): GameState {
+    const res = await this.gameService.updateGame({
+      where: { id: gameState.id },
+      data: {
+        ...this.gameService.gameStateToBddEntry(gameState),
+      },
+    });
+
+    return this.gameService.bddEntryToGameState(res);
   }
 
   @Put('stopgame')

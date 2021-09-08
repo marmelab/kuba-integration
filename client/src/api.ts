@@ -160,10 +160,6 @@ export const postGameState = async (
   }
 };
 
-export const setCurrentState = (gameState: GameState) => {
-  currentState = gameState;
-};
-
 export const restartGame = async (): Promise<GameState> => {
   try {
     const response = await fetch(`${URL}/restartgame`);

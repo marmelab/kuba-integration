@@ -1,11 +1,6 @@
 const blessed = require('blessed');
 import { MARBLE_INT_COLORS } from './constants';
-import {
-  postGameState,
-  pullActions,
-  setCurrentState,
-  restartGame,
-} from './api';
+import { postGameState, pullActions, restartGame } from './api';
 import { GameState } from './types';
 import { PLAYER_ID } from './index';
 
@@ -187,12 +182,10 @@ export const renderScreenView = (gameState: GameState) => {
       });
       tmpBox.on('click', async function () {
         gameState.marbleClicked = node;
-        setCurrentState(gameState);
-
+        renderScreenView(gameState);
         if (PLAYER_ID === gameState.currentPlayer.playerNumber) {
           await postGameState(gameState);
         }
-        renderScreenView(gameState);
       });
       board.append(tmpBox);
     }
@@ -217,7 +210,6 @@ export const renderScreenView = (gameState: GameState) => {
   });
   restartGameBox.on('click', async () => {
     const newGameState = await restartGame();
-    setCurrentState(newGameState);
     renderScreenView(newGameState);
   });
 

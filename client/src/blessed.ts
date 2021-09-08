@@ -8,7 +8,6 @@ import {
 } from './api';
 import { GameState } from './types';
 import { PLAYER_ID } from './index';
-import { cpuUsage } from 'process';
 
 let SCREEN: any;
 
@@ -155,7 +154,6 @@ export const renderScreenView = (gameState: GameState) => {
   });
 
   let marblesWonByBlue = gameState.players[1].marblesWon;
-  console.log(gameState.players);
 
   for (let i = 0; i < marblesWonByBlue.length; i++) {
     const marbleBox = blessed.box({

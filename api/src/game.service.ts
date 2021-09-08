@@ -2,12 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from './prisma.service';
 import { Game, Prisma } from '@prisma/client';
 import { GameState } from './types';
+import { createNewGameState } from './game';
+import { graphToBoard, boardToGraph } from './graph';
 
 @Injectable()
 export class GameService {
   constructor(private prisma: PrismaService) {}
 
-  async game(
+  async getGame(
     userWhereUniqueInput: Prisma.GameWhereUniqueInput,
   ): Promise<Game | null> {
     return this.prisma.game.findUnique({
@@ -15,7 +17,7 @@ export class GameService {
     });
   }
 
-  async games(params: {
+  async getGames(params: {
     skip?: number;
     take?: number;
     cursor?: Prisma.GameWhereUniqueInput;
@@ -30,7 +32,16 @@ export class GameService {
     });
   }
 
-  async createGame(data: Prisma.GameCreateInput): Promise<Game> {
+  async createGame(): Promise<Game> {
+    const newGameState: GameState = createNewGameState();
+
+    const data = {
+      board: JSON.stringify(graphToBoard(newGameState.graph)),
+      currentPlayer: 1,
+      players: JSON.stringify(newGameState.players),
+      hasWinner: false,
+      started: true,
+    };
     return this.prisma.game.create({ data });
   }
 
@@ -49,5 +60,24 @@ export class GameService {
     return this.prisma.game.delete({
       where,
     });
+  }
+
+  bddEntryToGameState(bddEntry): GameState {
+    const board = JSON.parse(bddEntry.board as string);
+    const graph = boardToGraph(board);
+    const players = JSON.parse(bddEntry.players as string);
+    const marbleClicked = JSON.parse(bddEntry.marbleClicked as string);
+
+    const gameState: GameState = {
+      id: bddEntry.id,
+      graph,
+      currentPlayer: players[bddEntry.currentPlayer],
+      players,
+      marbleClicked,
+      directionSelected: bddEntry.directionSelected,
+      hasWinner: bddEntry.hasWinner,
+      started: bddEntry.started,
+    };
+    return gameState;
   }
 }

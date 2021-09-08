@@ -5,7 +5,7 @@ export type Node = {
   isExit: Boolean;
 };
 
-export type Direction = "N" | "S" | "E" | "W";
+export type Direction = 'N' | 'S' | 'E' | 'W';
 
 export type Edge = {
   from: string;
@@ -45,7 +45,8 @@ export type UserMove = {
 };
 
 export type GameState = {
-  graph: Graph,
+  id: number | null;
+  graph: Graph;
   currentPlayer: Player;
   players: Player[];
   marbleClicked: Node;

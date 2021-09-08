@@ -12,6 +12,7 @@ import { setGameState } from './game';
 import { GameState, Node, Graph } from './types';
 import { Game as GameModel } from '@prisma/client';
 import { GameService } from './game.service';
+import { boardToGraph } from './graph';
 @Controller()
 export class AppController {
   constructor(
@@ -20,11 +21,9 @@ export class AppController {
   ) {}
 
   @Post('startgame')
-  startGame(@Body() body): GameState {
-    if (!body.playerNumber) {
-      throw new HttpException('Argument is missing', 400);
-    }
-    return this.appService.startGame(body.playerNumber);
+  async createGame(): Promise<GameState> {
+    const res = await this.gameService.createGame();
+    return this.gameService.bddEntryToGameState(res);
   }
 
   @Get('gamestate')
@@ -85,20 +84,10 @@ export class AppController {
   @Put('stopgame')
   putStopGame(): void {}
 
-  @Post('createGame')
-  async createGame(
-    @Body() postData: { playerNumber: string; name: string },
-  ): Promise<GameModel> {
-    console.log(postData);
-    if (!postData.name) {
-      throw new HttpException(
-        'Please provide a game name in order to create a game',
-        400,
-      );
-    }
-    const name = postData.name;
-    const resp = this.gameService.createGame({ name });
+  @Get('game/:id')
+  async getGameById(@Param('id') id: string): Promise<GameState> {
+    const res = await this.gameService.getGame({ id: Number(id) });
 
-    return resp;
+    return this.gameService.bddEntryToGameState(res);
   }
 }

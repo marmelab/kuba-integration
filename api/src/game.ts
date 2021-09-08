@@ -5,6 +5,7 @@ import { sanitizeGraph, boardToGraph } from './graph';
 import { INITIAL_BOARD } from './constants';
 
 export let gameState: GameState = {
+  id: null,
   graph: null,
   currentPlayer: null,
   players: null,

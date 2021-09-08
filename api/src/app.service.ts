@@ -57,14 +57,6 @@ export class AppService {
     if (gameState.currentPlayer.playerNumber !== player.playerNumber) {
       throw new Error('This is the other player turn, please be patient');
     }
-    const newGraph = moveMarbleInDirection(graph, coordinates, direction);
-
-    const newGameState = { ...gameState };
-    newGameState.graph = newGraph;
-    newGameState.currentPlayer = switchToNextPlayer(
-      gameState.currentPlayer,
-      gameState.players,
-    );
 
     return setGameState({
       ...gameState,
@@ -74,9 +66,6 @@ export class AppService {
         gameState.players,
       ),
     });
-    /* setGameState(newGameState);
-
-    return newGameState; */
   }
 
   putStopGame() {}

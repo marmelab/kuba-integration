@@ -49,3 +49,4 @@ export const MARBLE_INT_COLORS: string[] = [
 ];
 
 export const URL: string = process.env.URL;
+export const GATEWAY_URL: string = process.env.GATEWAY_URL;

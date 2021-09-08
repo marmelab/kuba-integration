@@ -8,7 +8,6 @@ import {
 } from './api';
 import { GameState } from './types';
 import { PLAYER_ID } from './index';
-import { cpuUsage } from 'process';
 
 let SCREEN: any;
 
@@ -192,8 +191,8 @@ export const renderScreenView = (gameState: GameState) => {
 
         if (PLAYER_ID === gameState.currentPlayerId) {
           await postGameState(gameState);
-          renderScreenView(gameState);
         }
+        renderScreenView(gameState);
       });
       board.append(tmpBox);
     }

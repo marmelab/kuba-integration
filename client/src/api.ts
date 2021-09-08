@@ -3,7 +3,7 @@ import { Player, GameState } from './types';
 import { close } from './userInput';
 import { PLAYER_ID } from './index';
 import { initScreenView, renderScreenView } from './blessed';
-import { URL } from './constants';
+import { GATEWAY_URL, URL } from './constants';
 import { GameError } from './error';
 require('isomorphic-fetch');
 import * as WebSocket from 'ws';
@@ -19,7 +19,7 @@ export const startNewGame = async (numberPlayer: number) => {
 
   currentState = gameState;
 
-  const ws = new WebSocket('ws://localhost:3000');
+  const ws = new WebSocket(GATEWAY_URL);
 
   ws.on('open', function open() {
     ws.send(JSON.stringify({ event: 'initGame' }));

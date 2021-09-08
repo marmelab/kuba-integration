@@ -46,7 +46,7 @@ export type UserMove = {
 
 export type GameState = {
   graph: Graph | null;
-  currentPlayer: Player | null;
+  currentPlayerId: number | null;
   players: Player[] | null;
   marbleClicked: Node | null;
   directionSelected: string | null;

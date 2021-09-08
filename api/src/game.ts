@@ -6,7 +6,7 @@ import { INITIAL_BOARD } from './constants';
 
 export let gameState: GameState = {
   graph: null,
-  currentPlayer: null,
+  currentPlayerId: null,
   players: null,
   marbleClicked: null,
   directionSelected: null,
@@ -31,7 +31,7 @@ export const createNewGameState = (): GameState => {
 
   gameState.graph = graph;
   gameState.players = players;
-  gameState.currentPlayer = players[0];
+  gameState.currentPlayerId = players[0].playerNumber;
   gameState.marbleClicked = { x: -1, y: -1, value: -1, isExit: false };
   gameState.directionSelected = '';
   gameState.started = true;
@@ -56,12 +56,16 @@ const initializePlayers = () => {
 };
 
 export const switchToNextPlayer = (
-  actualPlayer: Player,
-  players: Array<Player>,
-): Player => {
-  if (actualPlayer.playerNumber === 1) return players[1];
-  return players[0];
+  actualPlayerID: number,
+): number => {
+  if (actualPlayerID === 1) return 2;
+  return 1;
 };
+
+export const getCurrentPlayer = (gameState: GameState): Player => {
+  if (gameState.currentPlayerId === 1) return gameState.players[0];
+  return gameState.players[0];
+}
 
 export const getMarbleWonByPlayer = (graph: Graph): number => {
   if (!graph) {
@@ -94,28 +98,27 @@ export const checkIfPlayerWon = (player: Player) => {
   return neutralMarbles === 7 || otherPlayerMarbles === 8;
 };
 
-export const setGameStateOnDirectionSelected = (
-  gameState: GameState,
-  direction: string,
-): void => {
-  gameState.directionSelected = direction;
-  gameState.graph = moveMarble(gameState);
+// export const setGameStateOnDirectionSelected = (
+//   gameState: GameState,
+//   direction: string,
+// ): void => {
+//   gameState.directionSelected = direction;
+//   gameState.graph = moveMarble(gameState);
 
-  const marbleWon = getMarbleWonByPlayer(gameState.graph);
-  sanitizeGraph(gameState.graph);
+//   const marbleWon = getMarbleWonByPlayer(gameState.graph);
+//   console.log(marbleWon);
+//   sanitizeGraph(gameState.graph);
 
-  if (marbleWon > -1) {
-    gameState.currentPlayer.marblesWon.push(marbleWon);
-    if (checkIfPlayerWon(gameState.currentPlayer)) {
-      gameState.hasWinner = true;
-    }
-    return;
-  }
-  gameState.currentPlayer = switchToNextPlayer(
-    gameState.currentPlayer,
-    gameState.players,
-  );
-};
+//   if (marbleWon > -1) {
+//     gameState.players[gameState.currentPlayerId - 1].marblesWon.push(marbleWon);
+//     console.log(gameState.players)
+//     if (checkIfPlayerWon(gameState.players[gameState.currentPlayerId - 1])) {
+//       gameState.hasWinner = true;
+//     }
+//     return;
+//   }
+//   gameState.currentPlayerId = switchToNextPlayer(gameState.currentPlayerId);
+// };
 
 export const setGameState = (newGameState: GameState): GameState => {
   gameState = { ...newGameState };

@@ -177,7 +177,7 @@ export const renderScreenView = (gameState: GameState) => {
         tags: true,
         style: {
           fg: MARBLE_INT_COLORS[node.value],
-          bg: gameState.marbleClicked === node ? 'yellow' : '',
+          bg: (gameState.marbleClicked.x === node.x && gameState.marbleClicked.y === node.y) ? 'yellow' : '',
         },
       });
       tmpBox.on('click', async function () {

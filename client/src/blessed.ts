@@ -191,8 +191,8 @@ export const renderScreenView = (gameState: GameState) => {
 
         if (PLAYER_ID === gameState.currentPlayer.playerNumber) {
           await postGameState(gameState);
-          renderScreenView(gameState);
         }
+        renderScreenView(gameState);
       });
       board.append(tmpBox);
     }

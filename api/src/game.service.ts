@@ -61,21 +61,21 @@ export class GameService {
     });
   }
 
-  deserializer(bddEntry: Game): GameState {
-    const board = JSON.parse(bddEntry.board as string);
+  deserializer(entry: Game): GameState {
+    const board = JSON.parse(entry.board as string);
     const graph = boardToGraph(board);
-    const players = JSON.parse(bddEntry.players as string);
-    const marbleClicked = JSON.parse(bddEntry.marbleClicked as string);
+    const players = JSON.parse(entry.players as string);
+    const marbleClicked = JSON.parse(entry.marbleClicked as string);
 
     const gameState: GameState = {
-      id: bddEntry.id,
+      id: entry.id,
       graph,
-      currentPlayerId: bddEntry.currentPlayer,
+      currentPlayerId: entry.currentPlayer,
       players,
       marbleClicked,
-      directionSelected: bddEntry.directionSelected,
-      hasWinner: bddEntry.hasWinner,
-      started: bddEntry.started,
+      directionSelected: entry.directionSelected,
+      hasWinner: entry.hasWinner,
+      started: entry.started,
     };
     return gameState;
   }

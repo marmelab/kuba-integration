@@ -29,8 +29,12 @@ export class AppController {
 
   @Get('gamestate/:id')
   async getGameState(@Param('id') id: string): Promise<GameState> {
-    const res = await this.gameService.getGame({ id: Number(id) });
-    return this.gameService.deserializer(res);
+    try {
+      const res = await this.gameService.getGame({ id: Number(id) });
+      return this.gameService.deserializer(res);
+    } catch (e) {
+      throw new HttpException("That game id doesn't exists", 400);
+    }
   }
 
   @Post('restartgame/:id')
@@ -38,17 +42,21 @@ export class AppController {
     if (!Number(id)) {
       throw new HttpException('Please give a valid id', 400);
     }
-    const clearedPlayers = initializePlayers();
-    const res = await this.gameService.updateGame({
-      where: { id: Number(id) },
-      data: {
-        board: JSON.stringify(INITIAL_BOARD),
-        players: JSON.stringify(clearedPlayers),
-      },
-    });
-    const gameState = this.gameService.deserializer(res);
-    this.gatewayService.emitGameState(gameState);
-    return gameState;
+    try {
+      const clearedPlayers = initializePlayers();
+      const res = await this.gameService.updateGame({
+        where: { id: Number(id) },
+        data: {
+          board: JSON.stringify(INITIAL_BOARD),
+          players: JSON.stringify(clearedPlayers),
+        },
+      });
+      const gameState = this.gameService.deserializer(res);
+      this.gatewayService.emitGameState(gameState);
+      return gameState;
+    } catch (e) {
+      throw new HttpException("That game doesn't exists", 400);
+    }
   }
 
   @Get('gamestatehaschanged')

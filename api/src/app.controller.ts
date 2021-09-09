@@ -13,13 +13,12 @@ import { initializePlayers } from './game';
 import { GameState, Player } from './types';
 import { GameService } from './game.service';
 import { INITIAL_BOARD } from './constants';
-import { Game } from '.prisma/client';
 @Controller()
 export class AppController {
   constructor(
     private readonly appService: AppService,
     private readonly gameService: GameService,
-    private gatewayService: AppGateway
+    private gatewayService: AppGateway,
   ) {}
 
   @Post('startgame')
@@ -30,8 +29,12 @@ export class AppController {
 
   @Get('gamestate/:id')
   async getGameState(@Param('id') id: string): Promise<GameState> {
-    const res = await this.gameService.getGame({ id: Number(id) });
-    return this.gameService.deserializer(res);
+    try {
+      const res = await this.gameService.getGame({ id: Number(id) });
+      return this.gameService.deserializer(res);
+    } catch (e) {
+      throw new HttpException("That game id doesn't exists", 400);
+    }
   }
 
   @Post('restartgame/:id')
@@ -39,17 +42,21 @@ export class AppController {
     if (!Number(id)) {
       throw new HttpException('Please give a valid id', 400);
     }
-    const clearedPlayers = initializePlayers();
-    const res = await this.gameService.updateGame({
-      where: { id: Number(id) },
-      data: {
-        board: JSON.stringify(INITIAL_BOARD),
-        players: JSON.stringify(clearedPlayers),
-      },
-    });
-    const gameState = this.gameService.deserializer(res);
-    this.gatewayService.emitGameState(gameState);
-    return gameState
+    try {
+      const clearedPlayers = initializePlayers();
+      const res = await this.gameService.updateGame({
+        where: { id: Number(id) },
+        data: {
+          board: JSON.stringify(INITIAL_BOARD),
+          players: JSON.stringify(clearedPlayers),
+        },
+      });
+      const gameState = this.gameService.deserializer(res);
+      this.gatewayService.emitGameState(gameState);
+      return gameState;
+    } catch (e) {
+      throw new HttpException("That game doesn't exists", 400);
+    }
   }
 
   @Get('gamestatehaschanged')
@@ -85,7 +92,8 @@ export class AppController {
     };
 
     try {
-      const newGameState = this.appService.moveMarble(
+      const newGameState = await this.appService.moveMarble(
+        gameState.id,
         gameState.graph,
         coordinates,
         direction,
@@ -102,7 +110,7 @@ export class AppController {
       this.gatewayService.emitGameState(newGameState);
       return newGameState;
     } catch (error) {
-      throw new HttpException(error.message, 500);
+      throw new HttpException(error, 500);
     }
   }
 

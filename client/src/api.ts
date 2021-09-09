@@ -32,6 +32,7 @@ export const startNewGame = async (numberPlayer: number) => {
 
 export const pullNewGame = async (playerNumber: number): Promise<GameState> => {
   try {
+    console.log(`URL :`, URL);
     const response = await fetch(`${URL}/startgame`, {
       method: 'POST',
       body: JSON.stringify({ playerNumber }),
@@ -108,7 +109,6 @@ const moveMarble = async (
 
     const jsonResp = await response.json();
     const gameStateAfterMove: GameState = jsonResp as GameState;
-
     currentState = gameStateAfterMove;
     return gameStateAfterMove;
   } catch (ex) {
@@ -132,8 +132,12 @@ export const pullActions = async (
     );
 
     if (canMoveMarble) {
-      const newGameState = await moveMarble(gameState, direction, player);
-      renderGameView(newGameState);
+      try {
+        const newGameState = await moveMarble(gameState, direction, player);
+        renderGameView(newGameState);
+      } catch (e) {
+        console.log("Can't move this marble", e);
+      }
     }
   } catch (e) {
     console.log(e);

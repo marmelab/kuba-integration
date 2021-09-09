@@ -4,10 +4,11 @@ import { AppGateway } from './app.gateway';
 import { AppService } from './app.service';
 import { GameService } from './game.service';
 import { PrismaService } from './prisma.service';
+import { UserService } from './user.service';
 
 @Module({
   imports: [],
   controllers: [AppController],
-  providers: [AppService, PrismaService, GameService, AppGateway],
+  providers: [AppService, PrismaService, GameService, AppGateway, UserService],
 })
 export class AppModule {}

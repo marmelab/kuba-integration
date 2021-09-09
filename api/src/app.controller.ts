@@ -139,6 +139,7 @@ export class AppController {
 
   @Post('createAppAdmin')
   async createAppAdmin(
-    @Body('username'): username
-  )
+    @Body('username') username: string,
+    @Body('passhash') passhash: string,
+  ) {}
 }

@@ -85,7 +85,7 @@ export const renderScreenView = (gameState: GameState) => {
     tags: true,
     content: `Player turn : \u25CF`,
     style: {
-      fg: MARBLE_INT_COLORS[gameState.currentPlayer.playerNumber],
+      fg: MARBLE_INT_COLORS[gameState.currentPlayerId],
     },
   });
 
@@ -115,7 +115,7 @@ export const renderScreenView = (gameState: GameState) => {
       : `I (\u001b[34m BLUE \u001b[0m) have captured `;
 
   const playerOneCatchMarblesContainer = blessed.box({
-    top: 2,
+    top: 0,
     left: 0,
     height: 2,
     width: '100%',
@@ -126,8 +126,8 @@ export const renderScreenView = (gameState: GameState) => {
 
   for (let i = 0; i < marblesWonByRed.length; i++) {
     const marbleBox = blessed.box({
-      top: 0,
-      left: i * 2 + 10,
+      top: 1,
+      left: i * 2,
       width: 1,
       height: 1,
       tags: true,
@@ -151,8 +151,8 @@ export const renderScreenView = (gameState: GameState) => {
 
   for (let i = 0; i < marblesWonByBlue.length; i++) {
     const marbleBox = blessed.box({
-      top: 0,
-      left: i * 2 + 10,
+      top: 1,
+      left: i * 2,
       width: 1,
       height: 1,
       tags: true,
@@ -177,13 +177,17 @@ export const renderScreenView = (gameState: GameState) => {
         tags: true,
         style: {
           fg: MARBLE_INT_COLORS[node.value],
-          bg: (gameState.marbleClicked.x === node.x && gameState.marbleClicked.y === node.y) ? 'yellow' : '',
+          bg:
+            gameState.marbleClicked.x === node.x &&
+            gameState.marbleClicked.y === node.y
+              ? 'yellow'
+              : '',
         },
       });
       tmpBox.on('click', async function () {
         gameState.marbleClicked = node;
         renderScreenView(gameState);
-        if (PLAYER_ID === gameState.currentPlayer.playerNumber) {
+        if (PLAYER_ID === gameState.currentPlayerId) {
           await postGameState(gameState);
         }
       });
@@ -227,7 +231,7 @@ export const renderScreenView = (gameState: GameState) => {
 
   if (gameState.hasWinner) {
     const winnerColor =
-      gameState.currentPlayer.playerNumber === 1
+      gameState.currentPlayerId === 1
         ? `\u001b[31m REDS \u001b[0m`
         : `\u001b[34m BLUES \u001b[0m`;
     const winnerString = `{center}Congratulations to the ${winnerColor} for the nice victory !{/center}`;

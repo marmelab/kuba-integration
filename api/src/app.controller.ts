@@ -117,4 +117,9 @@ export class AppController {
 
     return this.gameService.deserializer(res);
   }
+
+  @Post('createAppAdmin')
+  async createAppAdmin(
+    @Body('username'): username
+  )
 }

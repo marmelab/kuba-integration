@@ -20,3 +20,9 @@ model Game {
   hasWinner         Boolean @default(false)
   started           Boolean @default(false)
 }
+
+model User {
+  id    Int    @id @default(autoincrement())
+  email String @unique
+  hash  String
+}

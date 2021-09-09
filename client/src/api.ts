@@ -15,7 +15,12 @@ export const startNewGame = async (numberPlayer: number) => {
   initScreenView();
 
   const gameState = await pullNewGame(numberPlayer);
-  renderScreenView(gameState);
+
+  try {
+    renderScreenView(gameState);
+  } catch (e) {
+    console.error(`error`, e);
+  }
 
   currentState = gameState;
 
@@ -26,13 +31,15 @@ export const startNewGame = async (numberPlayer: number) => {
   });
 
   ws.on('message', (message) => {
-    const newGameState = JSON.parse(message.toString('utf8')).gameState as GameState;
+    const newGameState = JSON.parse(message.toString('utf8'))
+      .gameState as GameState;
     renderScreenView(newGameState);
   });
 };
 
 export const pullNewGame = async (playerNumber: number): Promise<GameState> => {
   try {
+    console.log(`URL :`, URL);
     const response = await fetch(`${URL}/startgame`, {
       method: 'POST',
       body: JSON.stringify({ playerNumber }),

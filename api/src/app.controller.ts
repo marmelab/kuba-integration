@@ -13,13 +13,12 @@ import { initializePlayers } from './game';
 import { GameState, Player } from './types';
 import { GameService } from './game.service';
 import { INITIAL_BOARD } from './constants';
-import { Game } from '.prisma/client';
 @Controller()
 export class AppController {
   constructor(
     private readonly appService: AppService,
     private readonly gameService: GameService,
-    private gatewayService: AppGateway
+    private gatewayService: AppGateway,
   ) {}
 
   @Post('startgame')
@@ -49,7 +48,7 @@ export class AppController {
     });
     const gameState = this.gameService.deserializer(res);
     this.gatewayService.emitGameState(gameState);
-    return gameState
+    return gameState;
   }
 
   @Get('gamestatehaschanged')

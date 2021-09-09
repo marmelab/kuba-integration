@@ -34,7 +34,6 @@ export class GameService {
 
   async createGame(): Promise<Game> {
     const newGameState: GameState = createNewGameState();
-
     const data = {
       board: JSON.stringify(graphToBoard(newGameState.graph)),
       currentPlayer: 1,

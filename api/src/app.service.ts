@@ -67,7 +67,6 @@ export class AppService {
       gameState.players[gameState.currentPlayerId - 1].marblesWon.push(
         marbleWon,
       );
-      console.log(gameState.players);
       if (checkIfPlayerWon(gameState.players[gameState.currentPlayerId - 1])) {
         gameState.hasWinner = true;
       }

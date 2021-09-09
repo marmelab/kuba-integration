@@ -26,7 +26,8 @@ export const startNewGame = async (numberPlayer: number) => {
   });
 
   ws.on('message', (message) => {
-    const newGameState = JSON.parse(message.toString('utf8')).gameState as GameState;
+    const newGameState = JSON.parse(message.toString('utf8'))
+      .gameState as GameState;
     renderScreenView(newGameState);
   });
 };
@@ -133,8 +134,12 @@ export const pullActions = async (
     );
 
     if (canMoveMarble) {
-      const newGameState = await moveMarble(gameState, direction, player);
-      renderScreenView(newGameState);
+      try {
+        const newGameState = await moveMarble(gameState, direction, player);
+        renderScreenView(newGameState);
+      } catch (e) {
+        console.log("Can't moe this marble");
+      }
     }
   } catch (e) {
     console.log(e);
@@ -158,10 +163,6 @@ export const postGameState = async (
   } catch (ex) {
     throw new GameError('Unable to call the function postGameState');
   }
-};
-
-export const setCurrentState = (gameState: GameState) => {
-  currentState = gameState;
 };
 
 export const restartGame = async (): Promise<GameState> => {

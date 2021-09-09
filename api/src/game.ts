@@ -98,28 +98,6 @@ export const checkIfPlayerWon = (player: Player) => {
   return neutralMarbles === 7 || otherPlayerMarbles === 8;
 };
 
-// export const setGameStateOnDirectionSelected = (
-//   gameState: GameState,
-//   direction: string,
-// ): void => {
-//   gameState.directionSelected = direction;
-//   gameState.graph = moveMarble(gameState);
-
-//   const marbleWon = getMarbleWonByPlayer(gameState.graph);
-//   console.log(marbleWon);
-//   sanitizeGraph(gameState.graph);
-
-//   if (marbleWon > -1) {
-//     gameState.players[gameState.currentPlayerId - 1].marblesWon.push(marbleWon);
-//     console.log(gameState.players)
-//     if (checkIfPlayerWon(gameState.players[gameState.currentPlayerId - 1])) {
-//       gameState.hasWinner = true;
-//     }
-//     return;
-//   }
-//   gameState.currentPlayerId = switchToNextPlayer(gameState.currentPlayerId);
-// };
-
 export const setGameState = (newGameState: GameState): GameState => {
   gameState = { ...newGameState };
   return gameState;

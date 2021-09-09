@@ -53,3 +53,8 @@ export type GameState = {
   directionSelected: string;
   hasWinner: boolean;
 };
+
+export type GameChoice = {
+  type: 'newGame' | 'joinGame';
+  gameId?: number;
+};

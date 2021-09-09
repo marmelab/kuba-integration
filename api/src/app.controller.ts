@@ -37,6 +37,16 @@ export class AppController {
     }
   }
 
+  @Get('joingame/:id')
+  async joinGame(@Param('id') id: string): Promise<GameState> {
+    try {
+      const res = await this.gameService.getGame({ id: Number(id) });
+      return this.gameService.deserializer(res);
+    } catch (e) {
+      throw new HttpException("That game id doesn't exists", 400);
+    }
+  }
+
   @Post('restartgame/:id')
   async restartGame(@Param('id') id: string): Promise<GameState> {
     if (!Number(id)) {

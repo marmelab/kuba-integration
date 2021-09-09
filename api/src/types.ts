@@ -45,6 +45,7 @@ export type UserMove = {
 };
 
 export type GameState = {
+  id: number | null;
   graph: Graph | null;
   currentPlayerId: number | null;
   players: Player[] | null;

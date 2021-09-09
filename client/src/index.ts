@@ -2,7 +2,7 @@ require('dotenv').config({
   path: `.env.${process.env.NODE_ENV}`,
 });
 import { startNewGame } from './api';
-
+require('isomorphic-fetch');
 export let PLAYER_ID: number | undefined = null;
 async function main() {
   if (process.argv.slice(2).length > 0) {

@@ -1,10 +1,11 @@
-import { Player, Board, Graph, GameState } from './types';
+import { Player, Graph, GameState } from './types';
 
 import { moveMarble } from './board';
 import { sanitizeGraph, boardToGraph } from './graph';
 import { INITIAL_BOARD } from './constants';
 
 export let gameState: GameState = {
+  id: null,
   graph: null,
   currentPlayerId: null,
   players: null,
@@ -39,7 +40,7 @@ export const createNewGameState = (): GameState => {
   return gameState;
 };
 
-const initializePlayers = () => {
+export const initializePlayers = () => {
   const player1: Player = {
     playerNumber: 1,
     marbleColor: 1,

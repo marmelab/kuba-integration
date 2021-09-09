@@ -178,8 +178,8 @@ export const renderScreenView = (gameState: GameState) => {
         style: {
           fg: MARBLE_INT_COLORS[node.value],
           bg:
-            gameState.marbleClicked.x === node.x &&
-            gameState.marbleClicked.y === node.y
+            gameState.marbleClicked?.x === node.x &&
+            gameState.marbleClicked?.y === node.y
               ? 'yellow'
               : '',
         },

@@ -15,7 +15,12 @@ export const startNewGame = async (numberPlayer: number) => {
   initScreenView();
 
   const gameState = await pullNewGame(numberPlayer);
-  renderScreenView(gameState);
+
+  try {
+    renderScreenView(gameState);
+  } catch (e) {
+    console.error(`error`, e);
+  }
 
   currentState = gameState;
 
@@ -110,7 +115,6 @@ const moveMarble = async (
 
     const jsonResp = await response.json();
     const gameStateAfterMove: GameState = jsonResp as GameState;
-
     currentState = gameStateAfterMove;
     return gameStateAfterMove;
   } catch (ex) {
@@ -138,7 +142,7 @@ export const pullActions = async (
         const newGameState = await moveMarble(gameState, direction, player);
         renderScreenView(newGameState);
       } catch (e) {
-        console.log("Can't moe this marble");
+        console.log("Can't move this marble", e);
       }
     }
   } catch (e) {

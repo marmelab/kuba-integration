@@ -74,9 +74,6 @@ export class AppService {
         gameState.players,
       ),
     });
-    /* setGameState(newGameState);
-
-    return newGameState; */
   }
 
   putStopGame() {}

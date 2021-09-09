@@ -3,9 +3,10 @@ import { Player, GameState } from './types';
 import { close } from './userInput';
 import { PLAYER_ID } from './index';
 import { initScreenView, renderScreenView } from './blessed';
-import { URL } from './constants';
+import { GATEWAY_URL, URL } from './constants';
 import { GameError } from './error';
 require('isomorphic-fetch');
+import * as WebSocket from 'ws';
 
 export let currentState: GameState;
 
@@ -18,15 +19,16 @@ export const startNewGame = async (numberPlayer: number) => {
 
   currentState = gameState;
 
-  setInterval(async () => {
-    const hasChanged = await pullGameStateChanged(currentState);
+  const ws = new WebSocket(GATEWAY_URL);
 
-    if (hasChanged) {
-      const gameState = await pullGameState();
-      renderScreenView(gameState);
-      currentState = gameState;
-    }
-  }, 5000);
+  ws.on('open', function open() {
+    ws.send(JSON.stringify({ event: 'initGame' }));
+  });
+
+  ws.on('message', (message) => {
+    const newGameState = JSON.parse(message.toString('utf8')).gameState as GameState;
+    renderScreenView(newGameState);
+  });
 };
 
 export const pullNewGame = async (playerNumber: number): Promise<GameState> => {
@@ -156,10 +158,6 @@ export const postGameState = async (
   } catch (ex) {
     throw new GameError('Unable to call the function postGameState');
   }
-};
-
-export const setCurrentState = (gameState: GameState) => {
-  currentState = gameState;
 };
 
 export const restartGame = async (): Promise<GameState> => {

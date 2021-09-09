@@ -119,6 +119,5 @@ export const setGameStateOnDirectionSelected = (
 
 export const setGameState = (newGameState: GameState): GameState => {
   gameState = { ...newGameState };
-
   return gameState;
 };

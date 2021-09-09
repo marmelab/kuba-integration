@@ -7,6 +7,7 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
+import { AppGateway } from './app.gateway';
 import { AppService } from './app.service';
 import { initializePlayers } from './game';
 import { GameState, Player } from './types';
@@ -18,6 +19,7 @@ export class AppController {
   constructor(
     private readonly appService: AppService,
     private readonly gameService: GameService,
+    private gatewayService: AppGateway
   ) {}
 
   @Post('startgame')
@@ -45,7 +47,9 @@ export class AppController {
         players: JSON.stringify(clearedPlayers),
       },
     });
-    return this.gameService.deserializer(res);
+    const gameState = this.gameService.deserializer(res);
+    this.gatewayService.emitGameState(gameState);
+    return gameState
   }
 
   @Get('gamestatehaschanged')
@@ -84,17 +88,18 @@ export class AppController {
       const newGameState = this.appService.moveMarble(
         gameState.graph,
         coordinates,
-        body.direction,
+        direction,
         player,
       );
 
-      const res = await this.gameService.updateGame({
+      await this.gameService.updateGame({
         where: { id: newGameState.id },
         data: {
           ...this.gameService.serializer(newGameState),
         },
       });
 
+      this.gatewayService.emitGameState(newGameState);
       return newGameState;
     } catch (error) {
       throw new HttpException(error.message, 500);
@@ -110,6 +115,7 @@ export class AppController {
       },
     });
 
+    this.gatewayService.emitGameState(gameState);
     return this.gameService.deserializer(res);
   }
 

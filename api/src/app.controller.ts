@@ -84,7 +84,8 @@ export class AppController {
     };
 
     try {
-      const newGameState = this.appService.moveMarble(
+      const newGameState = await this.appService.moveMarble(
+        gameState.id,
         gameState.graph,
         coordinates,
         direction,
@@ -101,7 +102,7 @@ export class AppController {
       this.gatewayService.emitGameState(newGameState);
       return newGameState;
     } catch (error) {
-      throw new HttpException(error.message, 500);
+      throw new HttpException(error, 500);
     }
   }
 

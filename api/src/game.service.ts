@@ -70,7 +70,7 @@ export class GameService {
     const gameState: GameState = {
       id: bddEntry.id,
       graph,
-      currentPlayer: players[bddEntry.currentPlayer],
+      currentPlayerId: bddEntry.currentPlayer,
       players,
       marbleClicked,
       directionSelected: bddEntry.directionSelected,
@@ -84,7 +84,7 @@ export class GameService {
     const game: Game = {
       id: gameState.id,
       board: JSON.stringify(graphToBoard(gameState.graph)),
-      currentPlayer: gameState.currentPlayer.playerNumber,
+      currentPlayer: gameState.currentPlayerId,
       players: JSON.stringify(gameState.players),
       marbleClicked: JSON.stringify(gameState.marbleClicked),
       directionSelected: gameState.directionSelected,

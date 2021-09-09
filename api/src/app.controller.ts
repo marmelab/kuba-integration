@@ -9,9 +9,10 @@ import {
 } from '@nestjs/common';
 import { AppService } from './app.service';
 import { initializePlayers } from './game';
-import { GameState } from './types';
+import { GameState, Player } from './types';
 import { GameService } from './game.service';
 import { INITIAL_BOARD } from './constants';
+import { Game } from '.prisma/client';
 @Controller()
 export class AppController {
   constructor(
@@ -19,7 +20,7 @@ export class AppController {
     private readonly gameService: GameService,
   ) {}
 
-  @Get('startgame')
+  @Post('startgame')
   async createGame(): Promise<GameState> {
     const res = await this.gameService.createGame();
     return this.gameService.deserializer(res);
@@ -32,7 +33,7 @@ export class AppController {
   }
 
   @Post('restartgame/:id')
-  async getRestartGame(@Param('id') id: string): Promise<GameState> {
+  async restartGame(@Param('id') id: string): Promise<GameState> {
     if (!Number(id)) {
       throw new HttpException('Please give a valid id', 400);
     }
@@ -48,39 +49,43 @@ export class AppController {
   }
 
   @Get('gamestatehaschanged')
-  getGameStateHasChanged(@Body() body): boolean {
+  getGameStateHasChanged(@Body() body: GameState): boolean {
     return this.appService.hasGameStateChanged(body);
   }
 
   @Get('marbleplayable')
-  getMarblePlayable(@Body() body): Boolean {
-    if (!body.gameState || !body.player || !body.direction) {
+  getMarblePlayable(
+    @Body('gameState') gameState: GameState,
+    @Body('player') player: Player,
+    @Body('direction') direction: string,
+  ): Boolean {
+    if (!gameState || !player || !direction) {
       throw new HttpException('Argument is missing', 400);
     }
-    return this.appService.getIsMarblePlayable(
-      body.gameState,
-      body.direction,
-      body.player,
-    );
+    return this.appService.getIsMarblePlayable(gameState, direction, player);
   }
 
   @Post('movemarble')
-  async postMoveMarble(@Body() body): Promise<GameState> {
-    if (!body.gameState || !body.player || !body.direction) {
+  async moveMarble(
+    @Body('gameState') gameState: GameState,
+    @Body('player') player: Player,
+    @Body('direction') direction: string,
+  ): Promise<GameState> {
+    if (!gameState || !player || !direction) {
       throw new HttpException('Argument is missing', 400);
     }
 
     const coordinates = {
-      x: body.gameState.marbleClicked.x,
-      y: body.gameState.marbleClicked.y,
+      x: gameState.marbleClicked.x,
+      y: gameState.marbleClicked.y,
     };
 
     try {
       const newGameState = this.appService.moveMarble(
-        body.gameState.graph,
+        gameState.graph,
         coordinates,
         body.direction,
-        body.player,
+        player,
       );
 
       const res = await this.gameService.updateGame({
@@ -97,7 +102,7 @@ export class AppController {
   }
 
   @Post('setgamestate')
-  async postSetGameState(@Body() gameState: GameState): Promise<GameState> {
+  async setGameState(@Body() gameState: GameState): Promise<GameState> {
     const res = await this.gameService.updateGame({
       where: { id: gameState.id },
       data: {
@@ -109,7 +114,7 @@ export class AppController {
   }
 
   @Put('stopgame')
-  putStopGame(): void {}
+  stopGame(): void {}
 
   @Get('game/:id')
   async getGameById(@Param('id') id: string): Promise<GameState> {

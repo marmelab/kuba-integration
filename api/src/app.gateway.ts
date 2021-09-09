@@ -13,18 +13,22 @@ import { GameState } from './types';
 export class AppGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
-  clients: any[] = [];
+  clients: { gameId: number; wsClient: any }[] = [];
 
   @WebSocketServer() server;
   @SubscribeMessage('initGame')
-  receivedInitGame(client: any): void {
-    this.clients.push(client);
+  receivedInitGame(client: any, data: any): void {
+    if (data.gameId) {
+      this.clients.push({ gameId: data.gameId, wsClient: client });
+    }
     return;
   }
 
   emitGameState(gameState: GameState) {
     this.clients.map((client) => {
-      client.send(JSON.stringify({gameState}));
+      if (client.gameId === gameState.id) {
+        client.wsClient.send(JSON.stringify({ gameState }));
+      }
     });
   }
 

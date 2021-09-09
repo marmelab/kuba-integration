@@ -1,11 +1,12 @@
 const blessed = require('blessed');
 import { MARBLE_INT_COLORS } from './constants';
 import { login, postGameState, pullActions, restartGame } from './api';
-import { GameState } from './types';
+import { GameChoice, GameState } from './types';
 import { PLAYER_ID } from './index';
 
 let SCREEN: any;
 let LOGIN_SCREEN: any;
+let GAME_CHOICE_SCREEN: any;
 
 export const initGameView = (): void => {
   SCREEN = blessed.screen({
@@ -78,6 +79,13 @@ export const renderGameView = (gameState: GameState) => {
   cardinalNorthBox.on('click', function () {
     pullActions(gameState, 'N');
     renderGameView(gameState);
+  });
+
+  const gameIdText = blessed.box({
+    top: '20%',
+    left: '80%',
+    tags: true,
+    content: `Game : #${gameState.id}`,
   });
 
   const playerTurnText = blessed.box({
@@ -214,7 +222,7 @@ export const renderGameView = (gameState: GameState) => {
     },
   });
   restartGameBox.on('click', async () => {
-    const newGameState = await restartGame();
+    const newGameState = await restartGame(gameState.id);
     renderGameView(newGameState);
   });
 
@@ -228,6 +236,7 @@ export const renderGameView = (gameState: GameState) => {
   outerBoard.append(playerTwoCatchMarblesContainer);
   outerBoard.append(restartGameBox);
 
+  SCREEN.append(gameIdText);
   SCREEN.append(playerTurnText);
 
   if (gameState.hasWinner) {
@@ -390,6 +399,154 @@ export const renderLogin = (): Promise<boolean> => {
       emailBox.focus();
 
       LOGIN_SCREEN.render();
+    } catch (err) {
+      reject(err);
+    }
+  });
+};
+
+export const renderGameChoice = (): Promise<GameChoice> => {
+  return new Promise((resolve, reject) => {
+    try {
+      GAME_CHOICE_SCREEN = blessed.screen();
+
+      const newGame = blessed.box({
+        parent: GAME_CHOICE_SCREEN,
+        keys: true,
+        left: '10%',
+        top: 'center',
+        width: 40,
+        height: 9,
+        border: {
+          type: 'line',
+        },
+        style: {
+          border: {
+            fg: 'white',
+          },
+        },
+        autoNext: true,
+        content: ' New Game',
+      });
+
+      const or = blessed.box({
+        parent: GAME_CHOICE_SCREEN,
+        keys: true,
+        left: 'center',
+        top: 'center',
+        width: 10,
+        height: 9,
+        autoNext: true,
+        tags: true,
+        content: '{center}OR{/center}',
+      });
+
+      const joinGame = blessed.form({
+        parent: GAME_CHOICE_SCREEN,
+        keys: true,
+        left: '60%',
+        top: 'center',
+        width: 40,
+        height: 9,
+        border: {
+          type: 'line',
+        },
+        style: {
+          border: {
+            fg: 'white',
+          },
+        },
+        autoNext: true,
+        content: " Game' ID",
+      });
+
+      const newGameButton = blessed.button({
+        parent: newGame,
+        mouse: true,
+        keys: true,
+        shrink: true,
+        padding: {
+          left: 1,
+          right: 1,
+        },
+        left: 2,
+        bottom: 1,
+        name: "Let's go",
+        content: "Let's go",
+        style: {
+          bg: 'blue',
+          focus: {
+            bg: 'red',
+          },
+          hover: {
+            bg: 'red',
+          },
+        },
+      });
+
+      const gameIDBox = blessed.Textbox({
+        parent: joinGame,
+        top: 3,
+        height: 1,
+        left: 2,
+        right: 2,
+        bg: 'black',
+        keys: true,
+        inputOnFocus: true,
+        mouse: true,
+        content: '',
+      });
+
+      const joinButton = blessed.button({
+        parent: joinGame,
+        mouse: true,
+        keys: true,
+        shrink: true,
+        padding: {
+          left: 1,
+          right: 1,
+        },
+        left: 2,
+        bottom: 1,
+        name: 'submit',
+        content: 'submit',
+        style: {
+          bg: 'blue',
+          focus: {
+            bg: 'red',
+          },
+          hover: {
+            bg: 'red',
+          },
+        },
+      });
+
+      newGameButton.on('press', function () {
+        GAME_CHOICE_SCREEN.destroy();
+        resolve({ type: 'newGame' });
+      });
+
+      joinButton.on('press', function () {
+        joinGame.submit();
+      });
+
+      joinGame.on('submit', async () => {
+        const gameId = gameIDBox.getValue();
+
+        if (gameId) {
+          GAME_CHOICE_SCREEN.destroy();
+          resolve({ type: 'joinGame', gameId });
+        } else {
+          joinGame.setContent('No game ID submitted');
+          GAME_CHOICE_SCREEN.render();
+        }
+      });
+
+      GAME_CHOICE_SCREEN.key(['escape', 'q', 'C-c'], () => {
+        return process.exit(0);
+      });
+
+      GAME_CHOICE_SCREEN.render();
     } catch (err) {
       reject(err);
     }

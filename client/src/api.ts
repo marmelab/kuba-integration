@@ -1,4 +1,4 @@
-import { Player, GameState } from './types';
+import { Player, GameState, GameChoice } from './types';
 import { PLAYER_ID } from './index';
 import { initGameView, renderGameView } from './blessed';
 import { GATEWAY_URL, URL } from './constants';
@@ -6,20 +6,26 @@ import { GameError } from './error';
 require('isomorphic-fetch');
 import * as WebSocket from 'ws';
 
-export let currentState: GameState;
-
-export const startNewGame = async (numberPlayer: number) => {
+export const startGame = async (
+  numberPlayer: number,
+  gameChoice: GameChoice,
+) => {
   initGameView();
 
-  const gameState = await pullNewGame(numberPlayer);
+  let gameState;
+  if (gameChoice.type === 'newGame') {
+    gameState = await pullNewGame(numberPlayer);
+  } else {
+    gameState = await pullJoinGame(gameChoice?.gameId);
+  }
   renderGameView(gameState);
-
-  currentState = gameState;
 
   const ws = new WebSocket(GATEWAY_URL);
 
   ws.on('open', function open() {
-    ws.send(JSON.stringify({ event: 'initGame' }));
+    ws.send(
+      JSON.stringify({ event: 'initGame', data: { gameId: gameState.id } }),
+    );
   });
 
   ws.on('message', (message) => {
@@ -47,6 +53,17 @@ export const pullNewGame = async (playerNumber: number): Promise<GameState> => {
 export const pullGameState = async (): Promise<GameState> => {
   try {
     const response = await fetch(`${URL}/gamestate`);
+    const jsonResp = await response.json();
+    const gameState: GameState = jsonResp as GameState;
+    return gameState;
+  } catch (ex) {
+    throw new GameError("The game state can't be laoaded");
+  }
+};
+
+export const pullJoinGame = async (idGame: number): Promise<GameState> => {
+  try {
+    const response = await fetch(`${URL}/joingame/${idGame}`);
     const jsonResp = await response.json();
     const gameState: GameState = jsonResp as GameState;
     return gameState;
@@ -107,7 +124,6 @@ const moveMarble = async (
 
     const jsonResp = await response.json();
     const gameStateAfterMove: GameState = jsonResp as GameState;
-    currentState = gameStateAfterMove;
     return gameStateAfterMove;
   } catch (ex) {
     throw new GameError('Unable to call the function move marble');
@@ -128,7 +144,7 @@ export const pullActions = async (
       direction,
       player,
     );
-    
+
     if (canMoveMarble) {
       try {
         const newGameState = await moveMarble(gameState, direction, player);
@@ -161,9 +177,12 @@ export const postGameState = async (
   }
 };
 
-export const restartGame = async (): Promise<GameState> => {
+export const restartGame = async (gameId: number): Promise<GameState> => {
   try {
-    const response = await fetch(`${URL}/restartgame`);
+    const response = await fetch(`${URL}/restartgame/${gameId}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' }
+    })
     const jsonResp = await response.json();
     const newGameState: GameState = jsonResp as GameState;
     return newGameState;

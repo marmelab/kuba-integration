@@ -65,7 +65,7 @@ export class AppController {
   }
 
   @Post('marbleplayable')
-  getMarblePlayable(
+  isMarblePlayable(
     @Body('gameState') gameState: GameState,
     @Body('player') player: Player,
     @Body('direction') direction: string,
@@ -73,7 +73,7 @@ export class AppController {
     if (!gameState || !player || !direction) {
       throw new HttpException('Argument is missing', 400);
     }
-    return this.appService.getIsMarblePlayable(gameState, direction, player);
+    return this.appService.isMarblePlayable(gameState, direction, player);
   }
 
   @Post('movemarble')

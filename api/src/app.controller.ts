@@ -64,7 +64,7 @@ export class AppController {
     return this.appService.hasGameStateChanged(body);
   }
 
-  @Get('marbleplayable')
+  @Post('marbleplayable')
   getMarblePlayable(
     @Body('gameState') gameState: GameState,
     @Body('player') player: Player,

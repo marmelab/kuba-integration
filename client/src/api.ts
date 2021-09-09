@@ -128,7 +128,7 @@ export const pullActions = async (
       direction,
       player,
     );
-
+    
     if (canMoveMarble) {
       try {
         const newGameState = await moveMarble(gameState, direction, player);

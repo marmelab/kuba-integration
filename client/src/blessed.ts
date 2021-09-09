@@ -370,9 +370,10 @@ export const renderLogin = (): Promise<boolean> => {
 
           try {
             const log = await login(email, password);
+            LOGIN_SCREEN.destroy();
             resolve(log);
           } catch (e) {
-            reject(e)
+            reject(e);
           }
         }
       });

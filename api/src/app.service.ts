@@ -26,7 +26,7 @@ export class AppService {
     return JSON.stringify(playerGameState) !== JSON.stringify(gameState);
   }
 
-  getIsMarblePlayable(
+  isMarblePlayable(
     gameState: GameState,
     direction: string,
     player: Player,

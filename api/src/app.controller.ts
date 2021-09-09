@@ -64,8 +64,8 @@ export class AppController {
     return this.appService.hasGameStateChanged(body);
   }
 
-  @Get('marbleplayable')
-  getMarblePlayable(
+  @Post('marbleplayable')
+  isMarblePlayable(
     @Body('gameState') gameState: GameState,
     @Body('player') player: Player,
     @Body('direction') direction: string,
@@ -73,7 +73,7 @@ export class AppController {
     if (!gameState || !player || !direction) {
       throw new HttpException('Argument is missing', 400);
     }
-    return this.appService.getIsMarblePlayable(gameState, direction, player);
+    return this.appService.isMarblePlayable(gameState, direction, player);
   }
 
   @Post('movemarble')
@@ -135,5 +135,10 @@ export class AppController {
     const res = await this.gameService.getGame({ id: Number(id) });
 
     return this.gameService.deserializer(res);
+  }
+
+  @Post('login')
+  async login(@Body() email: string, password: string): Promise<boolean> {
+    return true;
   }
 }

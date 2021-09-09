@@ -1,12 +1,13 @@
 const blessed = require('blessed');
 import { MARBLE_INT_COLORS } from './constants';
-import { postGameState, pullActions, restartGame } from './api';
+import { login, postGameState, pullActions, restartGame } from './api';
 import { GameState } from './types';
 import { PLAYER_ID } from './index';
 
 let SCREEN: any;
+let LOGIN_SCREEN: any;
 
-export const initScreenView = (): void => {
+export const initGameView = (): void => {
   SCREEN = blessed.screen({
     smartCSR: true,
   });
@@ -19,7 +20,7 @@ export const initScreenView = (): void => {
   SCREEN.render();
 };
 
-export const renderScreenView = (gameState: GameState) => {
+export const renderGameView = (gameState: GameState) => {
   const outerBoard = blessed.box({
     top: 'center',
     left: 'center',
@@ -37,7 +38,7 @@ export const renderScreenView = (gameState: GameState) => {
 
   cardinalEastBox.on('click', function () {
     pullActions(gameState, 'E');
-    renderScreenView(gameState);
+    renderGameView(gameState);
   });
 
   const cardinalWestBox = blessed.box({
@@ -50,7 +51,7 @@ export const renderScreenView = (gameState: GameState) => {
 
   cardinalWestBox.on('click', function () {
     pullActions(gameState, 'W');
-    renderScreenView(gameState);
+    renderGameView(gameState);
   });
 
   const cardinalSouthBox = blessed.box({
@@ -63,7 +64,7 @@ export const renderScreenView = (gameState: GameState) => {
 
   cardinalSouthBox.on('click', function () {
     pullActions(gameState, 'S');
-    renderScreenView(gameState);
+    renderGameView(gameState);
   });
 
   const cardinalNorthBox = blessed.box({
@@ -76,7 +77,7 @@ export const renderScreenView = (gameState: GameState) => {
 
   cardinalNorthBox.on('click', function () {
     pullActions(gameState, 'N');
-    renderScreenView(gameState);
+    renderGameView(gameState);
   });
 
   const playerTurnText = blessed.box({
@@ -186,7 +187,7 @@ export const renderScreenView = (gameState: GameState) => {
       });
       tmpBox.on('click', async function () {
         gameState.marbleClicked = node;
-        renderScreenView(gameState);
+        renderGameView(gameState);
         if (PLAYER_ID === gameState.currentPlayerId) {
           await postGameState(gameState);
         }
@@ -214,7 +215,7 @@ export const renderScreenView = (gameState: GameState) => {
   });
   restartGameBox.on('click', async () => {
     const newGameState = await restartGame();
-    renderScreenView(newGameState);
+    renderGameView(newGameState);
   });
 
   SCREEN.append(outerBoard);
@@ -253,4 +254,144 @@ export const renderScreenView = (gameState: GameState) => {
   }
 
   SCREEN.render();
+};
+
+export const renderLogin = (): Promise<boolean> => {
+  return new Promise((resolve, reject) => {
+    try {
+      LOGIN_SCREEN = blessed.screen();
+
+      const form = blessed.form({
+        parent: LOGIN_SCREEN,
+        keys: true,
+        left: 'center',
+        top: 'center',
+        width: 40,
+        height: 14,
+        border: {
+          type: 'line',
+        },
+        style: {
+          border: {
+            fg: 'white',
+          },
+        },
+        autoNext: true,
+        content: ' Email + password',
+      });
+
+      const emailBox = blessed.Textbox({
+        parent: form,
+        top: 3,
+        height: 1,
+        left: 2,
+        right: 2,
+        bg: 'black',
+        keys: true,
+        inputOnFocus: true,
+        content: '',
+      });
+
+      const passwordBox = blessed.Textbox({
+        parent: form,
+        top: 6,
+        height: 1,
+        left: 2,
+        right: 2,
+        bg: 'black',
+        keys: true,
+        inputOnFocus: true,
+        content: '',
+      });
+
+      const submit = blessed.button({
+        parent: form,
+        mouse: true,
+        keys: true,
+        shrink: true,
+        padding: {
+          left: 1,
+          right: 1,
+        },
+        left: 10,
+        bottom: 2,
+        name: 'submit',
+        content: 'submit',
+        style: {
+          bg: 'blue',
+          focus: {
+            bg: 'red',
+          },
+          hover: {
+            bg: 'red',
+          },
+        },
+      });
+
+      const cancel = blessed.button({
+        parent: form,
+        mouse: true,
+        keys: true,
+        shrink: true,
+        padding: {
+          left: 1,
+          right: 1,
+        },
+        left: 20,
+        bottom: 2,
+        name: 'cancel',
+        content: 'cancel',
+        style: {
+          bg: 'blue',
+          focus: {
+            bg: 'red',
+          },
+          hover: {
+            bg: 'red',
+          },
+        },
+      });
+
+      submit.on('press', function () {
+        form.submit();
+      });
+
+      cancel.on('press', function () {
+        form.reset();
+      });
+
+      form.on('submit', async () => {
+        const email = emailBox.getValue();
+        const password = passwordBox.getValue();
+
+        if (email && password) {
+          form.setContent('Submitted.');
+          LOGIN_SCREEN.render();
+
+          try {
+            const log = await login(email, password);
+            LOGIN_SCREEN.destroy();
+            resolve(log);
+          } catch (e) {
+            reject(e);
+          }
+        }
+      });
+
+      form.on('reset', function (data) {
+        form.setContent('Canceled.');
+        LOGIN_SCREEN.render();
+      });
+
+      LOGIN_SCREEN.key(['escape', 'q', 'C-c'], () => {
+        return process.exit(0);
+      });
+
+      emailBox.focus();
+
+      LOGIN_SCREEN.render();
+    } catch (err) {
+      reject(err);
+    }
+  });
 };

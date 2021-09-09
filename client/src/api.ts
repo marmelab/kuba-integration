@@ -1,8 +1,6 @@
 import { Player, GameState } from './types';
-
-import { close } from './userInput';
 import { PLAYER_ID } from './index';
-import { initScreenView, renderScreenView } from './blessed';
+import { initGameView, renderGameView } from './blessed';
 import { GATEWAY_URL, URL } from './constants';
 import { GameError } from './error';
 require('isomorphic-fetch');
@@ -11,16 +9,10 @@ import * as WebSocket from 'ws';
 export let currentState: GameState;
 
 export const startNewGame = async (numberPlayer: number) => {
-  close();
-  initScreenView();
+  initGameView();
 
   const gameState = await pullNewGame(numberPlayer);
-
-  try {
-    renderScreenView(gameState);
-  } catch (e) {
-    console.error(`error`, e);
-  }
+  renderGameView(gameState);
 
   currentState = gameState;
 
@@ -33,7 +25,7 @@ export const startNewGame = async (numberPlayer: number) => {
   ws.on('message', (message) => {
     const newGameState = JSON.parse(message.toString('utf8'))
       .gameState as GameState;
-    renderScreenView(newGameState);
+    renderGameView(newGameState);
   });
 };
 
@@ -136,11 +128,11 @@ export const pullActions = async (
       direction,
       player,
     );
-
+    
     if (canMoveMarble) {
       try {
         const newGameState = await moveMarble(gameState, direction, player);
-        renderScreenView(newGameState);
+        renderGameView(newGameState);
       } catch (e) {
         console.log("Can't move this marble", e);
       }
@@ -177,5 +169,25 @@ export const restartGame = async (): Promise<GameState> => {
     return newGameState;
   } catch (ex) {
     throw new GameError('Unable to call the function restartgame');
+  }
+};
+
+export const login = async (
+  email: string,
+  password: string,
+): Promise<boolean> => {
+  try {
+    const response = await fetch(`${URL}/login`, {
+      method: 'POST',
+      body: JSON.stringify({ email, password }),
+      headers: { 'Content-Type': 'application/json' },
+    });
+
+    const jsonResp = await response.json();
+    const userLogin: boolean = jsonResp as boolean;
+
+    return userLogin;
+  } catch (ex) {
+    throw new GameError('Unable to call the function login');
   }
 };

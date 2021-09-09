@@ -1,6 +1,5 @@
 import expect from 'expect';
 import { Player } from './types';
-import { close } from './userInput';
 import {
   switchToNextPlayer,
   getMarbleWonByPlayer,

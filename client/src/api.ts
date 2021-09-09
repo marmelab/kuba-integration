@@ -140,8 +140,12 @@ export const pullActions = async (
     );
 
     if (canMoveMarble) {
-      const newGameState = await moveMarble(gameState, direction, player);
-      renderScreenView(newGameState);
+      try {
+        const newGameState = await moveMarble(gameState, direction, player);
+        renderScreenView(newGameState);
+      } catch (e) {
+        console.log("Can't moe this marble");
+      }
     }
   } catch (e) {
     console.log(e);

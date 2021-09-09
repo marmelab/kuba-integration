@@ -99,7 +99,7 @@ export function moveMarble(gameState: GameState): Graph {
     gameState.graph,
     stringCoordinate,
     gameState.directionSelected,
-    gameState.currentPlayer,
+    gameState.players[gameState.currentPlayerId],
   );
 
   const movedGraph = moveMarbleInDirection(

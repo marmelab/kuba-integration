@@ -5,9 +5,11 @@ import {
   gameState,
   switchToNextPlayer,
   setGameState,
+  getMarbleWonByPlayer,
+  checkIfPlayerWon,
 } from './game';
 import { checkMoveMarbleInDirection } from './board';
-import { moveMarbleInDirection } from './graph';
+import { moveMarbleInDirection, sanitizeGraph } from './graph';
 
 @Injectable()
 export class AppService {
@@ -49,17 +51,27 @@ export class AppService {
     direction: string,
     player: Player,
   ): GameState {
-    if (gameState.currentPlayer.playerNumber !== player.playerNumber) {
+    if (gameState.currentPlayerId !== player.playerNumber) {
       throw new Error('This is the other player turn, please be patient');
+    }
+    const newGraph = moveMarbleInDirection(graph, coordinates, direction);
+    const marbleWon = getMarbleWonByPlayer(newGraph);
+    sanitizeGraph(newGraph);
+
+    if (marbleWon > -1) {
+      gameState.players[gameState.currentPlayerId - 1].marblesWon.push(
+        marbleWon,
+      );
+      if (checkIfPlayerWon(gameState.players[gameState.currentPlayerId - 1])) {
+        gameState.hasWinner = true;
+      }
+    } else {
+      gameState.currentPlayerId = switchToNextPlayer(gameState.currentPlayerId);
     }
 
     return setGameState({
       ...gameState,
-      graph: moveMarbleInDirection(graph, coordinates, direction),
-      currentPlayer: switchToNextPlayer(
-        gameState.currentPlayer,
-        gameState.players,
-      ),
+      graph: newGraph,
     });
   }
 

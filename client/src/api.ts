@@ -31,7 +31,6 @@ export const startNewGame = async (numberPlayer: number) => {
 
 export const pullNewGame = async (playerNumber: number): Promise<GameState> => {
   try {
-    console.log(`URL :`, URL);
     const response = await fetch(`${URL}/startgame`, {
       method: 'POST',
       body: JSON.stringify({ playerNumber }),

@@ -1,8 +1,6 @@
 import { Player, GameState } from './types';
-
-import { close } from './userInput';
 import { PLAYER_ID } from './index';
-import { initScreenView, renderScreenView } from './blessed';
+import { initGameView, renderGameView } from './blessed';
 import { GATEWAY_URL, URL } from './constants';
 import { GameError } from './error';
 require('isomorphic-fetch');
@@ -12,10 +10,10 @@ export let currentState: GameState;
 
 export const startNewGame = async (numberPlayer: number) => {
   close();
-  initScreenView();
+  initGameView();
 
   const gameState = await pullNewGame(numberPlayer);
-  renderScreenView(gameState);
+  renderGameView(gameState);
 
   currentState = gameState;
 
@@ -26,8 +24,9 @@ export const startNewGame = async (numberPlayer: number) => {
   });
 
   ws.on('message', (message) => {
-    const newGameState = JSON.parse(message.toString('utf8')).gameState as GameState;
-    renderScreenView(newGameState);
+    const newGameState = JSON.parse(message.toString('utf8'))
+      .gameState as GameState;
+    renderGameView(newGameState);
   });
 };
 
@@ -134,7 +133,7 @@ export const pullActions = async (
 
     if (canMoveMarble) {
       const newGameState = await moveMarble(gameState, direction, player);
-      renderScreenView(newGameState);
+      renderGameView(newGameState);
     }
   } catch (e) {
     console.log(e);
@@ -168,5 +167,26 @@ export const restartGame = async (): Promise<GameState> => {
     return newGameState;
   } catch (ex) {
     throw new GameError('Unable to call the function restartgame');
+  }
+};
+
+export const login = async (
+  email: string,
+  password: string,
+): Promise<boolean> => {
+  try {
+    console.log('bimbam');
+    const response = await fetch(`${URL}/login`, {
+      method: 'POST',
+      body: JSON.stringify({ email, password }),
+      headers: { 'Content-Type': 'application/json' },
+    });
+
+    const jsonResp = await response.json();
+    const userLogin: boolean = jsonResp as boolean;
+
+    return userLogin;
+  } catch (ex) {
+    throw new GameError('Unable to call the function login');
   }
 };

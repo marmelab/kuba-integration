@@ -128,4 +128,9 @@ export class AppController {
 
     return this.gameService.deserializer(res);
   }
+
+  @Post('login')
+  async login(@Body() email: string, password: string): Promise<boolean> {
+    return true;
+  }
 }

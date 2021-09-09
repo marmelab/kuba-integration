@@ -16,8 +16,9 @@ import { GameState, Player } from './types';
 import { GameService } from './game.service';
 import { UserService } from './user.service';
 import { INITIAL_BOARD } from './constants';
-import { AuthGuard } from '@nestjs/passport';
+import { AuthService } from './auth/auth.service';
 import { LocalAuthGuard } from './auth/local-auth.guard';
+import { JwtAuthGuard } from './auth/jwt-auth.guard';
 @Controller()
 export class AppController {
   constructor(
@@ -25,15 +26,18 @@ export class AppController {
     private readonly gameService: GameService,
     private readonly userService: UserService,
     private gatewayService: AppGateway,
+    private authService: AuthService,
   ) {}
 
   // playerNumber
+  @UseGuards(JwtAuthGuard)
   @Post('startgame')
   async createGame(): Promise<GameState> {
     const res = await this.gameService.createGame();
     return this.gameService.deserializer(res);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get('gamestate/:id')
   async getGameState(@Param('id') id: string): Promise<GameState> {
     try {
@@ -44,6 +48,7 @@ export class AppController {
     }
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post('restartgame/:id')
   async restartGame(@Param('id') id: string): Promise<GameState> {
     if (!Number(id)) {
@@ -66,12 +71,13 @@ export class AppController {
     }
   }
 
-  // TODO: To be destroyed !
+  @UseGuards(JwtAuthGuard)
   @Get('gamestatehaschanged')
   getGameStateHasChanged(@Body() body: GameState): boolean {
     return this.appService.hasGameStateChanged(body);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get('marbleplayable')
   getMarblePlayable(
     @Body('gameState') gameState: GameState,
@@ -84,6 +90,7 @@ export class AppController {
     return this.appService.getIsMarblePlayable(gameState, direction, player);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post('movemarble')
   async moveMarble(
     @Body('gameState') gameState: GameState,
@@ -122,6 +129,7 @@ export class AppController {
     }
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post('setgamestate')
   async setGameState(@Body() gameState: GameState): Promise<GameState> {
     const res = await this.gameService.updateGame({
@@ -135,9 +143,11 @@ export class AppController {
     return this.gameService.deserializer(res);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Put('stopgame')
   stopGame(): void {}
 
+  @UseGuards(JwtAuthGuard)
   @Get('game/:id')
   async getGameById(@Param('id') id: string): Promise<GameState> {
     const res = await this.gameService.getGame({ id: Number(id) });
@@ -145,6 +155,7 @@ export class AppController {
     return this.gameService.deserializer(res);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post('createuser')
   async createuser(
     @Body('email') email: string,
@@ -181,35 +192,9 @@ export class AppController {
     }
   }
 
-  /* @Post('login')
-  async login(
-    @Body('email') email: string,
-    @Body('hash') hash: string,
-  ): Promise<string> {
-    console.log(`email`, email);
-    console.log(`hash`, hash);
-    try {
-      const user = await this.userService.getUser({ email });
-      if (!user) {
-        throw new HttpException(
-          "Something's wrong with your credentials ",
-          400,
-        );
-      }
-
-      if (user.hash === hash) {
-        return "Well done, you're connected !";
-      }
-    } catch (e) {
-      throw new HttpException("Something's wrong with your credentials ", 400);
-    }
-
-    return 'NOK';
-  } */
-
   @UseGuards(LocalAuthGuard)
   @Post('login')
   async login(@Request() req: any) {
-    return req.user;
+    return this.authService.login(req.user);
   }
 }

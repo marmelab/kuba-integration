@@ -9,7 +9,6 @@ import * as WebSocket from 'ws';
 export let currentState: GameState;
 
 export const startNewGame = async (numberPlayer: number) => {
-  close();
   initGameView();
 
   const gameState = await pullNewGame(numberPlayer);
@@ -179,7 +178,6 @@ export const login = async (
   password: string,
 ): Promise<boolean> => {
   try {
-    console.log('bimbam');
     const response = await fetch(`${URL}/login`, {
       method: 'POST',
       body: JSON.stringify({ email, password }),

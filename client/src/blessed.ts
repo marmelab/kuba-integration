@@ -256,134 +256,141 @@ export const renderGameView = (gameState: GameState) => {
   SCREEN.render();
 };
 
-export const renderLogin = () => {
-  LOGIN_SCREEN = blessed.screen();
+export const renderLogin = (): Promise<boolean> => {
+  return new Promise((resolve, reject) => {
+    try {
+      LOGIN_SCREEN = blessed.screen();
 
-  const form = blessed.form({
-    parent: LOGIN_SCREEN,
-    keys: true,
-    left: 'center',
-    top: 'center',
-    width: 40,
-    height: 14,
-    border: {
-      type: 'line',
-    },
-    style: {
-      border: {
-        fg: 'white',
-      },
-    },
-    autoNext: true,
-    content: ' Email + password',
-  });
+      const form = blessed.form({
+        parent: LOGIN_SCREEN,
+        keys: true,
+        left: 'center',
+        top: 'center',
+        width: 40,
+        height: 14,
+        border: {
+          type: 'line',
+        },
+        style: {
+          border: {
+            fg: 'white',
+          },
+        },
+        autoNext: true,
+        content: ' Email + password',
+      });
 
-  const emailBox = blessed.Textbox({
-    parent: form,
-    top: 3,
-    height: 1,
-    left: 2,
-    right: 2,
-    bg: 'black',
-    keys: true,
-    inputOnFocus: true,
-    content: '',
-  });
+      const emailBox = blessed.Textbox({
+        parent: form,
+        top: 3,
+        height: 1,
+        left: 2,
+        right: 2,
+        bg: 'black',
+        keys: true,
+        inputOnFocus: true,
+        content: '',
+      });
 
-  const passwordBox = blessed.Textbox({
-    parent: form,
-    top: 6,
-    height: 1,
-    left: 2,
-    right: 2,
-    bg: 'black',
-    keys: true,
-    inputOnFocus: true,
-    content: '',
-  });
+      const passwordBox = blessed.Textbox({
+        parent: form,
+        top: 6,
+        height: 1,
+        left: 2,
+        right: 2,
+        bg: 'black',
+        keys: true,
+        inputOnFocus: true,
+        content: '',
+      });
 
-  const submit = blessed.button({
-    parent: form,
-    mouse: true,
-    keys: true,
-    shrink: true,
-    padding: {
-      left: 1,
-      right: 1,
-    },
-    left: 10,
-    bottom: 2,
-    name: 'submit',
-    content: 'submit',
-    style: {
-      bg: 'blue',
-      focus: {
-        bg: 'red',
-      },
-      hover: {
-        bg: 'red',
-      },
-    },
-  });
+      const submit = blessed.button({
+        parent: form,
+        mouse: true,
+        keys: true,
+        shrink: true,
+        padding: {
+          left: 1,
+          right: 1,
+        },
+        left: 10,
+        bottom: 2,
+        name: 'submit',
+        content: 'submit',
+        style: {
+          bg: 'blue',
+          focus: {
+            bg: 'red',
+          },
+          hover: {
+            bg: 'red',
+          },
+        },
+      });
 
-  const cancel = blessed.button({
-    parent: form,
-    mouse: true,
-    keys: true,
-    shrink: true,
-    padding: {
-      left: 1,
-      right: 1,
-    },
-    left: 20,
-    bottom: 2,
-    name: 'cancel',
-    content: 'cancel',
-    style: {
-      bg: 'blue',
-      focus: {
-        bg: 'red',
-      },
-      hover: {
-        bg: 'red',
-      },
-    },
-  });
+      const cancel = blessed.button({
+        parent: form,
+        mouse: true,
+        keys: true,
+        shrink: true,
+        padding: {
+          left: 1,
+          right: 1,
+        },
+        left: 20,
+        bottom: 2,
+        name: 'cancel',
+        content: 'cancel',
+        style: {
+          bg: 'blue',
+          focus: {
+            bg: 'red',
+          },
+          hover: {
+            bg: 'red',
+          },
+        },
+      });
 
-  submit.on('press', function () {
-    form.submit();
-  });
+      submit.on('press', function () {
+        form.submit();
+      });
 
-  cancel.on('press', function () {
-    form.reset();
-  });
+      cancel.on('press', function () {
+        form.reset();
+      });
 
-  form.on('submit', async () => {
-    const email = emailBox.getValue();
-    const password = passwordBox.getValue();
+      form.on('submit', async () => {
+        const email = emailBox.getValue();
+        const password = passwordBox.getValue();
 
-    if (email && password) {
-      form.setContent('Submitted.');
+        if (email && password) {
+          form.setContent('Submitted.');
+          LOGIN_SCREEN.render();
+
+          try {
+            const log = await login(email, password);
+            resolve(log);
+          } catch (e) {
+            reject(e)
+          }
+        }
+      });
+
+      form.on('reset', function (data) {
+        form.setContent('Canceled.');
+        LOGIN_SCREEN.render();
+      });
+
+      LOGIN_SCREEN.key(['escape', 'q', 'C-c'], () => {
+        return process.exit(0);
+      });
+
+      emailBox.focus();
+
       LOGIN_SCREEN.render();
-
-      try {
-        await login(email, password);
-      } catch (e) {
-        console.log(e.message);
-      }
+    } catch (err) {
+      reject(err);
     }
   });
-
-  form.on('reset', function (data) {
-    form.setContent('Canceled.');
-    LOGIN_SCREEN.render();
-  });
-
-  LOGIN_SCREEN.key(['escape', 'q', 'C-c'], () => {
-    return process.exit(0);
-  });
-
-  emailBox.focus();
-
-  LOGIN_SCREEN.render();
 };

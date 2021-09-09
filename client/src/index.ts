@@ -12,11 +12,14 @@ async function main() {
     PLAYER_ID = 1;
   }
 
-  renderLogin();
-  try {
-    // await startNewGame(PLAYER_ID);
-  } catch (e) {
-    console.log("Game can't be started");
+  const log = await renderLogin();
+  if (log) {
+    try {
+      await startNewGame(PLAYER_ID);
+    } catch (e) {
+      console.log(e);
+      console.log("Game can't be started");
+    }
   }
 }
 

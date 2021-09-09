@@ -4,13 +4,16 @@ import {
   startNewGame,
   gameState,
   switchToNextPlayer,
-  setGameState,
+  getMarbleWonByPlayer,
+  checkIfPlayerWon,
 } from './game';
 import { checkMoveMarbleInDirection } from './board';
-import { moveMarbleInDirection } from './graph';
+import { moveMarbleInDirection, sanitizeGraph } from './graph';
+import { GameService } from './game.service';
 
 @Injectable()
 export class AppService {
+  constructor(private readonly gameService: GameService) {}
   startGame(playerNumber: number): GameState {
     return startNewGame(playerNumber);
   }
@@ -43,24 +46,43 @@ export class AppService {
     }
   }
 
-  moveMarble(
+  async moveMarble(
+    id: number,
     graph: Graph,
     coordinates: { x: number; y: number },
     direction: string,
     player: Player,
-  ): GameState {
-    if (gameState.currentPlayer.playerNumber !== player.playerNumber) {
+  ): Promise<GameState> {
+    let serializedGameState = await this.gameService.getGame({ id });
+    const currentGameState = this.gameService.deserializer(serializedGameState);
+
+    if (currentGameState.currentPlayerId !== player.playerNumber) {
       throw new Error('This is the other player turn, please be patient');
     }
+    const newGraph = moveMarbleInDirection(graph, coordinates, direction);
+    const marbleWon = getMarbleWonByPlayer(newGraph);
+    sanitizeGraph(newGraph);
 
-    return setGameState({
-      ...gameState,
-      graph: moveMarbleInDirection(graph, coordinates, direction),
-      currentPlayer: switchToNextPlayer(
-        gameState.currentPlayer,
-        gameState.players,
-      ),
-    });
+    if (marbleWon > -1) {
+      currentGameState.players[
+        currentGameState.currentPlayerId - 1
+      ].marblesWon.push(marbleWon);
+      if (
+        checkIfPlayerWon(
+          currentGameState.players[currentGameState.currentPlayerId - 1],
+        )
+      ) {
+        currentGameState.hasWinner = true;
+      }
+    } else {
+      currentGameState.currentPlayerId = switchToNextPlayer(
+        currentGameState.currentPlayerId,
+      );
+    }
+
+    currentGameState.graph = newGraph;
+
+    return currentGameState;
   }
 
   putStopGame() {}

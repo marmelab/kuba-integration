@@ -48,5 +48,4 @@ export const MARBLE_INT_COLORS: string[] = [
   'white',
 ];
 
-// export const URL: string = "http://192.168.86.189:3000";
-export const URL: string = 'http://localhost:3000';
+export const URL: string = process.env.URL;

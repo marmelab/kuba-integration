@@ -6,6 +6,8 @@ import {
   Param,
   Post,
   Put,
+  Request,
+  UseGuards,
 } from '@nestjs/common';
 import { AppGateway } from './app.gateway';
 import { AppService } from './app.service';
@@ -14,6 +16,8 @@ import { GameState, Player } from './types';
 import { GameService } from './game.service';
 import { UserService } from './user.service';
 import { INITIAL_BOARD } from './constants';
+import { AuthGuard } from '@nestjs/passport';
+import { LocalAuthGuard } from './auth/local-auth.guard';
 @Controller()
 export class AppController {
   constructor(
@@ -23,6 +27,7 @@ export class AppController {
     private gatewayService: AppGateway,
   ) {}
 
+  // playerNumber
   @Post('startgame')
   async createGame(): Promise<GameState> {
     const res = await this.gameService.createGame();
@@ -61,6 +66,7 @@ export class AppController {
     }
   }
 
+  // TODO: To be destroyed !
   @Get('gamestatehaschanged')
   getGameStateHasChanged(@Body() body: GameState): boolean {
     return this.appService.hasGameStateChanged(body);
@@ -141,12 +147,17 @@ export class AppController {
 
   @Post('createuser')
   async createuser(
-    @Body('username') username: string,
-    @Body('passhash') passhash: string,
+    @Body('email') email: string,
+    @Body('email') passhash: string,
   ) {
-    if (!username || !passhash) {
+    if (!email || !passhash) {
       throw new HttpException("Something's wrong with your credentials ", 400);
     }
+
+    await this.userService.createUser({
+      email,
+      hash: passhash,
+    });
   }
 
   @Post('createadmin')
@@ -170,7 +181,7 @@ export class AppController {
     }
   }
 
-  @Post('login')
+  /* @Post('login')
   async login(
     @Body('email') email: string,
     @Body('hash') hash: string,
@@ -194,5 +205,11 @@ export class AppController {
     }
 
     return 'NOK';
+  } */
+
+  @UseGuards(LocalAuthGuard)
+  @Post('login')
+  async login(@Request() req: any) {
+    return req.user;
   }
 }

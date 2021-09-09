@@ -5,9 +5,10 @@ import { AppService } from './app.service';
 import { GameService } from './game.service';
 import { PrismaService } from './prisma.service';
 import { UserService } from './user.service';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
-  imports: [],
+  imports: [AuthModule],
   controllers: [AppController],
   providers: [AppService, PrismaService, GameService, AppGateway, UserService],
 })

@@ -5,6 +5,7 @@ import { moveMarbleInDirection, willExitAnOwnMarble } from './graph';
 import { INVERSE_DIRECTION, INITIAL_BOARD } from './constants';
 
 import { CantMoveError } from './error';
+import { gameState } from './game';
 
 enum Mode {
   initial = '1',
@@ -22,6 +23,11 @@ export function checkMoveMarbleInDirection(
   player: Player,
 ): void {
   const existInBoard = positionExistsInBoard(boardGraph, marblePosition);
+
+  if (gameState.currentPlayerId !== player.playerNumber) {
+    throw new CantMoveError('This is not your turn');
+  }
+
   if (!existInBoard) {
     throw new CantMoveError('This position does not exist in the board');
   }

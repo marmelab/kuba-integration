@@ -59,6 +59,7 @@ export class AppController {
         data: {
           board: JSON.stringify(INITIAL_BOARD),
           players: JSON.stringify(clearedPlayers),
+          currentPlayer: 1,
         },
       });
       const gameState = this.gameService.deserializer(res);

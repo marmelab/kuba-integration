@@ -38,8 +38,7 @@ export const renderGameView = (gameState: GameState) => {
   });
 
   cardinalEastBox.on('click', function () {
-    pullActions(gameState, 'E');
-    renderGameView(gameState);
+    actionOnCardinal(gameState, 'E');
   });
 
   const cardinalWestBox = blessed.box({
@@ -51,8 +50,7 @@ export const renderGameView = (gameState: GameState) => {
   });
 
   cardinalWestBox.on('click', function () {
-    pullActions(gameState, 'W');
-    renderGameView(gameState);
+    actionOnCardinal(gameState, 'W');
   });
 
   const cardinalSouthBox = blessed.box({
@@ -64,8 +62,7 @@ export const renderGameView = (gameState: GameState) => {
   });
 
   cardinalSouthBox.on('click', function () {
-    pullActions(gameState, 'S');
-    renderGameView(gameState);
+    actionOnCardinal(gameState, 'S');
   });
 
   const cardinalNorthBox = blessed.box({
@@ -77,8 +74,7 @@ export const renderGameView = (gameState: GameState) => {
   });
 
   cardinalNorthBox.on('click', function () {
-    pullActions(gameState, 'N');
-    renderGameView(gameState);
+    actionOnCardinal(gameState, 'N');
   });
 
   const gameIdText = blessed.box({
@@ -551,4 +547,11 @@ export const renderGameChoice = (): Promise<GameChoice> => {
       reject(err);
     }
   });
+};
+
+const actionOnCardinal = (gameState: GameState, cardinal: any): void => {
+  if (PLAYER_ID === gameState.currentPlayerId) {
+    pullActions(gameState, cardinal);
+    renderGameView(gameState);
+  }
 };

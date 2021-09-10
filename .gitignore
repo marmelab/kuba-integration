@@ -1,4 +1,4 @@
 node_modules
-api/dist/*.*
+api/dist
 .env.production
 .env.development

@@ -17,6 +17,7 @@ export function getInitialBoard(): Board {
 }
 
 export function checkMoveMarbleInDirection(
+  currentPlayerId: number,
   boardGraph: Graph,
   marblePosition: string,
   direction: string,
@@ -24,7 +25,7 @@ export function checkMoveMarbleInDirection(
 ): void {
   const existInBoard = positionExistsInBoard(boardGraph, marblePosition);
 
-  if (gameState.currentPlayerId !== player.playerNumber) {
+  if (currentPlayerId !== player.playerNumber) {
     throw new CantMoveError('This is not your turn');
   }
 
@@ -102,6 +103,7 @@ export function moveMarble(gameState: GameState): Graph {
   };
   const stringCoordinate = `${gameState.marbleClicked?.x},${gameState.marbleClicked?.y}`;
   const canMove = checkMoveMarbleInDirection(
+    gameState.currentPlayerId,
     gameState.graph,
     stringCoordinate,
     gameState.directionSelected,

@@ -34,6 +34,7 @@ export class AppService {
     const marbleClickedCoordinates = `${gameState.marbleClicked.x},${gameState.marbleClicked.y}`;
     try {
       checkMoveMarbleInDirection(
+        gameState.currentPlayerId,
         gameState.graph,
         marbleClickedCoordinates,
         direction,

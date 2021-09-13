@@ -1,7 +1,8 @@
 require('dotenv').config({
   path: `.env.${process.env.NODE_ENV}`,
 });
-import { startNewGame } from './api';
+import { startGame } from './api';
+import { renderGameChoice, renderLogin } from './blessed';
 require('isomorphic-fetch');
 export let PLAYER_ID: number | undefined = null;
 async function main() {
@@ -11,10 +12,14 @@ async function main() {
     PLAYER_ID = 1;
   }
 
-  try {
-    await startNewGame(PLAYER_ID);
-  } catch (e) {
-    console.log("Game can't be started");
+  const log = await renderLogin();
+  const gameChoice = await renderGameChoice();
+  if (log && gameChoice) {
+    try {
+      await startGame(PLAYER_ID, gameChoice);
+    } catch (e) {
+      console.log("Game can't be started");
+    }
   }
 }
 

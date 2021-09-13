@@ -49,6 +49,17 @@ export class AppController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Get('joingame/:id')
+  async joinGame(@Param('id') id: string): Promise<GameState> {
+    try {
+      const res = await this.gameService.getGame({ id: Number(id) });
+      return this.gameService.deserializer(res);
+    } catch (e) {
+      throw new HttpException("That game id doesn't exists", 400);
+    }
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Post('restartgame/:id')
   async restartGame(@Param('id') id: string): Promise<GameState> {
     if (!Number(id)) {
@@ -61,6 +72,7 @@ export class AppController {
         data: {
           board: JSON.stringify(INITIAL_BOARD),
           players: JSON.stringify(clearedPlayers),
+          currentPlayer: 1,
         },
       });
       const gameState = this.gameService.deserializer(res);
@@ -78,8 +90,8 @@ export class AppController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get('marbleplayable')
-  getMarblePlayable(
+  @Post('marbleplayable')
+  isMarblePlayable(
     @Body('gameState') gameState: GameState,
     @Body('player') player: Player,
     @Body('direction') direction: string,
@@ -87,7 +99,7 @@ export class AppController {
     if (!gameState || !player || !direction) {
       throw new HttpException('Argument is missing', 400);
     }
-    return this.appService.getIsMarblePlayable(gameState, direction, player);
+    return this.appService.isMarblePlayable(gameState, direction, player);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -159,15 +171,15 @@ export class AppController {
   @Post('createuser')
   async createuser(
     @Body('email') email: string,
-    @Body('email') passhash: string,
+    @Body('password') password: string,
   ) {
-    if (!email || !passhash) {
+    if (!email || !password) {
       throw new HttpException("Something's wrong with your credentials ", 400);
     }
 
     await this.userService.createUser({
       email,
-      hash: passhash,
+      hash: password,
     });
   }
 

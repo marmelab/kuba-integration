@@ -16,7 +16,8 @@ export class UserController {
 
   @Get()
   async getUsers() {
-    await this.userService.getUsers({});
+    const users = await this.userService.getUsers({});
+    return users;
   }
 
   @Get(':id')

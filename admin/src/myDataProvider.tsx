@@ -1,7 +1,7 @@
 import { fetchUtils, DataProvider } from "react-admin";
 import { stringify } from "query-string";
 
-const apiUrl = "http://localhost:3000";
+const apiUrl = process.env.REACT_APP_API_URL;
 const httpClient = fetchUtils.fetchJson;
 
 export const dataProvider: DataProvider = {
@@ -16,7 +16,6 @@ export const dataProvider: DataProvider = {
     const url = `${apiUrl}/${resource}?${stringify(query)}`;
 
     return httpClient(url).then(({ headers, json }) => {
-      console.log(json)
       return {
       data: json.data,
       total: parseInt(json.total),

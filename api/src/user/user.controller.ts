@@ -18,8 +18,19 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get()
-  async getUsers() {
-    const users = await this.userService.getUsers({});
+  async getUsers(@Query('filter') filter: string) {
+    let params;
+    const filters = JSON.parse(filter);
+    if (filters.email) {
+      params = {
+        where: {
+          email: {
+            contains: filters.email,
+          },
+        },
+      };
+    }
+    const users = await this.userService.getUsers(params);
     return users;
   }
 
@@ -74,7 +85,6 @@ export class UserController {
     }
 
     const deletedUser = await this.userService.deleteUser({ id });
-    console.log(deletedUser);
     return deletedUser;
   }
 

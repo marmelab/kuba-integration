@@ -17,10 +17,10 @@ export class UserService {
   async getUsers(params: {
     skip?: number;
     take?: number;
-    cursor?: Prisma.GameWhereUniqueInput;
-    where?: Prisma.GameWhereInput;
+    cursor?: Prisma.UserWhereUniqueInput;
+    where?: Prisma.UserWhereInput;
   }): Promise<{ data: User[]; total: number }> {
-    const { skip, take, cursor, where } = params;
+    const { skip, take, cursor, where } = params || {};
     const data = await this.prisma.user.findMany({
       skip,
       take,

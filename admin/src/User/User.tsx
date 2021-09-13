@@ -1,4 +1,24 @@
-import { Create, Edit, SimpleForm, TextInput, required } from "react-admin";
+import {
+  Create,
+  Edit,
+  SimpleForm,
+  TextInput,
+  required,
+  List,
+  Datagrid,
+  TextField,
+  EmailField,
+} from "react-admin";
+
+export const UserList = (props: any) => (
+  <List {...props} filters={UserFilter}>
+    <Datagrid rowClick="edit">
+      <TextField source="id" />
+      <EmailField source="email" />
+      <TextField source="hash" />
+    </Datagrid>
+  </List>
+);
 
 export const UserEdit = (props: any) => {
   return (
@@ -20,3 +40,7 @@ export const UserCreate = (props: any) => (
     </SimpleForm>
   </Create>
 );
+
+export const UserFilter = [
+  <TextInput label="Search on email" source="email" alwaysOn />,
+];

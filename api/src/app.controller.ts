@@ -163,7 +163,6 @@ export class AppController {
   @Get('game/:id')
   async getGameById(@Param('id') id: string): Promise<GameState> {
     const res = await this.gameService.getGame({ id: Number(id) });
-
     return this.gameService.deserializer(res);
   }
 
@@ -192,11 +191,16 @@ export class AppController {
           400,
         );
       }
+
+      const hash = await this.authService.hashPassword('1234');
+      console.log(`hash`, hash);
+
       return this.userService.createUser({
         email: 'adm@mrmlb.com',
-        hash: '$2y$10$232.rKLBowZhyb7QxkiJkeSar3lKR4fKL8y/34w2oOM9t.eyUnRUm',
+        hash,
       });
     } catch (e) {
+      console.log(e);
       throw new HttpException(
         "this is not the droids you're looking for...",
         400,

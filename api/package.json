@@ -29,6 +29,7 @@
     "@nestjs/platform-ws": "^8.0.6",
     "@nestjs/websockets": "^8.0.6",
     "@prisma/client": "^3.0.1",
+    "bcrypt": "^5.0.1",
     "dotenv": "^10.0.0",
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",

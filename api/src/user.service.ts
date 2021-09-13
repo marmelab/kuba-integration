@@ -17,8 +17,8 @@ export class UserService {
   async getUsers(params: {
     skip?: number;
     take?: number;
-    cursor?: Prisma.GameWhereUniqueInput;
-    where?: Prisma.GameWhereInput;
+    cursor?: Prisma.UserWhereUniqueInput;
+    where?: Prisma.UserWhereInput;
   }): Promise<User[]> {
     const { skip, take, cursor, where } = params;
     return this.prisma.user.findMany({
@@ -33,7 +33,7 @@ export class UserService {
     return this.prisma.user.create({ data });
   }
 
-  async updateGame(params: {
+  async updateUser(params: {
     where: Prisma.UserWhereUniqueInput;
     data: Prisma.UserUpdateInput;
   }): Promise<User> {
@@ -44,7 +44,7 @@ export class UserService {
     });
   }
 
-  async deleteGame(where: Prisma.UserWhereUniqueInput): Promise<User> {
+  async deleteUser(where: Prisma.UserWhereUniqueInput): Promise<User> {
     return this.prisma.user.delete({
       where,
     });

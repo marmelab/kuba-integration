@@ -1,5 +1,5 @@
 import { Player, GameState, GameChoice } from './types';
-import { PLAYER_ID } from './index';
+import { ACCES_TOKEN, PLAYER_ID } from './index';
 import { initGameView, renderGameView } from './blessed';
 import { GATEWAY_URL, URL } from './constants';
 import { GameError } from './error';
@@ -40,7 +40,7 @@ export const pullNewGame = async (playerNumber: number): Promise<GameState> => {
     const response = await fetch(`${URL}/startgame`, {
       method: 'POST',
       body: JSON.stringify({ playerNumber }),
-      headers: { 'Content-Type': 'application/json' },
+      headers: getHeaders(),
     });
     const jsonResp = await response.json();
     const gameState: GameState = jsonResp as GameState;
@@ -52,7 +52,11 @@ export const pullNewGame = async (playerNumber: number): Promise<GameState> => {
 
 export const pullGameState = async (): Promise<GameState> => {
   try {
-    const response = await fetch(`${URL}/gamestate`);
+    const response = await fetch(`${URL}/gamestate`,  
+    {
+      method: 'GET',
+      headers: getHeaders(),
+    });
     const jsonResp = await response.json();
     const gameState: GameState = jsonResp as GameState;
     return gameState;
@@ -63,7 +67,11 @@ export const pullGameState = async (): Promise<GameState> => {
 
 export const pullJoinGame = async (idGame: number): Promise<GameState> => {
   try {
-    const response = await fetch(`${URL}/joingame/${idGame}`);
+    const response = await fetch(`${URL}/joingame/${idGame}`, 
+    {
+      method: 'GET',
+      headers: getHeaders(),
+    });
     const jsonResp = await response.json();
     const gameState: GameState = jsonResp as GameState;
     return gameState;
@@ -79,7 +87,7 @@ export const pullGameStateChanged = async (
     const response = await fetch(`${URL}/gamestatehaschanged`, {
       method: 'POST',
       body: JSON.stringify(playerGameState),
-      headers: { 'Content-Type': 'application/json' },
+      headers: getHeaders(),
     });
 
     const jsonResp = await response.json();
@@ -99,7 +107,7 @@ export const pullCanMoveMarblePlayable = async (
     let response = await fetch(`${URL}/marbleplayable`, {
       method: 'POST',
       body: JSON.stringify({ gameState, direction, player }),
-      headers: { 'Content-Type': 'application/json' },
+      headers: getHeaders(),
     });
     response = status(response);
     const jsonResp = await response.json();
@@ -121,7 +129,7 @@ const moveMarble = async (
     let response = await fetch(`${URL}/movemarble`, {
       method: 'POST',
       body: JSON.stringify({ gameState, direction, player }),
-      headers: { 'Content-Type': 'application/json' },
+      headers: getHeaders(),
     });
 
     response = status(response);
@@ -169,7 +177,7 @@ export const postGameState = async (
     const response = await fetch(`${URL}/setgamestate`, {
       method: 'POST',
       body: JSON.stringify(gameState),
-      headers: { 'Content-Type': 'application/json' },
+      headers: getHeaders(),
     });
 
     const jsonResp = await response.json();
@@ -185,7 +193,7 @@ export const restartGame = async (gameId: number): Promise<GameState> => {
   try {
     const response = await fetch(`${URL}/restartgame/${gameId}`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getHeaders(),
     });
     const jsonResp = await response.json();
     const newGameState: GameState = jsonResp as GameState;
@@ -198,16 +206,16 @@ export const restartGame = async (gameId: number): Promise<GameState> => {
 export const login = async (
   email: string,
   password: string,
-): Promise<boolean> => {
+): Promise<{acces_token: string, id: number}> => {
   try {
     const response = await fetch(`${URL}/login`, {
       method: 'POST',
       body: JSON.stringify({ email, password }),
-      headers: { 'Content-Type': 'application/json' },
+      headers: getHeaders(),
     });
 
     const jsonResp = await response.json();
-    const userLogin: boolean = jsonResp as boolean;
+    const userLogin: {acces_token: string, id: number} = jsonResp as {acces_token: string, id: number};
 
     return userLogin;
   } catch (ex) {
@@ -220,4 +228,11 @@ const status = (res: Response) => {
     throw new GameError(res.statusText);
   }
   return res;
+};
+
+const getHeaders = () => {
+  return {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ' + ACCES_TOKEN,
+  };
 };

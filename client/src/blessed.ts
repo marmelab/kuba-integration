@@ -261,7 +261,7 @@ export const renderGameView = (gameState: GameState) => {
   SCREEN.render();
 };
 
-export const renderLogin = (): Promise<boolean> => {
+export const renderLogin = (): Promise<{acces_token: string, id: number}> => {
   return new Promise((resolve, reject) => {
     try {
       LOGIN_SCREEN = blessed.screen();
@@ -374,9 +374,9 @@ export const renderLogin = (): Promise<boolean> => {
           LOGIN_SCREEN.render();
 
           try {
-            const log = await login(email, password);
+            const resultLogin = await login(email, password);
             LOGIN_SCREEN.destroy();
-            resolve(log);
+            resolve(resultLogin);
           } catch (e) {
             reject(e);
           }

@@ -7,6 +7,7 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  NotFoundException,
 } from '@nestjs/common';
 import { AppGateway } from '../app.gateway';
 import { GameState, Player } from '../types';
@@ -34,7 +35,7 @@ export class GameStateController {
       const res = await this.gameStateService.getGame({ id });
       return this.gameStateService.deserializer(res);
     } catch (e) {
-      throw new HttpException("That game id doesn't exists", 400);
+      throw new NotFoundException("That game id doesn't exists");
     }
   }
 
@@ -44,7 +45,7 @@ export class GameStateController {
       const res = await this.gameStateService.getGame({ id });
       return this.gameStateService.deserializer(res);
     } catch (e) {
-      throw new HttpException("That game id doesn't exists", 400);
+      throw new NotFoundException("That game id doesn't exists");
     }
   }
 
@@ -55,7 +56,7 @@ export class GameStateController {
       this.gatewayService.emitGameState(gameState);
       return gameState;
     } catch (e) {
-      throw new HttpException("That game doesn't exists", 400);
+      throw new NotFoundException("That game doesn't exists");
     }
   }
 

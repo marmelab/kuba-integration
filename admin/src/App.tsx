@@ -1,6 +1,6 @@
 import { Admin, Resource } from "react-admin";
-import { dataProvider } from "./myDataProvider";
-import { UserCreate, UserEdit, UserList } from "./User/User";
+import { dataProvider } from "./dataProvider";
+import { UserCreate, UserEdit, UserList } from "./User";
 
 const App = () => (
   <Admin dataProvider={dataProvider}>

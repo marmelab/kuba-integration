@@ -37,7 +37,7 @@ export const startGame = async (
 
 export const pullNewGame = async (playerNumber: number): Promise<GameState> => {
   try {
-    const response = await fetch(`${URL}/game/start`, {
+    const response = await fetch(`${URL}/games`, {
       method: 'POST',
       body: JSON.stringify({ playerNumber }),
       headers: { 'Content-Type': 'application/json' },
@@ -52,7 +52,7 @@ export const pullNewGame = async (playerNumber: number): Promise<GameState> => {
 
 export const pullJoinGame = async (idGame: number): Promise<GameState> => {
   try {
-    const response = await fetch(`${URL}/game/join/${idGame}`);
+    const response = await fetch(`${URL}/games/join/${idGame}`);
     const jsonResp = await response.json();
     const gameState: GameState = jsonResp as GameState;
     return gameState;
@@ -67,7 +67,7 @@ export const pullCanMoveMarblePlayable = async (
   player: Player,
 ): Promise<boolean> => {
   try {
-    let response = await fetch(`${URL}/game/marble/is-playable`, {
+    let response = await fetch(`${URL}/games/marble/is-playable`, {
       method: 'POST',
       body: JSON.stringify({ gameState, direction, player }),
       headers: { 'Content-Type': 'application/json' },
@@ -89,7 +89,7 @@ const moveMarble = async (
   player: Player,
 ): Promise<GameState> => {
   try {
-    let response = await fetch(`${URL}/game/marble/move`, {
+    let response = await fetch(`${URL}/games/marble/move`, {
       method: 'POST',
       body: JSON.stringify({ gameState, direction, player }),
       headers: { 'Content-Type': 'application/json' },
@@ -137,7 +137,7 @@ export const postGameState = async (
   gameState: GameState,
 ): Promise<GameState> => {
   try {
-    const response = await fetch(`${URL}/game/${gameState.id}`, {
+    const response = await fetch(`${URL}/games/${gameState.id}`, {
       method: 'PUT',
       body: JSON.stringify(gameState),
       headers: { 'Content-Type': 'application/json' },
@@ -154,7 +154,7 @@ export const postGameState = async (
 
 export const restartGame = async (gameId: number): Promise<GameState> => {
   try {
-    const response = await fetch(`${URL}/game/restart/${gameId}`, {
+    const response = await fetch(`${URL}/games/restart/${gameId}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
     });

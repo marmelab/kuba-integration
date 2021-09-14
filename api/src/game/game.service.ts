@@ -528,4 +528,21 @@ export class GameService {
     }
     return willExitOwnMarble;
   };
+
+  restartGame = async (id: number): Promise<GameState> => {
+    try {
+      const clearedPlayers = this.initializePlayers();
+      const res = await this.updateGame({
+        where: { id },
+        data: {
+          board: JSON.stringify(INITIAL_BOARD),
+          players: JSON.stringify(clearedPlayers),
+          currentPlayer: 1,
+        },
+      });
+      return this.deserializer(res);
+    } catch (err) {
+      throw new HttpException("That game doesn't exists", 400);
+    }
+  };
 }

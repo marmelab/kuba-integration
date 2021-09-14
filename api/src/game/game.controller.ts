@@ -4,6 +4,7 @@ import {
   Get,
   HttpException,
   Param,
+  ParseIntPipe,
   Post,
   Put,
 } from '@nestjs/common';
@@ -12,23 +13,25 @@ import { GameState, Player } from '../types';
 import { GameService } from './game.service';
 import { INITIAL_BOARD } from '../constants';
 
-@Controller('game')
+@Controller('games')
 export class GameController {
   constructor(
     private readonly gameService: GameService,
     private gatewayService: AppGateway,
   ) {}
 
-  @Post('start')
+  @Post('')
   async createGame(): Promise<GameState> {
     const res = await this.gameService.createGame();
     return this.gameService.deserializer(res);
   }
 
   @Get(':id')
-  async getGameState(@Param('id') id: string): Promise<GameState> {
+  async getGameState(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<GameState> {
     try {
-      const res = await this.gameService.getGame({ id: Number(id) });
+      const res = await this.gameService.getGame({ id });
       return this.gameService.deserializer(res);
     } catch (e) {
       throw new HttpException("That game id doesn't exists", 400);
@@ -36,9 +39,9 @@ export class GameController {
   }
 
   @Get('join/:id')
-  async joinGame(@Param('id') id: string): Promise<GameState> {
+  async joinGame(@Param('id', ParseIntPipe) id: number): Promise<GameState> {
     try {
-      const res = await this.gameService.getGame({ id: Number(id) });
+      const res = await this.gameService.getGame({ id });
       return this.gameService.deserializer(res);
     } catch (e) {
       throw new HttpException("That game id doesn't exists", 400);
@@ -46,21 +49,9 @@ export class GameController {
   }
 
   @Post('restart/:id')
-  async restartGame(@Param('id') id: string): Promise<GameState> {
-    if (!Number(id)) {
-      throw new HttpException('Please give a valid id', 400);
-    }
+  async restartGame(@Param('id', ParseIntPipe) id: number): Promise<GameState> {
     try {
-      const clearedPlayers = this.gameService.initializePlayers();
-      const res = await this.gameService.updateGame({
-        where: { id: Number(id) },
-        data: {
-          board: JSON.stringify(INITIAL_BOARD),
-          players: JSON.stringify(clearedPlayers),
-          currentPlayer: 1,
-        },
-      });
-      const gameState = this.gameService.deserializer(res);
+      const gameState = await this.gameService.restartGame(id);
       this.gatewayService.emitGameState(gameState);
       return gameState;
     } catch (e) {

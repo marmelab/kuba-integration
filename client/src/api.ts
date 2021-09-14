@@ -154,7 +154,7 @@ export const postGameState = async (
 
 export const restartGame = async (gameId: number): Promise<GameState> => {
   try {
-    const response = await fetch(`${URL}/games/restart/${gameId}`, {
+    const response = await fetch(`${URL}/games/${gameId}/restart`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
     });

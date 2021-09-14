@@ -48,7 +48,7 @@ export class GameStateController {
     }
   }
 
-  @Post('restart/:id')
+  @Post(':id/restart')
   async restartGame(@Param('id', ParseIntPipe) id: number): Promise<GameState> {
     try {
       const gameState = await this.gameStateService.restartGame(id);

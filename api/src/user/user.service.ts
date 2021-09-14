@@ -19,15 +19,17 @@ export class UserService {
     take?: number;
     cursor?: Prisma.UserWhereUniqueInput;
     where?: Prisma.UserWhereInput;
+    orderBy?: Prisma.UserOrderByWithAggregationInput;
   }): Promise<{ data: User[]; total: number }> {
-    const { skip, take, cursor, where } = params || {};
+    const { skip, take, cursor, where, orderBy } = params || {};
     const data = await this.prisma.user.findMany({
       skip,
       take,
       cursor,
       where,
+      orderBy,
     });
-    const total = await this.prisma.user.count();
+    const total = await this.prisma.user.count({ where });
     return { data, total };
   }
 

@@ -18,7 +18,11 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get()
-  async getUsers(@Query('filter') filter: string) {
+  async getUsers(
+    @Query('filter') filter: string,
+    @Query('sort') sort: string,
+    @Query('range') range: string,
+  ) {
     let params;
     const filters = JSON.parse(filter);
     if (filters.email) {
@@ -30,6 +34,26 @@ export class UserController {
         },
       };
     }
+
+    const rangeNumber = JSON.parse(range) as number[];
+    if (rangeNumber) {
+      params = {
+        ...params,
+        take: rangeNumber[1] - rangeNumber[0],
+        skip: rangeNumber[0],
+      };
+    }
+
+    const sortParsed = JSON.parse(sort);
+    if (sortParsed) {
+      params = {
+        ...params,
+        orderBy: {
+          [sortParsed[0]]: sortParsed[1].toLowerCase(),
+        }
+      };
+    }
+    
     const users = await this.userService.getUsers(params);
     return users;
   }

@@ -70,15 +70,9 @@ export const pullCanMoveMarblePlayable = async (
   player: Player,
 ): Promise<boolean> => {
   try {
-    let response = await fetch(`${URL}/games/${gameState.id}/authorized-move`, {
-      method: 'POST',
-      body: JSON.stringify({
-        marbleClicked: gameState.marbleClicked,
-        direction,
-        player,
-      }),
-      headers: { 'Content-Type': 'application/json' },
-    });
+    let response = await fetch(
+      `${URL}/games/${gameState.id}/authorized-move?player=${player.playerNumber}&direction=${direction}`,
+    );
     response = status(response);
     const jsonResp = await response.json();
 

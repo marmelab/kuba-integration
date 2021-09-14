@@ -198,12 +198,9 @@ export class GameStateService {
 
   async isMarblePlayable(
     id: number,
-    marbleClicked: Node,
     direction: string,
-    player: Player,
+    playerId: number,
   ): Promise<Boolean> {
-    const marbleClickedCoordinates = `${marbleClicked.x},${marbleClicked.y}`;
-
     let serializedGameState: Game;
     try {
       serializedGameState = await this.getGame({ id });
@@ -212,6 +209,8 @@ export class GameStateService {
     }
 
     const currentGameState = this.deserializer(serializedGameState);
+    const marbleClickedCoordinates = `${currentGameState.marbleClicked.x},${currentGameState.marbleClicked.y}`;
+    const player = currentGameState.players[playerId - 1];
 
     try {
       this.checkMoveMarbleInDirection(

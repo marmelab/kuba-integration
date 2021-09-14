@@ -4,6 +4,7 @@ import {
   Get,
   HttpException,
   Param,
+  Query,
   ParseIntPipe,
   Post,
   Put,
@@ -96,19 +97,13 @@ export class GameStateController {
   @Get(':id/authorized-move')
   isAnAuthorizedMove(
     @Param('id', ParseIntPipe) id: number,
-    @Body('marbleClicked') marbleClicked: Node,
-    @Body('player') player: Player,
-    @Body('direction') direction: string,
+    @Query('player', ParseIntPipe) player: number,
+    @Query('direction') direction: string,
   ): Promise<Boolean> {
-    if (!marbleClicked || !player || !direction) {
+    if (!player || !direction) {
       throw new BadRequestException('Argument is missing');
     }
-    return this.gameStateService.isMarblePlayable(
-      id,
-      marbleClicked,
-      direction,
-      player,
-    );
+    return this.gameStateService.isMarblePlayable(id, direction, player);
   }
 
   @Post(':id/move-marble')

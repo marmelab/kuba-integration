@@ -5,18 +5,16 @@ services:
     container_name: kuba_admin_container
     image: node  
     volumes: 
-      - ./admin:/admin
-    working_dir: /admin
-    command: bash -c "yarn && yarn start"
+      - ./:/kuba
+    command: bash -c "cd kuba && yarn && cd admin && yarn start"
     ports: 
       - '3001:3001' 
   api:
     container_name: kuba_api_container
     image: node  
     volumes: 
-      - ./api:/api
-    working_dir: /api
-    command: bash -c "yarn && npx prisma migrate dev --name init && yarn start:dev"
+      - ./:/kuba
+    command: bash -c "cd kuba && yarn && cd api && npx prisma migrate dev --name init && yarn start:dev"
     ports: 
       - '3000:3000' 
   db:

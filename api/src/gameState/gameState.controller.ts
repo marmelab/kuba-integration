@@ -13,6 +13,7 @@ import { AppGateway } from '../app.gateway';
 import { GameState, Player } from '../types';
 import { GameStateService } from './gameState.service';
 import { INITIAL_BOARD } from '../constants';
+import { Game } from '@prisma/client';
 
 @Controller('games')
 export class GameStateController {
@@ -31,43 +32,52 @@ export class GameStateController {
   async getGameState(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<GameState> {
+    let res: Game;
     try {
-      const res = await this.gameStateService.getGame({ id });
-      return this.gameStateService.deserializer(res);
-    } catch (e) {
+      res = await this.gameStateService.getGame({ id });
+    } catch (error) {
       throw new NotFoundException("That game id doesn't exists");
     }
+    return this.gameStateService.deserializer(res);
   }
 
   @Put(':id/join')
   async joinGame(@Param('id', ParseIntPipe) id: number): Promise<GameState> {
+    let res: Game;
     try {
       const res = await this.gameStateService.getGame({ id });
-      return this.gameStateService.deserializer(res);
     } catch (e) {
       throw new NotFoundException("That game id doesn't exists");
     }
+    return this.gameStateService.deserializer(res);
   }
 
   @Post(':id/restart')
   async restartGame(@Param('id', ParseIntPipe) id: number): Promise<GameState> {
+    let gameState: GameState;
     try {
-      const gameState = await this.gameStateService.restartGame(id);
-      this.gatewayService.emitGameState(gameState);
-      return gameState;
+      gameState = await this.gameStateService.restartGame(id);
     } catch (e) {
       throw new NotFoundException("That game doesn't exists");
     }
+
+    this.gatewayService.emitGameState(gameState);
+    return gameState;
   }
 
   @Put(':id')
   async setGameState(@Body() gameState: GameState): Promise<GameState> {
-    const res = await this.gameStateService.updateGame({
-      where: { id: gameState.id },
-      data: {
-        ...this.gameStateService.serializer(gameState),
-      },
-    });
+    let res: Game;
+    try {
+      const res = await this.gameStateService.updateGame({
+        where: { id: gameState.id },
+        data: {
+          ...this.gameStateService.serializer(gameState),
+        },
+      });
+    } catch (error) {
+      throw new Error('unable to update the game');
+    }
 
     this.gatewayService.emitGameState(gameState);
     return this.gameStateService.deserializer(res);

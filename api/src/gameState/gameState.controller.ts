@@ -87,16 +87,22 @@ export class GameStateController {
     return gameState;
   }
 
-  @Post('marble/is-playable')
-  isMarblePlayable(
-    @Body('gameState') gameState: GameState,
+  @Post(':id/authorizedmove')
+  isAnAuthorizedMove(
+    @Param('id', ParseIntPipe) id: number,
+    @Body('marbleClicked') marbleClicked: Node,
     @Body('player') player: Player,
     @Body('direction') direction: string,
-  ): Boolean {
-    if (!gameState || !player || !direction) {
+  ): Promise<Boolean> {
+    if (!marbleClicked || !player || !direction) {
       throw new HttpException('Argument is missing', 400);
     }
-    return this.gameStateService.isMarblePlayable(gameState, direction, player);
+    return this.gameStateService.isMarblePlayable(
+      id,
+      marbleClicked,
+      direction,
+      player,
+    );
   }
 
   @Post(':id/move')

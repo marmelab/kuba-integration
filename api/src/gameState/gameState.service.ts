@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { Game, Prisma } from '@prisma/client';
 import {
@@ -196,16 +196,27 @@ export class GameStateService {
     return neutralMarbles === 7 || otherPlayerMarbles === 8;
   };
 
-  isMarblePlayable(
-    gameState: GameState,
+  async isMarblePlayable(
+    id: number,
+    marbleClicked: Node,
     direction: string,
     player: Player,
-  ): Boolean {
-    const marbleClickedCoordinates = `${gameState.marbleClicked.x},${gameState.marbleClicked.y}`;
+  ): Promise<Boolean> {
+    const marbleClickedCoordinates = `${marbleClicked.x},${marbleClicked.y}`;
+
+    let serializedGameState: Game;
+    try {
+      serializedGameState = await this.getGame({ id });
+    } catch (error) {
+      throw new NotFoundException('Game not found');
+    }
+
+    const currentGameState = this.deserializer(serializedGameState);
+
     try {
       this.checkMoveMarbleInDirection(
-        gameState.currentPlayerId,
-        gameState.graph,
+        currentGameState.currentPlayerId,
+        currentGameState.graph,
         marbleClickedCoordinates,
         direction,
         player,

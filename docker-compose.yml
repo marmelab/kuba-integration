@@ -4,6 +4,7 @@ services:
   admin:
     container_name: kuba_admin_container
     image: node  
+    user: ${CURRENT_UID}
     volumes: 
       - ./:/kuba
     command: bash -c "cd kuba && yarn && cd admin && yarn start"
@@ -12,6 +13,7 @@ services:
   api:
     container_name: kuba_api_container
     image: node  
+    user: ${CURRENT_UID}
     volumes: 
       - ./:/kuba
     command: bash -c "cd kuba && yarn && cd api && npx prisma migrate dev --name init && yarn start:dev"

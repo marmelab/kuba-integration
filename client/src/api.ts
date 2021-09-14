@@ -96,7 +96,7 @@ const moveMarble = async (
   player: Player,
 ): Promise<GameState> => {
   try {
-    let response = await fetch(`${URL}/games/${gameState.id}/move`, {
+    let response = await fetch(`${URL}/games/${gameState.id}/move-marble`, {
       method: 'POST',
       body: JSON.stringify({
         coordinates: {

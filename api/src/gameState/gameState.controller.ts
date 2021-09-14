@@ -8,6 +8,9 @@ import {
   Post,
   Put,
   NotFoundException,
+  HttpStatus,
+  BadRequestException,
+  ConflictException,
 } from '@nestjs/common';
 import { AppGateway } from '../app.gateway';
 import { GameState, Player, Node } from '../types';
@@ -36,7 +39,7 @@ export class GameStateController {
     try {
       res = await this.gameStateService.getGame({ id });
     } catch (error) {
-      throw new NotFoundException("That game id doesn't exists");
+      throw new NotFoundException("That game doesn't exists");
     }
     return this.gameStateService.deserializer(res);
   }
@@ -47,7 +50,7 @@ export class GameStateController {
     try {
       res = await this.gameStateService.getGame({ id });
     } catch (e) {
-      throw new NotFoundException("That game id doesn't exists");
+      throw new NotFoundException("That game doesn't exists");
     }
     const gameState: GameState = this.gameStateService.deserializer(res);
     return gameState;
@@ -59,7 +62,7 @@ export class GameStateController {
     try {
       gameState = await this.gameStateService.restartGame(id);
     } catch (e) {
-      throw new NotFoundException("That game doesn't exists");
+      throw new NotFoundException("This game doesn't exists");
     }
 
     this.gatewayService.emitGameState(gameState);
@@ -80,14 +83,17 @@ export class GameStateController {
         },
       });
     } catch (error) {
-      throw new Error('unable to update the game');
+      throw new HttpException(
+        'unable to update the game',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
     const gameState = this.gameStateService.deserializer(res);
     this.gatewayService.emitGameState(gameState);
     return gameState;
   }
 
-  @Post(':id/authorized-move')
+  @Get(':id/authorized-move')
   isAnAuthorizedMove(
     @Param('id', ParseIntPipe) id: number,
     @Body('marbleClicked') marbleClicked: Node,
@@ -95,7 +101,7 @@ export class GameStateController {
     @Body('direction') direction: string,
   ): Promise<Boolean> {
     if (!marbleClicked || !player || !direction) {
-      throw new HttpException('Argument is missing', 400);
+      throw new BadRequestException('Argument is missing');
     }
     return this.gameStateService.isMarblePlayable(
       id,
@@ -105,7 +111,7 @@ export class GameStateController {
     );
   }
 
-  @Post(':id/move')
+  @Post(':id/move-marble')
   async moveMarble(
     @Param('id', ParseIntPipe) id: number,
     @Body('coordinates') coordinates: { x: number; y: number },
@@ -113,7 +119,7 @@ export class GameStateController {
     @Body('direction') direction: string,
   ): Promise<GameState> {
     if (!coordinates || !player || !direction) {
-      throw new HttpException('Argument is missing', 400);
+      throw new HttpException('Argument is missing', HttpStatus.BAD_REQUEST);
     }
 
     let newGameState: GameState;
@@ -126,7 +132,7 @@ export class GameStateController {
         player,
       );
     } catch (error) {
-      throw new HttpException(error, 500);
+      throw new ConflictException(error);
     }
 
     try {
@@ -137,7 +143,10 @@ export class GameStateController {
         },
       });
     } catch (error) {
-      throw new Error('unable to update the game');
+      throw new HttpException(
+        'unable to update the game',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
 
     this.gatewayService.emitGameState(newGameState);

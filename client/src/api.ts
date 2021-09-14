@@ -70,7 +70,7 @@ export const pullCanMoveMarblePlayable = async (
   player: Player,
 ): Promise<boolean> => {
   try {
-    let response = await fetch(`${URL}/games/${gameState.id}/authorizedmove`, {
+    let response = await fetch(`${URL}/games/${gameState.id}/authorized-move`, {
       method: 'POST',
       body: JSON.stringify({
         marbleClicked: gameState.marbleClicked,
@@ -151,11 +151,14 @@ export const postMarbleClicked = async (
   gameState: GameState,
 ): Promise<GameState> => {
   try {
-    const response = await fetch(`${URL}/games/${gameState.id}/marbleclicked`, {
-      method: 'PUT',
-      body: JSON.stringify({ marbleClicked: gameState.marbleClicked }),
-      headers: { 'Content-Type': 'application/json' },
-    });
+    const response = await fetch(
+      `${URL}/games/${gameState.id}/marble-clicked`,
+      {
+        method: 'PUT',
+        body: JSON.stringify({ marbleClicked: gameState.marbleClicked }),
+        headers: { 'Content-Type': 'application/json' },
+      },
+    );
 
     const jsonResp = await response.json();
     const newGameState: GameState = jsonResp as GameState;

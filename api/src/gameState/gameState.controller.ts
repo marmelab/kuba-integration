@@ -66,7 +66,7 @@ export class GameStateController {
     return gameState;
   }
 
-  @Put(':id/marbleclicked')
+  @Put(':id/marble-clicked')
   async setMarbleClicked(
     @Param('id', ParseIntPipe) id: number,
     @Body('marbleClicked') marbleClicked: Node,
@@ -87,7 +87,7 @@ export class GameStateController {
     return gameState;
   }
 
-  @Post(':id/authorizedmove')
+  @Post(':id/authorized-move')
   isAnAuthorizedMove(
     @Param('id', ParseIntPipe) id: number,
     @Body('marbleClicked') marbleClicked: Node,

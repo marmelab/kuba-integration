@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  admin:
+    container_name: kuba_admin_container
+    image: node  
+    volumes: 
+      - ./admin:/admin
+    working_dir: /admin
+    command: bash -c "yarn && yarn start"
+    ports: 
+      - '3001:3001' 
+  api:
+    container_name: kuba_api_container
+    image: node  
+    volumes: 
+      - ./api:/api
+    working_dir: /api
+    command: bash -c "yarn && npx prisma migrate dev --name init && yarn start:dev"
+    ports: 
+      - '3000:3000' 
+  db:
+    container_name: postgres_container
+    image: postgres
+    restart: always
+    env_file:
+      - ../kubapostgres.env
+    ports:
+      - '5432:5432'

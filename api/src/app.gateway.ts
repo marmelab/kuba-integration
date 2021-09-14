@@ -32,14 +32,14 @@ export class AppGateway
   }
 
   afterInit() {
-    console.log('init Gateway');
+    console.info('init Gateway');
   }
 
   handleDisconnect() {
-    console.log('disconnect Gateway');
+    console.info('disconnect Gateway');
   }
 
   handleConnection() {
-    console.log('connect Gateway');
+    console.info('connect Gateway');
   }
 }

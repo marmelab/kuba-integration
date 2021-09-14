@@ -52,7 +52,10 @@ export const pullNewGame = async (playerNumber: number): Promise<GameState> => {
 
 export const pullJoinGame = async (idGame: number): Promise<GameState> => {
   try {
-    const response = await fetch(`${URL}/games/join/${idGame}`);
+    const response = await fetch(`${URL}/games/${idGame}/join`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+    });
     const jsonResp = await response.json();
     const gameState: GameState = jsonResp as GameState;
     return gameState;
@@ -89,9 +92,16 @@ const moveMarble = async (
   player: Player,
 ): Promise<GameState> => {
   try {
-    let response = await fetch(`${URL}/games/marble/move`, {
+    let response = await fetch(`${URL}/games/${gameState.id}/move`, {
       method: 'POST',
-      body: JSON.stringify({ gameState, direction, player }),
+      body: JSON.stringify({
+        coordinates: {
+          x: gameState.marbleClicked.x,
+          y: gameState.marbleClicked.y,
+        },
+        direction,
+        player,
+      }),
       headers: { 'Content-Type': 'application/json' },
     });
 
@@ -125,11 +135,30 @@ export const pullActions = async (
         const newGameState = await moveMarble(gameState, direction, player);
         renderGameView(newGameState);
       } catch (e) {
-        console.log("Can't move this marble", e);
+        console.error("Can't move this marble", e);
       }
     }
   } catch (e) {
-    console.log(e);
+    console.error(e);
+  }
+};
+
+export const postMarbleClicked = async (
+  gameState: GameState,
+): Promise<GameState> => {
+  try {
+    const response = await fetch(`${URL}/games/${gameState.id}/marbleclicked`, {
+      method: 'PUT',
+      body: JSON.stringify({ marbleClicked: gameState.marbleClicked }),
+      headers: { 'Content-Type': 'application/json' },
+    });
+
+    const jsonResp = await response.json();
+    const newGameState: GameState = jsonResp as GameState;
+
+    return newGameState;
+  } catch (ex) {
+    throw new GameError('Unable to call the function postMarbleClicked');
   }
 };
 

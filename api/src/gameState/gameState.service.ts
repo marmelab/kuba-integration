@@ -219,7 +219,6 @@ export class GameStateService {
 
   async moveMarble(
     id: number,
-    graph: Graph,
     coordinates: { x: number; y: number },
     direction: string,
     player: Player,
@@ -230,7 +229,11 @@ export class GameStateService {
     if (currentGameState.currentPlayerId !== player.playerNumber) {
       throw new Error('This is the other player turn, please be patient');
     }
-    const newGraph = this.moveMarbleInDirection(graph, coordinates, direction);
+    const newGraph = this.moveMarbleInDirection(
+      currentGameState.graph,
+      coordinates,
+      direction,
+    );
     const marbleWon = this.getMarbleWonByPlayer(newGraph);
     this.sanitizeGraph(newGraph);
 

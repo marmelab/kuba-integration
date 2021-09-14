@@ -10,7 +10,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { AppGateway } from '../app.gateway';
-import { GameState, Player } from '../types';
+import { GameState, Player, Node } from '../types';
 import { GameStateService } from './gameState.service';
 import { INITIAL_BOARD } from '../constants';
 import { Game } from '@prisma/client';
@@ -45,11 +45,12 @@ export class GameStateController {
   async joinGame(@Param('id', ParseIntPipe) id: number): Promise<GameState> {
     let res: Game;
     try {
-      const res = await this.gameStateService.getGame({ id });
+      res = await this.gameStateService.getGame({ id });
     } catch (e) {
       throw new NotFoundException("That game id doesn't exists");
     }
-    return this.gameStateService.deserializer(res);
+    const gameState: GameState = this.gameStateService.deserializer(res);
+    return gameState;
   }
 
   @Post(':id/restart')
@@ -65,22 +66,25 @@ export class GameStateController {
     return gameState;
   }
 
-  @Put(':id')
-  async setGameState(@Body() gameState: GameState): Promise<GameState> {
+  @Put(':id/marbleclicked')
+  async setMarbleClicked(
+    @Param('id', ParseIntPipe) id: number,
+    @Body('marbleClicked') marbleClicked: Node,
+  ) {
     let res: Game;
     try {
-      const res = await this.gameStateService.updateGame({
-        where: { id: gameState.id },
+      res = await this.gameStateService.updateGame({
+        where: { id },
         data: {
-          ...this.gameStateService.serializer(gameState),
+          marbleClicked: JSON.stringify(marbleClicked),
         },
       });
     } catch (error) {
       throw new Error('unable to update the game');
     }
-
+    const gameState = this.gameStateService.deserializer(res);
     this.gatewayService.emitGameState(gameState);
-    return this.gameStateService.deserializer(res);
+    return gameState;
   }
 
   @Post('marble/is-playable')
@@ -95,41 +99,42 @@ export class GameStateController {
     return this.gameStateService.isMarblePlayable(gameState, direction, player);
   }
 
-  @Post('marble/move')
+  @Post(':id/move')
   async moveMarble(
-    @Body('gameState') gameState: GameState,
+    @Param('id', ParseIntPipe) id: number,
+    @Body('coordinates') coordinates: { x: number; y: number },
     @Body('player') player: Player,
     @Body('direction') direction: string,
   ): Promise<GameState> {
-    if (!gameState || !player || !direction) {
+    if (!coordinates || !player || !direction) {
       throw new HttpException('Argument is missing', 400);
     }
 
-    const coordinates = {
-      x: gameState.marbleClicked.x,
-      y: gameState.marbleClicked.y,
-    };
+    let newGameState: GameState;
 
     try {
-      const newGameState = await this.gameStateService.moveMarble(
-        gameState.id,
-        gameState.graph,
+      newGameState = await this.gameStateService.moveMarble(
+        id,
         coordinates,
         direction,
         player,
       );
+    } catch (error) {
+      throw new HttpException(error, 500);
+    }
 
+    try {
       await this.gameStateService.updateGame({
         where: { id: newGameState.id },
         data: {
           ...this.gameStateService.serializer(newGameState),
         },
       });
-
-      this.gatewayService.emitGameState(newGameState);
-      return newGameState;
     } catch (error) {
-      throw new HttpException(error, 500);
+      throw new Error('unable to update the game');
     }
+
+    this.gatewayService.emitGameState(newGameState);
+    return newGameState;
   }
 }

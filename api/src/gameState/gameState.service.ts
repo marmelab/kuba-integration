@@ -14,7 +14,7 @@ import { INITIAL_BOARD, INVERSE_DIRECTION, ALPHABET } from '../constants';
 import { CantMoveError, UserPositionError } from 'src/error';
 
 @Injectable()
-export class GameService {
+export class GameStateService {
   constructor(private prisma: PrismaService) {}
 
   async getGame(
@@ -542,7 +542,7 @@ export class GameService {
       });
       return this.deserializer(res);
     } catch (err) {
-      throw new HttpException("That game doesn't exists", 400);
+      throw new Error("That game doesn't exists");
     }
   };
 }

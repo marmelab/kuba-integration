@@ -10,20 +10,20 @@ import {
 } from '@nestjs/common';
 import { AppGateway } from '../app.gateway';
 import { GameState, Player } from '../types';
-import { GameService } from './game.service';
+import { GameStateService } from './gameState.service';
 import { INITIAL_BOARD } from '../constants';
 
 @Controller('games')
-export class GameController {
+export class GameStateController {
   constructor(
-    private readonly gameService: GameService,
+    private readonly gameStateService: GameStateService,
     private gatewayService: AppGateway,
   ) {}
 
   @Post('')
   async createGame(): Promise<GameState> {
-    const res = await this.gameService.createGame();
-    return this.gameService.deserializer(res);
+    const res = await this.gameStateService.createGame();
+    return this.gameStateService.deserializer(res);
   }
 
   @Get(':id')
@@ -31,18 +31,18 @@ export class GameController {
     @Param('id', ParseIntPipe) id: number,
   ): Promise<GameState> {
     try {
-      const res = await this.gameService.getGame({ id });
-      return this.gameService.deserializer(res);
+      const res = await this.gameStateService.getGame({ id });
+      return this.gameStateService.deserializer(res);
     } catch (e) {
       throw new HttpException("That game id doesn't exists", 400);
     }
   }
 
-  @Get('join/:id')
+  @Put(':id/join')
   async joinGame(@Param('id', ParseIntPipe) id: number): Promise<GameState> {
     try {
-      const res = await this.gameService.getGame({ id });
-      return this.gameService.deserializer(res);
+      const res = await this.gameStateService.getGame({ id });
+      return this.gameStateService.deserializer(res);
     } catch (e) {
       throw new HttpException("That game id doesn't exists", 400);
     }
@@ -51,7 +51,7 @@ export class GameController {
   @Post('restart/:id')
   async restartGame(@Param('id', ParseIntPipe) id: number): Promise<GameState> {
     try {
-      const gameState = await this.gameService.restartGame(id);
+      const gameState = await this.gameStateService.restartGame(id);
       this.gatewayService.emitGameState(gameState);
       return gameState;
     } catch (e) {
@@ -61,15 +61,15 @@ export class GameController {
 
   @Put(':id')
   async setGameState(@Body() gameState: GameState): Promise<GameState> {
-    const res = await this.gameService.updateGame({
+    const res = await this.gameStateService.updateGame({
       where: { id: gameState.id },
       data: {
-        ...this.gameService.serializer(gameState),
+        ...this.gameStateService.serializer(gameState),
       },
     });
 
     this.gatewayService.emitGameState(gameState);
-    return this.gameService.deserializer(res);
+    return this.gameStateService.deserializer(res);
   }
 
   @Post('marble/is-playable')
@@ -81,7 +81,7 @@ export class GameController {
     if (!gameState || !player || !direction) {
       throw new HttpException('Argument is missing', 400);
     }
-    return this.gameService.isMarblePlayable(gameState, direction, player);
+    return this.gameStateService.isMarblePlayable(gameState, direction, player);
   }
 
   @Post('marble/move')
@@ -100,7 +100,7 @@ export class GameController {
     };
 
     try {
-      const newGameState = await this.gameService.moveMarble(
+      const newGameState = await this.gameStateService.moveMarble(
         gameState.id,
         gameState.graph,
         coordinates,
@@ -108,10 +108,10 @@ export class GameController {
         player,
       );
 
-      await this.gameService.updateGame({
+      await this.gameStateService.updateGame({
         where: { id: newGameState.id },
         data: {
-          ...this.gameService.serializer(newGameState),
+          ...this.gameStateService.serializer(newGameState),
         },
       });
 

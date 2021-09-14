@@ -10,7 +10,6 @@ import {
   Put,
   Query,
 } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
 import { UserService } from './user.service';
 
 @Controller('user')
@@ -24,51 +23,66 @@ export class UserController {
     @Query('range') range: string,
   ) {
     let params;
-    const filters = JSON.parse(filter);
-    if (filters.email) {
-      params = {
-        where: {
-          email: {
-            contains: filters.email,
-          },
-        },
-      };
-    }
 
-    const rangeNumber = JSON.parse(range) as number[];
-    if (rangeNumber) {
-      params = {
-        ...params,
-        take: rangeNumber[1] - rangeNumber[0],
-        skip: rangeNumber[0],
-      };
-    }
-
-    const sortParsed = JSON.parse(sort);
-    if (sortParsed) {
-      params = {
-        ...params,
-        orderBy: {
-          [sortParsed[0]]: sortParsed[1].toLowerCase(),
+    if (filter) {
+      try {
+        const filters = JSON.parse(filter);
+        if (filters.email) {
+          params = {
+            where: {
+              email: {
+                contains: filters.email,
+              },
+            },
+          };
         }
-      };
+      } catch (e) {
+        throw new HttpException('Incorrect filter parameter', 400);
+      }
     }
-    
+
+    if (range) {
+      try {
+        const rangeNumber = JSON.parse(range) as number[];
+        if (rangeNumber) {
+          params = {
+            ...params,
+            take: rangeNumber[1] - rangeNumber[0],
+            skip: rangeNumber[0],
+          };
+        }
+      } catch (e) {
+        throw new HttpException('Incorrect range parameter', 400);
+      }
+    }
+
+    if (sort) {
+      try {
+        const sortParsed = JSON.parse(sort);
+        if (sortParsed) {
+          params = {
+            ...params,
+            orderBy: {
+              [sortParsed[0]]: sortParsed[1].toLowerCase(),
+            },
+          };
+        }
+      } catch (e) {
+        throw new HttpException('Incorrect sort parameter', 400);
+      }
+    }
+
     const users = await this.userService.getUsers(params);
     return users;
   }
 
   @Get(':id')
   async getUser(@Param('id', ParseIntPipe) id: number) {
-    if (!id) {
-      throw new HttpException('Missing parameter', 400);
-    }
-    const user = await this.userService.getUser({ id });
-    return user;
+    return this.userService.getUser({ id });
   }
 
   @Post()
-  async createuser(
+  async createUser(
     @Body('email') email: string,
     @Body('password') password: string,
   ) {
@@ -76,12 +90,10 @@ export class UserController {
       throw new HttpException("Something's wrong with your credentials ", 400);
     }
 
-    const createdUser = await this.userService.createUser({
+    return this.userService.createUser({
       email,
       hash: password,
     });
-
-    return createdUser;
   }
 
   @Put(':id')
@@ -91,15 +103,13 @@ export class UserController {
     @Body('hash') hash: string,
   ) {
     if (!email || !hash) {
-      throw new HttpException("Something's wrong with your credentials ", 400);
+      throw new HttpException('Missing parameter', 400);
     }
 
-    const updatedUser = await this.userService.updateUser({
+    return this.userService.updateUser({
       where: { id },
       data: { email, hash },
     });
-
-    return updatedUser;
   }
 
   @Delete(':id')
@@ -108,8 +118,7 @@ export class UserController {
       throw new HttpException('Missing parameter', 400);
     }
 
-    const deletedUser = await this.userService.deleteUser({ id });
-    return deletedUser;
+    return this.userService.deleteUser({ id });
   }
 
   @Delete()
@@ -118,9 +127,6 @@ export class UserController {
       throw new HttpException('Missing parameter', 400);
     }
 
-    const deletedUser = await this.userService.deleteManyUser(
-      JSON.parse(filter).id,
-    );
-    return deletedUser;
+    return this.userService.deleteManyUser(JSON.parse(filter).id);
   }
 }

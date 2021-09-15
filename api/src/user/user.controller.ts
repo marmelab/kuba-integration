@@ -9,13 +9,16 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Get()
   async getUsers(
     @Query('filter') filter: string,
@@ -76,6 +79,7 @@ export class UserController {
     return users;
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
   async getUser(@Param('id', ParseIntPipe) id: number) {
     return this.userService.getUser({ id });
@@ -89,13 +93,10 @@ export class UserController {
     if (!email || !password) {
       throw new HttpException("Something's wrong with your credentials ", 400);
     }
-
-    return this.userService.createUser({
-      email,
-      hash: password,
-    });
+    return this.userService.createUser(email, password);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Put(':id')
   async putUser(
     @Param('id', ParseIntPipe) id: number,
@@ -112,6 +113,7 @@ export class UserController {
     });
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   async deleteUser(@Param('id', ParseIntPipe) id: number) {
     if (!id) {
@@ -121,6 +123,7 @@ export class UserController {
     return this.userService.deleteUser({ id });
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete()
   async deleteUsers(@Query('filter') filter: any) {
     if (!filter) {

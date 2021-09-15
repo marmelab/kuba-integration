@@ -1,19 +1,24 @@
-import { Injectable } from '@nestjs/common';
-import { UserService } from '../user.service';
+import {
+  HttpException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
-import { bcryptSalt, saltRounds } from './constants';
+import { saltRounds } from './constants';
 const bcrypt = require('bcrypt');
+
 @Injectable()
 export class AuthService {
   constructor(
     private userService: UserService,
-    private jwtService: JwtService,
+    private readonly jwtService: JwtService,
   ) {}
 
   async validateUser(email: string, pass: string): Promise<any> {
     const user = await this.userService.getUser({ email: email });
     if (user) {
-      const resp = bcrypt.compare(pass, user.hash);
+      const resp = await bcrypt.compare(pass, user.hash);
       if (resp) {
         const { hash, ...result } = user;
         return result;
@@ -28,19 +33,5 @@ export class AuthService {
       access_token: this.jwtService.sign(payload),
       id: user.id,
     };
-  }
-
-  async genSalt(): Promise<string> {
-    return await bcrypt.genSalt(Number(saltRounds));
-  }
-
-  async hashPassword(pass: string, salt: string): Promise<any> {
-    try {
-      const salt = await bcrypt.genSalt(Number(saltRounds));
-      const hash = await bcrypt.hash(pass, salt);
-      return hash;
-    } catch (error) {
-      console.log(`error in haspass`, error);
-    }
   }
 }

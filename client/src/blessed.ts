@@ -261,7 +261,10 @@ export const renderGameView = (gameState: GameState) => {
   SCREEN.render();
 };
 
-export const renderLogin = (): Promise<{acces_token: string, id: number}> => {
+export const renderLogin = (): Promise<{
+  access_token: string;
+  id: number;
+}> => {
   return new Promise((resolve, reject) => {
     try {
       LOGIN_SCREEN = blessed.screen();
@@ -375,8 +378,10 @@ export const renderLogin = (): Promise<{acces_token: string, id: number}> => {
 
           try {
             const resultLogin = await login(email, password);
-            LOGIN_SCREEN.destroy();
-            resolve(resultLogin);
+            if (resultLogin.statusCode === 201) {
+              LOGIN_SCREEN.destroy();
+              resolve(resultLogin);
+            }
           } catch (e) {
             reject(e);
           }

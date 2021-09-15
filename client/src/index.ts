@@ -5,7 +5,7 @@ import { startGame } from './api';
 import { renderGameChoice, renderLogin } from './blessed';
 require('isomorphic-fetch');
 export let PLAYER_ID: number | undefined = null;
-export let ACCES_TOKEN: string | undefined = null;
+export let ACCESS_TOKEN: string | undefined = null;
 async function main() {
   if (process.argv.slice(2).length > 0) {
     PLAYER_ID = +process.argv.slice(2)[0];
@@ -15,12 +15,12 @@ async function main() {
 
   const resultLogin = await renderLogin();
   const gameChoice = await renderGameChoice();
-  ACCES_TOKEN = resultLogin.acces_token;
+  ACCESS_TOKEN = resultLogin.access_token;
   if (resultLogin && gameChoice) {
     try {
       await startGame(PLAYER_ID, gameChoice);
     } catch (e) {
-      console.error("Game can't be started");
+      console.error(`Game can't be started: `, e);
     }
   }
 }

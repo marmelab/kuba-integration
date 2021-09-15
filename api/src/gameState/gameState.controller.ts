@@ -20,6 +20,7 @@ import { GameStateService } from './gameState.service';
 import { Game } from '@prisma/client';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
+@UseGuards(JwtAuthGuard)
 @Controller('games')
 export class GameStateController {
   constructor(
@@ -27,14 +28,12 @@ export class GameStateController {
     private gatewayService: AppGateway,
   ) {}
 
-  @UseGuards(JwtAuthGuard)
   @Post('')
   async createGame(): Promise<GameState> {
     const res = await this.gameStateService.createGame();
     return this.gameStateService.deserializer(res);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get(':id')
   async getGameState(
     @Param('id', ParseIntPipe) id: number,
@@ -48,7 +47,6 @@ export class GameStateController {
     return this.gameStateService.deserializer(res);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Put(':id/join')
   async joinGame(@Param('id', ParseIntPipe) id: number): Promise<GameState> {
     let res: Game;
@@ -61,7 +59,6 @@ export class GameStateController {
     return gameState;
   }
 
-  @UseGuards(JwtAuthGuard)
   @Post(':id/restart')
   async restartGame(@Param('id', ParseIntPipe) id: number): Promise<GameState> {
     let gameState: GameState;
@@ -75,7 +72,6 @@ export class GameStateController {
     return gameState;
   }
 
-  @UseGuards(JwtAuthGuard)
   @Put(':id/marble-clicked')
   async setMarbleClicked(
     @Param('id', ParseIntPipe) id: number,
@@ -100,7 +96,6 @@ export class GameStateController {
     return gameState;
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get(':id/authorized-move')
   isAnAuthorizedMove(
     @Param('id', ParseIntPipe) id: number,
@@ -113,7 +108,6 @@ export class GameStateController {
     return this.gameStateService.isMarblePlayable(id, direction, player);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Post(':id/move-marble')
   async moveMarble(
     @Param('id', ParseIntPipe) id: number,

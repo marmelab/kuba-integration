@@ -1,11 +1,6 @@
-import {
-  HttpException,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
-import { saltRounds } from './constants';
 const bcrypt = require('bcrypt');
 
 @Injectable()

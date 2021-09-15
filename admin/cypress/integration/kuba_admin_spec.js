@@ -6,43 +6,43 @@ describe("Kuba Admin Test", () => {
 
   it("Post user with bad email and no password", () => {
     cy.visit(Cypress.env('ADMIN_URL'));
-    cy.get('.RaButton-label-7').contains('Create').click();
-    cy.contains('Create User');
-    cy.get('#email');
+    cy.findByRole('button', {name: /Create/i}).click();
+    cy.findByText('Create User').should('exist');
+    cy.get('#email').should('exist');
     cy.get('#email').type('NotAnEmail');
-    cy.get('#password');
-    cy.get('.MuiButtonBase-root').contains('Save').click();
-    cy.contains('Must be a valid email');
-    cy.contains('Required');
-    cy.contains('The form is not valid. Please check for errors');
+    cy.get('#password').should('exist');
+    cy.findByRole('button', {name: /Save/i}).click();
+    cy.findByText('Must be a valid email').should('exist');
+    cy.findByText('Required').should('exist');
+    cy.findByText('The form is not valid. Please check for errors').should('exist');
   });
 
   it("Post user", () => {
     cy.visit(Cypress.env('ADMIN_URL'));
-    cy.get('.RaButton-label-7').contains('Create').click();
-    cy.contains('Create User');
-    cy.get('#email');
+    cy.findByRole('button', {name: /Create/i}).click();
+    cy.findByText('Create User').should('exist');
+    cy.get('#email').should('exist');
     cy.get('#email').type(cy.faker.internet.email());
     cy.get('#password').type('password');
-    cy.get('.MuiButtonBase-root').contains('Save').click();
-    cy.contains('Element created');
+    cy.findByRole('button', {name: /Save/i}).click();
+    cy.findByText('Element created').should('exist');
   });
 
   it("Update user", () => {
     cy.visit(Cypress.env('ADMIN_URL'));
-    cy.get('.column-id').first().click();
-    cy.contains('User #');
-    cy.get('#email');
+    cy.get('tr[resource="user"]').eq(0).get('td').eq(1).click();
+    cy.findByText(/User #/).should('exist');
+    cy.get('#email').should('exist');
     cy.get('#email').clear();
     cy.get('#email').type(cy.faker.internet.email());
-    cy.get('.MuiButtonBase-root').contains('Save').click();
-    cy.contains('Element updated');
+    cy.findByRole('button', {name: /Save/i}).click();
+    cy.findByText('Element updated').should('exist');
   });
 
   it("Delete user", () => {
     cy.visit(Cypress.env('ADMIN_URL'));
-    cy.get('.select-item').first().click();
-    cy.get('.MuiButtonBase-root').contains('Delete').click();
-    cy.contains('Element deleted');
+    cy.findAllByRole('checkbox').eq(1).click();
+    cy.findByRole('button', {name: /Delete/i}).click();
+    cy.findByText('Element deleted').should('exist');
   });
 });

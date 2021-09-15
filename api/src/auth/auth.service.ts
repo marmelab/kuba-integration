@@ -30,7 +30,11 @@ export class AuthService {
     };
   }
 
-  async hashPassword(pass: string): Promise<any> {
+  async genSalt(): Promise<string> {
+    return await bcrypt.genSalt(Number(saltRounds));
+  }
+
+  async hashPassword(pass: string, salt: string): Promise<any> {
     try {
       const salt = await bcrypt.genSalt(Number(saltRounds));
       const hash = await bcrypt.hash(pass, salt);

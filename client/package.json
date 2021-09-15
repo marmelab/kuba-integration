@@ -1,9 +1,8 @@
 {
-    "name": "kuba",
+    "name": "client",
     "version": "1.0.0",
     "main": "src/index.ts",
     "license": "MIT",
-    "private": true,
     "dependencies": {
         "@babel/core": "^7.14.6",
         "@babel/preset-env": "^7.14.7",

@@ -37,7 +37,7 @@ export const startGame = async (
 
 export const pullNewGame = async (playerNumber: number): Promise<GameState> => {
   try {
-    const response = await fetch(`${URL}/game/start`, {
+    const response = await fetch(`${URL}/games`, {
       method: 'POST',
       body: JSON.stringify({ playerNumber }),
       headers: { 'Content-Type': 'application/json' },
@@ -52,7 +52,10 @@ export const pullNewGame = async (playerNumber: number): Promise<GameState> => {
 
 export const pullJoinGame = async (idGame: number): Promise<GameState> => {
   try {
-    const response = await fetch(`${URL}/game/join/${idGame}`);
+    const response = await fetch(`${URL}/games/${idGame}/join`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+    });
     const jsonResp = await response.json();
     const gameState: GameState = jsonResp as GameState;
     return gameState;
@@ -67,11 +70,9 @@ export const pullCanMoveMarblePlayable = async (
   player: Player,
 ): Promise<boolean> => {
   try {
-    let response = await fetch(`${URL}/game/marble/is-playable`, {
-      method: 'POST',
-      body: JSON.stringify({ gameState, direction, player }),
-      headers: { 'Content-Type': 'application/json' },
-    });
+    let response = await fetch(
+      `${URL}/games/${gameState.id}/authorized-move?player=${player.playerNumber}&direction=${direction}`,
+    );
     response = status(response);
     const jsonResp = await response.json();
 
@@ -89,9 +90,16 @@ const moveMarble = async (
   player: Player,
 ): Promise<GameState> => {
   try {
-    let response = await fetch(`${URL}/game/marble/move`, {
+    let response = await fetch(`${URL}/games/${gameState.id}/move-marble`, {
       method: 'POST',
-      body: JSON.stringify({ gameState, direction, player }),
+      body: JSON.stringify({
+        coordinates: {
+          x: gameState.marbleClicked.x,
+          y: gameState.marbleClicked.y,
+        },
+        direction,
+        player,
+      }),
       headers: { 'Content-Type': 'application/json' },
     });
 
@@ -125,11 +133,33 @@ export const pullActions = async (
         const newGameState = await moveMarble(gameState, direction, player);
         renderGameView(newGameState);
       } catch (e) {
-        console.log("Can't move this marble", e);
+        console.error("Can't move this marble", e);
       }
     }
   } catch (e) {
-    console.log(e);
+    console.error(e);
+  }
+};
+
+export const postMarbleClicked = async (
+  gameState: GameState,
+): Promise<GameState> => {
+  try {
+    const response = await fetch(
+      `${URL}/games/${gameState.id}/marble-clicked`,
+      {
+        method: 'PUT',
+        body: JSON.stringify({ marbleClicked: gameState.marbleClicked }),
+        headers: { 'Content-Type': 'application/json' },
+      },
+    );
+
+    const jsonResp = await response.json();
+    const newGameState: GameState = jsonResp as GameState;
+
+    return newGameState;
+  } catch (ex) {
+    throw new GameError('Unable to call the function postMarbleClicked');
   }
 };
 
@@ -137,7 +167,7 @@ export const postGameState = async (
   gameState: GameState,
 ): Promise<GameState> => {
   try {
-    const response = await fetch(`${URL}/game/${gameState.id}`, {
+    const response = await fetch(`${URL}/games/${gameState.id}`, {
       method: 'PUT',
       body: JSON.stringify(gameState),
       headers: { 'Content-Type': 'application/json' },
@@ -154,7 +184,7 @@ export const postGameState = async (
 
 export const restartGame = async (gameId: number): Promise<GameState> => {
   try {
-    const response = await fetch(`${URL}/game/restart/${gameId}`, {
+    const response = await fetch(`${URL}/games/${gameId}/restart`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
     });

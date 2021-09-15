@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { Game, Prisma } from '@prisma/client';
 import {
@@ -14,7 +14,7 @@ import { INITIAL_BOARD, INVERSE_DIRECTION, ALPHABET } from '../constants';
 import { CantMoveError, UserPositionError } from 'src/error';
 
 @Injectable()
-export class GameService {
+export class GameStateService {
   constructor(private prisma: PrismaService) {}
 
   async getGame(
@@ -196,16 +196,26 @@ export class GameService {
     return neutralMarbles === 7 || otherPlayerMarbles === 8;
   };
 
-  isMarblePlayable(
-    gameState: GameState,
+  async isMarblePlayable(
+    id: number,
     direction: string,
-    player: Player,
-  ): Boolean {
-    const marbleClickedCoordinates = `${gameState.marbleClicked.x},${gameState.marbleClicked.y}`;
+    playerId: number,
+  ): Promise<Boolean> {
+    let serializedGameState: Game;
+    try {
+      serializedGameState = await this.getGame({ id });
+    } catch (error) {
+      throw new NotFoundException('Game not found');
+    }
+
+    const currentGameState = this.deserializer(serializedGameState);
+    const marbleClickedCoordinates = `${currentGameState.marbleClicked.x},${currentGameState.marbleClicked.y}`;
+    const player = currentGameState.players[playerId - 1];
+
     try {
       this.checkMoveMarbleInDirection(
-        gameState.currentPlayerId,
-        gameState.graph,
+        currentGameState.currentPlayerId,
+        currentGameState.graph,
         marbleClickedCoordinates,
         direction,
         player,
@@ -219,7 +229,6 @@ export class GameService {
 
   async moveMarble(
     id: number,
-    graph: Graph,
     coordinates: { x: number; y: number },
     direction: string,
     player: Player,
@@ -230,7 +239,11 @@ export class GameService {
     if (currentGameState.currentPlayerId !== player.playerNumber) {
       throw new Error('This is the other player turn, please be patient');
     }
-    const newGraph = this.moveMarbleInDirection(graph, coordinates, direction);
+    const newGraph = this.moveMarbleInDirection(
+      currentGameState.graph,
+      coordinates,
+      direction,
+    );
     const marbleWon = this.getMarbleWonByPlayer(newGraph);
     this.sanitizeGraph(newGraph);
 
@@ -527,5 +540,22 @@ export class GameService {
       });
     }
     return willExitOwnMarble;
+  };
+
+  restartGame = async (id: number): Promise<GameState> => {
+    try {
+      const clearedPlayers = this.initializePlayers();
+      const res = await this.updateGame({
+        where: { id },
+        data: {
+          board: JSON.stringify(INITIAL_BOARD),
+          players: JSON.stringify(clearedPlayers),
+          currentPlayer: 1,
+        },
+      });
+      return this.deserializer(res);
+    } catch (err) {
+      throw new Error("That game doesn't exists");
+    }
   };
 }

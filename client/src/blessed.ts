@@ -1,6 +1,6 @@
 const blessed = require('blessed');
 import { MARBLE_INT_COLORS } from './constants';
-import { login, postGameState, pullActions, restartGame } from './api';
+import { login, postMarbleClicked, pullActions, restartGame } from './api';
 import { GameChoice, GameState } from './types';
 import { PLAYER_ID } from './index';
 
@@ -193,7 +193,7 @@ export const renderGameView = (gameState: GameState) => {
         gameState.marbleClicked = node;
         renderGameView(gameState);
         if (PLAYER_ID === gameState.currentPlayerId) {
-          await postGameState(gameState);
+          await postMarbleClicked(gameState);
         }
       });
       board.append(tmpBox);

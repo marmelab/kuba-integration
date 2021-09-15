@@ -9,9 +9,11 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+@UseGuards(JwtAuthGuard)
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -89,11 +91,7 @@ export class UserController {
     if (!email || !password) {
       throw new HttpException("Something's wrong with your credentials ", 400);
     }
-
-    return this.userService.createUser({
-      email,
-      hash: password,
-    });
+    return this.userService.createUser(email, password);
   }
 
   @Put(':id')

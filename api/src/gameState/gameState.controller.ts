@@ -12,13 +12,15 @@ import {
   HttpStatus,
   BadRequestException,
   ConflictException,
+  UseGuards,
 } from '@nestjs/common';
 import { AppGateway } from '../app.gateway';
 import { GameState, Player, Node } from '../types';
 import { GameStateService } from './gameState.service';
-import { INITIAL_BOARD } from '../constants';
 import { Game } from '@prisma/client';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
+@UseGuards(JwtAuthGuard)
 @Controller('games')
 export class GameStateController {
   constructor(

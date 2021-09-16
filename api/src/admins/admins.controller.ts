@@ -58,7 +58,7 @@ export class AdminsController {
         if (rangeNumber) {
           params = {
             ...params,
-            take: rangeNumber[1] - rangeNumber[0],
+            take: rangeNumber[1] + 1 - rangeNumber[0],
             skip: rangeNumber[0],
           };
         }
@@ -83,11 +83,11 @@ export class AdminsController {
       }
     }
 
-    const users = await this.adminsService.getAdmins(params);
-    return users;
+    const admins = await this.adminsService.getAdmins(params);
+    return admins;
   }
 
-  @Post('create-admin')
+  @Post()
   async createAdmin(
     @Body('email') email: string,
     @Body('password') password: string,

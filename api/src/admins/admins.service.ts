@@ -23,15 +23,17 @@ export class AdminsService {
     cursor?: Prisma.AdminWhereUniqueInput;
     where?: Prisma.AdminWhereInput;
     orderBy?: Prisma.AdminOrderByWithAggregationInput;
-  }): Promise<Admin[]> {
-    const { skip, take, cursor, where, orderBy } = params;
-    return this.prisma.admin.findMany({
+  }): Promise<{ data: Admin[]; total: number }> {
+    const { skip, take, cursor, where, orderBy } = params || {};
+    const data = await this.prisma.admin.findMany({
       skip,
       take,
       cursor,
       where,
       orderBy,
     });
+    const total = await this.prisma.admin.count({ where });
+    return { data, total };
   }
 
   async updateAdmin(params: {

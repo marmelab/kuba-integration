@@ -26,3 +26,10 @@ model User {
   email String @unique
   hash  String
 }
+
+model Admin {
+  id    Int    @id @default(autoincrement())
+  email String @unique
+  hash  String
+  role  String
+}

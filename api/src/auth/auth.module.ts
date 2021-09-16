@@ -12,7 +12,9 @@ import { AuthController } from './auth.controller';
 import { AdminsService } from 'src/admins/admins.service';
 @Module({
   imports: [
-    PassportModule,
+    PassportModule.register({
+      session: true,
+    }),
     UserModule,
     JwtModule.register({
       secret: JWT_CONSTANTS.secret,

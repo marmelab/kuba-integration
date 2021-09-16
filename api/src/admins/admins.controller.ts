@@ -9,11 +9,14 @@ import {
   Post,
   Body,
   ForbiddenException,
+  UseGuards,
 } from '@nestjs/common';
 import { Admin } from 'src/types';
 import { AdminsService } from './admins.service';
 import { ADMIN_TYPE } from 'src/constants';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
+@UseGuards(JwtAuthGuard)
 @Controller('admins')
 export class AdminsController {
   constructor(private readonly adminsService: AdminsService) {}

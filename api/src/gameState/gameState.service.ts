@@ -30,14 +30,16 @@ export class GameStateService {
     take?: number;
     cursor?: Prisma.GameWhereUniqueInput;
     where?: Prisma.GameWhereInput;
-  }): Promise<Game[]> {
+  }): Promise<{ data: Game[] }> {
     const { skip, take, cursor, where } = params;
-    return this.prisma.game.findMany({
+    const data = await this.prisma.game.findMany({
       skip,
       take,
       cursor,
       where,
     });
+
+    return { data };
   }
 
   async createGame(): Promise<Game> {

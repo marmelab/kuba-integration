@@ -9,11 +9,15 @@ import {
   Post,
   Put,
   Query,
-  UseGuards,
+  // UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-@UseGuards(JwtAuthGuard)
+// import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
+// @UseGuards(JwtAuthGuard)
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}

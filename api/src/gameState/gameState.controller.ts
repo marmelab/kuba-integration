@@ -12,15 +12,15 @@ import {
   HttpStatus,
   BadRequestException,
   ConflictException,
-  UseGuards,
+  // UseGuards,
 } from '@nestjs/common';
 import { AppGateway } from '../app.gateway';
 import { GameState, Player, Node } from '../types';
 import { GameStateService } from './gameState.service';
 import { Game } from '@prisma/client';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+// import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
-@UseGuards(JwtAuthGuard)
+// @UseGuards(JwtAuthGuard)
 @Controller('games')
 export class GameStateController {
   constructor(
@@ -34,17 +34,22 @@ export class GameStateController {
     return this.gameStateService.deserializer(res);
   }
 
-  @Get(':id')
-  async getGameState(
-    @Param('id', ParseIntPipe) id: number,
-  ): Promise<GameState> {
-    let res: Game;
+  @Get('')
+  async getGames(): Promise<{ data: Game[] }> {
     try {
-      res = await this.gameStateService.getGame({ id });
+      return await this.gameStateService.getGames({});
+    } catch (error) {
+      throw new NotFoundException('No games was found');
+    }
+  }
+
+  @Get(':id')
+  async getGame(@Param('id', ParseIntPipe) id: number): Promise<Game> {
+    try {
+      return await this.gameStateService.getGame({ id });
     } catch (error) {
       throw new NotFoundException("That game doesn't exists");
     }
-    return this.gameStateService.deserializer(res);
   }
 
   @Put(':id/join')

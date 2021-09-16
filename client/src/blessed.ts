@@ -430,7 +430,7 @@ export const renderGameChoice = (): Promise<GameChoice> => {
         content: ' New Game',
       });
 
-      const or = blessed.box({
+      blessed.box({
         parent: GAME_CHOICE_SCREEN,
         keys: true,
         left: 'center',

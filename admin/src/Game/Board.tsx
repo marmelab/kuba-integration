@@ -1,4 +1,5 @@
 import { useRecordContext } from "react-admin";
+import { Container, Typography, Table, TableBody, TableCell } from "@material-ui/core";
 
 export const Board = (props: any) => {
   const record = useRecordContext(props);
@@ -8,23 +9,23 @@ export const Board = (props: any) => {
   for (let y = 0; y < board.length; y++) {
     const cells = [];
     for (let x = 0; x < board[0].length; x++) {
-      cells.push(<Cell value={board[x][y]} />);
+      cells.push(<Cell value={board[y][x]} />);
     }
     rows.push(<tr>{cells}</tr>);
   }
   return (
-    <div>
-      <h3>Board</h3>
-      <table>
-        <tbody>{rows}</tbody>
-      </table>
-    </div>
+    <Container>
+      <Typography>Board</Typography>
+      <Table>
+        <TableBody>{rows}</TableBody>
+      </Table>
+    </Container>
   );
 };
 
 export const Cell = (props: any) => {
   return (
-    <td
+    <TableCell
       style={{
         width: "3em",
         height: "3em",
@@ -35,7 +36,7 @@ export const Cell = (props: any) => {
       <span style={{ fontSize: "3rem", color: getMarbleColor(props.value) }}>
         &#x2022;
       </span>
-    </td>
+    </TableCell>
   );
 };
 

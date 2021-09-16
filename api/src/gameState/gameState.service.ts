@@ -30,7 +30,7 @@ export class GameStateService {
     take?: number;
     cursor?: Prisma.GameWhereUniqueInput;
     where?: Prisma.GameWhereInput;
-  }): Promise<{ data: Game[] }> {
+  }): Promise<{ data: Game[], total: number }> {
     const { skip, take, cursor, where } = params;
     const data = await this.prisma.game.findMany({
       skip,
@@ -38,8 +38,8 @@ export class GameStateService {
       cursor,
       where,
     });
-
-    return { data };
+    const total = await this.prisma.user.count({ where });
+    return { data, total };
   }
 
   async createGame(): Promise<Game> {
@@ -71,7 +71,14 @@ export class GameStateService {
     });
   }
 
-  deserializer(entry: Game): GameState {
+  deserializerGame(entry: Game): Game {
+    entry.board = JSON.parse(entry.board as string);
+    entry.players = JSON.parse(entry.players as string);
+    entry.marbleClicked = JSON.parse(entry.marbleClicked as string);
+    return entry;
+  }
+
+  deserializerGameState(entry: Game): GameState {
     const board = JSON.parse(entry.board as string);
     const graph = this.boardToGraph(board);
     const players = JSON.parse(entry.players as string);
@@ -210,7 +217,7 @@ export class GameStateService {
       throw new NotFoundException('Game not found');
     }
 
-    const currentGameState = this.deserializer(serializedGameState);
+    const currentGameState = this.deserializerGameState(serializedGameState);
     const marbleClickedCoordinates = `${currentGameState.marbleClicked.x},${currentGameState.marbleClicked.y}`;
     const player = currentGameState.players[playerId - 1];
 
@@ -236,7 +243,7 @@ export class GameStateService {
     player: Player,
   ): Promise<GameState> {
     let serializedGameState = await this.getGame({ id });
-    const currentGameState = this.deserializer(serializedGameState);
+    const currentGameState = this.deserializerGameState(serializedGameState);
 
     if (currentGameState.currentPlayerId !== player.playerNumber) {
       throw new Error('This is the other player turn, please be patient');
@@ -555,7 +562,7 @@ export class GameStateService {
           currentPlayer: 1,
         },
       });
-      return this.deserializer(res);
+      return this.deserializerGameState(res);
     } catch (err) {
       throw new Error("That game doesn't exists");
     }

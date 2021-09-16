@@ -13,10 +13,6 @@ import {
 } from '@nestjs/common';
 import { UserService } from './user.service';
 // import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-<<<<<<< Updated upstream
-=======
-
->>>>>>> Stashed changes
 // @UseGuards(JwtAuthGuard)
 @Controller('user')
 export class UserController {

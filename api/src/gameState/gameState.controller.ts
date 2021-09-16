@@ -31,13 +31,15 @@ export class GameStateController {
   @Post('')
   async createGame(): Promise<GameState> {
     const res = await this.gameStateService.createGame();
-    return this.gameStateService.deserializer(res);
+    return this.gameStateService.deserializerGameState(res);
   }
 
   @Get('')
   async getGames(): Promise<{ data: Game[] }> {
     try {
-      return await this.gameStateService.getGames({});
+      const result = await this.gameStateService.getGames({});
+      result.data.map((game) => this.gameStateService.deserializerGame(game));
+      return result;
     } catch (error) {
       throw new NotFoundException('No games was found');
     }
@@ -46,7 +48,8 @@ export class GameStateController {
   @Get(':id')
   async getGame(@Param('id', ParseIntPipe) id: number): Promise<Game> {
     try {
-      return await this.gameStateService.getGame({ id });
+      const game = await this.gameStateService.getGame({ id });
+      return this.gameStateService.deserializerGame(game);
     } catch (error) {
       throw new NotFoundException("That game doesn't exists");
     }
@@ -60,7 +63,8 @@ export class GameStateController {
     } catch (e) {
       throw new NotFoundException("That game doesn't exists");
     }
-    const gameState: GameState = this.gameStateService.deserializer(res);
+    const gameState: GameState =
+      this.gameStateService.deserializerGameState(res);
     return gameState;
   }
 
@@ -96,7 +100,7 @@ export class GameStateController {
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
-    const gameState = this.gameStateService.deserializer(res);
+    const gameState = this.gameStateService.deserializerGameState(res);
     this.gatewayService.emitGameState(gameState);
     return gameState;
   }

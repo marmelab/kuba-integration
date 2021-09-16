@@ -4,20 +4,15 @@ import {
   TextField,
   NumberField,
   BooleanField,
-  ArrayField,
 } from "react-admin";
+import { GameUser } from "./User";
 
 export const GameList = (props: any) => (
   <List {...props}>
     <Datagrid rowClick="show">
       <TextField source="id" />
       <NumberField source="currentPlayer" label="Curent id player" />
-      <ArrayField source="players">
-        <Datagrid>
-          <NumberField source="playerNumber" label="Id player" />
-          <NumberField source="marblesWon.length" label="Marbles won" />
-        </Datagrid>
-      </ArrayField>
+      <GameUser />
       <BooleanField source="hasWinner" />
       <BooleanField source="started" />
     </Datagrid>

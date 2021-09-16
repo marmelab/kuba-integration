@@ -16,7 +16,7 @@ export const startGame = async (
   if (gameChoice.type === 'newGame') {
     gameState = await pullNewGame(numberPlayer);
   } else {
-    gameState = await pullJoinGame(gameChoice?.gameId);
+    gameState = await pullJoinGame(gameChoice?.gameId, numberPlayer);
   }
   renderGameView(gameState);
 
@@ -35,11 +35,11 @@ export const startGame = async (
   });
 };
 
-export const pullNewGame = async (playerNumber: number): Promise<GameState> => {
+export const pullNewGame = async (playerId: number): Promise<GameState> => {
   try {
     const response = await fetch(`${URL}/games`, {
       method: 'POST',
-      body: JSON.stringify({ playerNumber }),
+      body: JSON.stringify({ playerId }),
       headers: getHeaders(),
     });
     const jsonResp = await response.json();
@@ -50,10 +50,11 @@ export const pullNewGame = async (playerNumber: number): Promise<GameState> => {
   }
 };
 
-export const pullJoinGame = async (idGame: number): Promise<GameState> => {
+export const pullJoinGame = async (idGame: number, playerId: number): Promise<GameState> => {
   try {
     const response = await fetch(`${URL}/games/${idGame}/join`, {
       method: 'PUT',
+      body: JSON.stringify({ playerId }),
       headers: getHeaders(),
     });
     const jsonResp = await response.json();

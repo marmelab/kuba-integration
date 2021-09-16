@@ -30,7 +30,7 @@ export class GameStateService {
     take?: number;
     cursor?: Prisma.GameWhereUniqueInput;
     where?: Prisma.GameWhereInput;
-  }): Promise<{ data: Game[], total: number }> {
+  }): Promise<{ data: Game[]; total: number }> {
     const { skip, take, cursor, where } = params;
     const data = await this.prisma.game.findMany({
       skip,
@@ -42,12 +42,18 @@ export class GameStateService {
     return { data, total };
   }
 
-  async createGame(): Promise<Game> {
+  async createGame(playerId: number): Promise<Game> {
     const newGameState: GameState = this.createNewGameState();
     const data = {
       board: JSON.stringify(this.graphToBoard(newGameState.graph)),
-      currentPlayer: 1,
-      players: JSON.stringify(newGameState.players),
+      currentPlayer: playerId,
+      players: JSON.stringify([
+        {
+          playerNumber: playerId,
+          marbleColor: 1,
+          marblesWon: [],
+        },
+      ]),
       hasWinner: false,
       started: true,
     };
@@ -560,6 +566,31 @@ export class GameStateService {
           board: JSON.stringify(INITIAL_BOARD),
           players: JSON.stringify(clearedPlayers),
           currentPlayer: 1,
+        },
+      });
+      return this.deserializerGameState(res);
+    } catch (err) {
+      throw new Error("That game doesn't exists");
+    }
+  };
+
+  joinGame = async (id: number, playerId: number): Promise<GameState> => {
+    try {
+      const game = await this.getGame({ id });
+      const players = JSON.parse(game.players as string);
+      if (players.length > 2) {
+        throw new Error('That game as already two player');
+      }
+      players.push({
+        playerNumber: playerId,
+        marbleColor: 2,
+        marblesWon: [],
+      });
+
+      const res = await this.updateGame({
+        where: { id },
+        data: {
+          players: JSON.stringify(players),
         },
       });
       return this.deserializerGameState(res);

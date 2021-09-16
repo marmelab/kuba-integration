@@ -32,7 +32,7 @@ export const dataProvider: DataProvider = {
       filter: JSON.stringify({ id: params.ids }),
     };
     const url = `${apiUrl}/${resource}?${stringify(query)}`;
-    return httpClient(url).then(({ json }) => ({ data: json }));
+    return httpClient(url).then(({ json }) => ({ data: json.data }));
   },
 
   getManyReference: (resource, params) => {

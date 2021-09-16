@@ -1,13 +1,7 @@
 import { Grid, Typography } from "@material-ui/core";
-import {
-  Show,
-  SimpleShowLayout,
-  TextField,
-  ArrayField,
-  NumberField,
-  Datagrid,
-} from "react-admin";
+import { Show, SimpleShowLayout, TextField } from "react-admin";
 import { Board } from "./Board";
+import { GameUser } from "./User";
 
 export const GameShow = (props: any) => {
   return (
@@ -47,13 +41,7 @@ export const GameShow = (props: any) => {
               direction="column"
               style={{ paddingBottom: "20px" }}
             >
-              <ArrayField source="players">
-                <Datagrid>
-                  <NumberField source="playerNumber" label="Id player" />
-                  <NumberField source="marblesWon.length" label="Marbles won" />
-                  <NumberField source="marbleColor" label="Marbles Color" />
-                </Datagrid>
-              </ArrayField>
+              <GameUser />
             </Grid>
           </Grid>
         </Grid>

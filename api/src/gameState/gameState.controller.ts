@@ -29,8 +29,10 @@ export class GameStateController {
   ) {}
 
   @Post('')
-  async createGame(): Promise<GameState> {
-    const res = await this.gameStateService.createGame();
+  async createGame(
+    @Body('playerId', ParseIntPipe) playerId: number,
+  ): Promise<GameState> {
+    const res = await this.gameStateService.createGame(playerId);
     return this.gameStateService.deserializerGameState(res);
   }
 
@@ -56,16 +58,15 @@ export class GameStateController {
   }
 
   @Put(':id/join')
-  async joinGame(@Param('id', ParseIntPipe) id: number): Promise<GameState> {
-    let res: Game;
+  async joinGame(
+    @Param('id', ParseIntPipe) id: number,
+    @Body('playerId', ParseIntPipe) playerId: number,
+  ): Promise<GameState> {
     try {
-      res = await this.gameStateService.getGame({ id });
+      return await this.gameStateService.joinGame(id, playerId);
     } catch (e) {
       throw new NotFoundException("That game doesn't exists");
     }
-    const gameState: GameState =
-      this.gameStateService.deserializerGameState(res);
-    return gameState;
   }
 
   @Post(':id/restart')

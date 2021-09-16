@@ -9,7 +9,7 @@ import { JWT_CONSTANTS } from './constants';
 import { JwtStrategy } from './jwt.strategy';
 import { LocalStrategy } from './local.strategy';
 import { AuthController } from './auth.controller';
-
+import { AdminsService } from 'src/admins/admins.service';
 @Module({
   imports: [
     PassportModule,
@@ -22,6 +22,7 @@ import { AuthController } from './auth.controller';
   providers: [
     AuthService,
     UserService,
+    AdminsService,
     PrismaService,
     LocalStrategy,
     JwtStrategy,

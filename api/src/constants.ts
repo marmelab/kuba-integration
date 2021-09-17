@@ -1,4 +1,4 @@
-import { DirectionInBoard, Board } from "./types";
+import { DirectionInBoard, Board } from './types';
 
 export const INVERSE_DIRECTION: DirectionInBoard = {
   E: {
@@ -40,10 +40,15 @@ export const MARBLE_COLORS = [
   WHITE_MARBLE,
 ];
 
-export const ALPHABET: string = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+export const ALPHABET: string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 export const MARBLE_INT_COLORS: string[] = [
-  "transparent",
-  "red",
-  "blue",
-  "white",
+  'transparent',
+  'red',
+  'blue',
+  'white',
 ];
+
+export const ADMIN_TYPE = {
+  ADMIN: 'ADMIN',
+  SUPER_ADMIN: 'SUPERADMIN',
+};

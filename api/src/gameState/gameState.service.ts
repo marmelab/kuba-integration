@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { Game, Prisma } from '@prisma/client';
 import {
@@ -30,13 +30,15 @@ export class GameStateService {
     take?: number;
     cursor?: Prisma.GameWhereUniqueInput;
     where?: Prisma.GameWhereInput;
+    orderBy?: Prisma.GameOrderByWithAggregationInput;
   }): Promise<{ data: Game[]; total: number }> {
-    const { skip, take, cursor, where } = params;
+    const { skip, take, cursor, where, orderBy } = params;
     const data = await this.prisma.game.findMany({
       skip,
       take,
       cursor,
       where,
+      orderBy,
     });
     const total = await this.prisma.user.count({ where });
     return { data, total };
@@ -585,7 +587,7 @@ export class GameStateService {
       });
       return this.deserializerGameState(res);
     } catch (err) {
-      throw new Error("That game doesn't exists");
+      throw new Error("That game does not exists");
     }
   };
 
@@ -602,7 +604,7 @@ export class GameStateService {
       }
 
       if (players.length >= 2) {
-        throw new Error('That game as already two player');
+        throw new ForbiddenException('That game as already two player');
       }
 
       players.push({

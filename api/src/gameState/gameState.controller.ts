@@ -13,6 +13,7 @@ import {
   BadRequestException,
   ConflictException,
   Delete,
+  ForbiddenException,
   // UseGuards,
 } from '@nestjs/common';
 import { AppGateway } from '../app.gateway';
@@ -38,9 +39,44 @@ export class GameStateController {
   }
 
   @Get('')
-  async getGames(): Promise<{ data: Game[] }> {
+  async getGames(
+    @Query('sort') sort: string,
+    @Query('range') range: string,
+  ): Promise<{ data: Game[] }> {
+    let params;
+
+    if (range) {
+      try {
+        const rangeNumber = JSON.parse(range) as number[];
+        if (rangeNumber) {
+          params = {
+            ...params,
+            take: rangeNumber[1] - rangeNumber[0],
+            skip: rangeNumber[0],
+          };
+        }
+      } catch (e) {
+        throw new HttpException('Incorrect range parameter', 400);
+      }
+    }
+
+    if (sort) {
+      try {
+        const sortParsed = JSON.parse(sort);
+        if (sortParsed) {
+          params = {
+            ...params,
+            orderBy: {
+              [sortParsed[0]]: sortParsed[1].toLowerCase(),
+            },
+          };
+        }
+      } catch (e) {
+        throw new HttpException('Incorrect sort parameter', 400);
+      }
+    }
     try {
-      const result = await this.gameStateService.getGames({});
+      const result = await this.gameStateService.getGames(params);
       result.data.map((game) => this.gameStateService.deserializerGame(game));
       return result;
     } catch (error) {
@@ -54,7 +90,7 @@ export class GameStateController {
       const game = await this.gameStateService.getGame({ id });
       return this.gameStateService.deserializerGame(game);
     } catch (error) {
-      throw new NotFoundException("That game doesn't exists");
+      throw new NotFoundException('That game does not exists');
     }
   }
 
@@ -64,11 +100,11 @@ export class GameStateController {
     @Body('playerId', ParseIntPipe) playerId: number,
   ): Promise<GameState> {
     try {
-      const gameState =  await this.gameStateService.joinGame(id, playerId);
+      const gameState = await this.gameStateService.joinGame(id, playerId);
       this.gatewayService.emitGameState(gameState);
-      return gameState
+      return gameState;
     } catch (e) {
-      throw new HttpException("Can't join the game", HttpStatus.FORBIDDEN);
+      throw new ForbiddenException("Can't join the game");
     }
   }
 

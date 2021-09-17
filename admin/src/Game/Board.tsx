@@ -7,6 +7,8 @@ import {
   TableCell,
 } from "@material-ui/core";
 
+const MARBLE_COLOR = ["white", "red", "blue", "grey"];
+
 export const Board = (props: any) => {
   const record = useRecordContext(props);
   const board = record.board;
@@ -18,10 +20,9 @@ export const Board = (props: any) => {
         <TableBody>
           {board.map((row: [], rowIndex: number) => (
             <tr>
-              {" "}
               {row.map((cell, cellIndex) => (
                 <Cell key={rowIndex + cellIndex} value={cell} />
-              ))}{" "}
+              ))}
             </tr>
           ))}
         </TableBody>
@@ -31,7 +32,7 @@ export const Board = (props: any) => {
 };
 
 export const Cell = (props: any) => {
-  const marble = '&#x2022;'
+  const marble = "&#x2022;";
   return (
     <TableCell
       style={{
@@ -41,13 +42,14 @@ export const Cell = (props: any) => {
         textAlign: "center",
       }}
     >
-      <span style={{ fontSize: "3rem", color: getMarbleColor(props.value) }} dangerouslySetInnerHTML={{ __html: `${marble}` }} >
-      </span>
+      <span
+        style={{ fontSize: "3rem", color: getMarbleColor(props.value) }}
+        dangerouslySetInnerHTML={{ __html: `${marble}` }}
+      ></span>
     </TableCell>
   );
 };
 
 const getMarbleColor = (value: number): string => {
-  const marbleColor = ["white", "red", "blue", "grey"];
-  return marbleColor[value];
+  return MARBLE_COLOR[value];
 };

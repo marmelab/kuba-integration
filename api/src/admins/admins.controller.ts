@@ -1,31 +1,43 @@
 import {
-  Body,
   Controller,
-  Delete,
   Get,
-  HttpException,
   NotFoundException,
   Param,
   ParseIntPipe,
-  Post,
-  Put,
   Query,
-  // UseGuards,
+  HttpException,
+  Post,
+  Body,
+  ForbiddenException,
+  UseGuards,
 } from '@nestjs/common';
-import { UserService } from './user.service';
-// import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-// @UseGuards(JwtAuthGuard)
-@Controller('user')
-export class UserController {
-  constructor(private readonly userService: UserService) {}
+import { Admin } from 'src/types';
+import { AdminsService } from './admins.service';
+import { ADMIN_TYPE } from 'src/constants';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
+
+@Controller('admins')
+export class AdminsController {
+  constructor(private readonly adminsService: AdminsService) {}
+  @UseGuards(JwtAuthGuard)
+  @Get(':id')
+  async getAdmin(@Param('id', ParseIntPipe) id: number): Promise<Admin> {
+    try {
+      return await this.adminsService.getAdmin({ id });
+    } catch (error) {
+      throw new NotFoundException(`This admin doesn't exists`);
+    }
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Get()
-  async getUsers(
+  async getAdmins(
     @Query('filter') filter: string,
     @Query('sort') sort: string,
     @Query('range') range: string,
   ) {
-    let params;
+    let params = {};
 
     if (filter) {
       try {
@@ -50,7 +62,7 @@ export class UserController {
         if (rangeNumber) {
           params = {
             ...params,
-            take: rangeNumber[1] - rangeNumber[0],
+            take: rangeNumber[1] + 1 - rangeNumber[0],
             skip: rangeNumber[0],
           };
         }
@@ -75,61 +87,38 @@ export class UserController {
       }
     }
 
-    const users = await this.userService.getUsers(params);
-    return users;
+    const admins = await this.adminsService.getAdmins(params);
+    return admins;
   }
 
-  @Get(':id')
-  async getUser(@Param('id', ParseIntPipe) id: number) {
-    try {
-      return this.userService.getUser({ id });
-    } catch (error) {
-      throw new NotFoundException("That user doesn't exists");
-    }
-  }
-
+  @UseGuards(JwtAuthGuard)
   @Post()
-  async createUser(
+  async createAdmin(
     @Body('email') email: string,
     @Body('password') password: string,
   ) {
     if (!email || !password) {
       throw new HttpException("Something's wrong with your credentials ", 400);
     }
-    return this.userService.createUser(email, password);
+    return this.adminsService.createAdmin(email, password);
   }
 
-  @Put(':id')
-  async putUser(
-    @Param('id', ParseIntPipe) id: number,
-    @Body('email') email: string,
-    @Body('hash') hash: string,
-  ) {
-    if (!email || !hash) {
-      throw new HttpException('Missing parameter', 400);
-    }
-
-    return this.userService.updateUser({
-      where: { id },
-      data: { email, hash },
+  @Post('setup-admin')
+  async setupAdmin() {
+    const superAdmin = await this.adminsService.getAdmin({
+      email: 'adm@mrmlb.com',
     });
-  }
 
-  @Delete(':id')
-  async deleteUser(@Param('id', ParseIntPipe) id: number) {
-    if (!id) {
-      throw new HttpException('Missing parameter', 400);
+    if (superAdmin) {
+      throw new ForbiddenException(
+        "These are not the droïds you're looking for",
+      );
     }
 
-    return this.userService.deleteUser({ id });
-  }
-
-  @Delete()
-  async deleteUsers(@Query('filter') filter: any) {
-    if (!filter) {
-      throw new HttpException('Missing parameter', 400);
-    }
-
-    return this.userService.deleteManyUser(JSON.parse(filter).id);
+    return this.adminsService.createAdmin(
+      'adm@mrmlb.com',
+      '1234',
+      ADMIN_TYPE.SUPER_ADMIN,
+    );
   }
 }

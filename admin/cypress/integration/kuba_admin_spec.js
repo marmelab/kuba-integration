@@ -54,20 +54,4 @@ describe("Kuba Admin Test", () => {
     });
   });
 
-  describe("Delete user", () => {
-
-    it("with good credentials should display a success message", () => {
-      cy.get("#email",  {timeout: 2000}).clear()
-      cy.get("#email",).type('adm@mrmlb.com');
-      cy.get("#password").type("1234");
-      cy.findByRole("button", { name: /Save/i }).click();
-      cy.findByText("Element created").should("be.visible");
-    });
-    
-    it("should display a success message", () => {
-      cy.findAllByRole("checkbox").eq(1).click();
-      cy.findByRole("button", { name: /Delete/i }).click();
-      cy.findByText("Element deleted").should("be.visible");
-    });
-  });
 });

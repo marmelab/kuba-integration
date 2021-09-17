@@ -45,4 +45,15 @@ export class AuthController {
       );
     }
   }
+
+  @UseGuards(LocalAuthGuard)
+  @Post('admin/login')
+  async adminLogin(@Request() req: any) {
+    try {
+      return await this.authService.adminLogin(req.user);
+    } catch (e) {
+      console.error(e);
+    }
+    return req.body;
+  }
 }

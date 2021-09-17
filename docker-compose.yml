@@ -1,24 +1,24 @@
-version: '3.8'
+version: "3.8"
 
 services:
   admin:
     container_name: kuba_admin_container
-    image: node  
+    image: node
     user: ${CURRENT_UID}
-    volumes: 
+    volumes:
       - ./:/kuba
     command: bash -c "cd kuba && yarn && cd admin && yarn start"
-    ports: 
-      - '3001:3001' 
+    ports:
+      - "3001:3001"
   api:
     container_name: kuba_api_container
-    image: node  
+    image: node:14 || node:latest
     user: ${CURRENT_UID}
-    volumes: 
+    volumes:
       - ./:/kuba
     command: bash -c "cd kuba && yarn && cd api && npx prisma migrate dev --name init && yarn start:dev"
-    ports: 
-      - '3000:3000' 
+    ports:
+      - "3000:3000"
   db:
     container_name: postgres_container
     image: postgres
@@ -26,4 +26,4 @@ services:
     env_file:
       - ../kubapostgres.env
     ports:
-      - '5432:5432'
+      - "5432:5432"

@@ -21,6 +21,7 @@ import { GameState, Player, Node } from '../types';
 import { GameStateService } from './gameState.service';
 import { Game } from '@prisma/client';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { RangePipe, SortPipe } from 'src/customPipe.pipe';
 
 @UseGuards(JwtAuthGuard)
 @Controller('games')
@@ -40,45 +41,15 @@ export class GameStateController {
 
   @Get('')
   async getGames(
-    @Query('sort') sort: string,
-    @Query('range') range: string,
+    @Query('sort', SortPipe) sort: {},
+    @Query('range', RangePipe) range: {},
   ): Promise<{ data: Game[] }> {
-    let params;
-
-    if (range) {
-      try {
-        const rangeNumber = JSON.parse(range) as number[];
-        if (rangeNumber) {
-          params = {
-            ...params,
-            take: rangeNumber[1] - rangeNumber[0],
-            skip: rangeNumber[0],
-          };
-        }
-      } catch (e) {
-        throw new HttpException('Incorrect range parameter', 400);
-      }
-    }
-
-    if (sort) {
-      try {
-        const sortParsed = JSON.parse(sort);
-        if (sortParsed) {
-          params = {
-            ...params,
-            orderBy: {
-              [sortParsed[0]]: sortParsed[1].toLowerCase(),
-            },
-          };
-        }
-      } catch (e) {
-        throw new HttpException('Incorrect sort parameter', 400);
-      }
-    }
+    const params = { ...sort, ...range };
     try {
       const result = await this.gameStateService.getGames(params);
       result.data.map((game) => this.gameStateService.deserializerGame(game));
       return result;
+      return;
     } catch (error) {
       throw new NotFoundException('No games was found');
     }

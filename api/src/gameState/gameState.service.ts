@@ -40,7 +40,7 @@ export class GameStateService {
       where,
       orderBy,
     });
-    const total = await this.prisma.user.count({ where });
+    const total = await this.prisma.game.count({ where });
     return { data, total };
   }
 

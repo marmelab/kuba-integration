@@ -9,7 +9,7 @@ import {
 import { Board } from "./Board";
 import { GameUser } from "./User";
 
-const GameShowActions = ({ basePath, data, resource }: any) => (
+const GameShowActions = ({ basePath, data }: any) => (
   <TopToolbar>
     <DeleteButton basePath={basePath} record={data} />
   </TopToolbar>

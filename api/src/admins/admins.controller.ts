@@ -16,11 +16,11 @@ import { AdminsService } from './admins.service';
 import { ADMIN_TYPE } from 'src/constants';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
-@UseGuards(JwtAuthGuard)
 @Controller('admins')
 export class AdminsController {
   constructor(private readonly adminsService: AdminsService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
   async getAdmin(@Param('id', ParseIntPipe) id: number): Promise<Admin> {
     try {
@@ -30,6 +30,7 @@ export class AdminsController {
     }
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get()
   async getAdmins(
     @Query('filter') filter: string,
@@ -90,6 +91,7 @@ export class AdminsController {
     return admins;
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post()
   async createAdmin(
     @Body('email') email: string,

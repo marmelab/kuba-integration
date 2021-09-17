@@ -7,7 +7,6 @@ import { UserCreate, UserEdit, UserList } from "./User";
 import { AdminList, AdminCreate, AdminEdit } from "./Admins";
 import { ADMIN_TYPE } from "./constants";
 
-
 const App = () => (
     <Admin dataProvider={dataProvider} authProvider={authProvider as any}>
     

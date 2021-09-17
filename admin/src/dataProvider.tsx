@@ -4,6 +4,15 @@ import { stringify } from "query-string";
 const apiUrl = process.env.REACT_APP_API_URL;
 const httpClient = fetchUtils.fetchJson;
 
+const getOptionsHeaders = (): any => {
+  return{
+    headers:  new Headers({
+      'Content-Type': 'application/json', 
+      'Authorization': `Bearer ${localStorage.getItem('token')}`
+    })
+  }
+};
+
 export const dataProvider: DataProvider = {
 
   getList: async (resource, params) => {
@@ -16,13 +25,11 @@ export const dataProvider: DataProvider = {
       filter: JSON.stringify(params.filter),
     };
     const url = `${apiUrl}/${resource}?${stringify(query)}`;
+    
+    const headers = getOptionsHeaders()
 
-    return httpClient(url, {
-      headers:  new Headers({
-        'Content-Type': 'application/json', 
-        'Authorization': 'Bearer ' + localStorage.getItem('token')
-      })
-    }).then(({ headers, json }) => {
+    return httpClient(url, headers)
+    .then(({ headers, json }) => {
       return {
       data: json.data,
       total: parseInt(json.total),
@@ -30,12 +37,8 @@ export const dataProvider: DataProvider = {
   },
 
   getOne: (resource, params) =>
-    httpClient(`${apiUrl}/${resource}/${params.id}`, {
-      headers:  new Headers({
-        'Content-Type': 'application/json', 
-        'Authorization': 'Bearer ' + localStorage.getItem('token')
-      })
-    }).then(({ json }) => ({
+    httpClient(`${apiUrl}/${resource}/${params.id}`, )
+    .then(({ json }) => ({
       data: json,
     })),
 
@@ -44,12 +47,8 @@ export const dataProvider: DataProvider = {
       filter: JSON.stringify({ id: params.ids }),
     };
     const url = `${apiUrl}/${resource}?${stringify(query)}`;
-    return httpClient(url, {
-      headers:  new Headers({
-        'Content-Type': 'application/json', 
-        'Authorization': 'Bearer ' + localStorage.getItem('token')
-      })
-    }).then(({ json }) => ({ data: json.data }));
+    return httpClient(url)
+    .then(({ json }) => ({ data: json.data }));
   },
 
   getManyReference: (resource, params) => {
@@ -65,12 +64,8 @@ export const dataProvider: DataProvider = {
     };
     const url = `${apiUrl}/${resource}?${stringify(query)}`;
 
-    return httpClient(url, {
-      headers:  new Headers({
-        'Content-Type': 'application/json', 
-        'Authorization': 'Bearer ' + localStorage.getItem('token')
-      })
-    }).then(({ headers, json }) => ({
+    return httpClient(url)
+    .then(({ headers, json }) => ({
       data: json,
       total: parseInt(headers?.get("content-range")?.split("/").pop() as string, 10),
     }));
@@ -80,10 +75,6 @@ export const dataProvider: DataProvider = {
     httpClient(`${apiUrl}/${resource}/${params.id}`, {
       method: "PUT",
       body: JSON.stringify(params.data),
-        headers:  new Headers({
-          'Content-Type': 'application/json', 
-          'Authorization': 'Bearer ' + localStorage.getItem('token')
-        })
       
     }).then(({ json }) => ({ data: json })),
 
@@ -94,10 +85,6 @@ export const dataProvider: DataProvider = {
     return httpClient(`${apiUrl}/${resource}?${stringify(query)}`, {
       method: "PUT",
       body: JSON.stringify(params.data),
-      headers:  new Headers({
-        'Content-Type': 'application/json', 
-        'Authorization': 'Bearer ' + localStorage.getItem('token')
-      })
     }).then(({ json }) => ({ data: json }));
   },
 
@@ -105,10 +92,6 @@ export const dataProvider: DataProvider = {
     httpClient(`${apiUrl}/${resource}`, {
       method: "POST",
       body: JSON.stringify(params.data),
-      headers:  new Headers({
-        'Content-Type': 'application/json', 
-        'Authorization': 'Bearer ' + localStorage.getItem('token')
-      })
     }).then(({ json }) => ({
       data: { ...params.data, id: json.id },
     })),
@@ -116,10 +99,6 @@ export const dataProvider: DataProvider = {
   delete: (resource, params) =>
     httpClient(`${apiUrl}/${resource}/${params.id}`, {
       method: "DELETE",
-      headers:  new Headers({
-        'Content-Type': 'application/json', 
-        'Authorization': 'Bearer ' + localStorage.getItem('token')
-      })
     }).then(({ json }) => ({ data: json })),
 
   deleteMany: (resource, params) => {
@@ -129,10 +108,6 @@ export const dataProvider: DataProvider = {
     return httpClient(`${apiUrl}/${resource}?${stringify(query)}`, {
       method: "DELETE",
       body: JSON.stringify(params),
-      headers:  new Headers({
-        'Content-Type': 'application/json', 
-        'Authorization': 'Bearer ' + localStorage.getItem('token')
-      })
     }).then(({ json }) => ({ data: json }));
   },
 };

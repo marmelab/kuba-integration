@@ -1,4 +1,4 @@
-import { PipeTransform, Injectable, HttpException } from '@nestjs/common';
+import { PipeTransform, Injectable, HttpException, BadRequestException } from '@nestjs/common';
 
 @Injectable()
 export class RangePipe implements PipeTransform {
@@ -13,7 +13,7 @@ export class RangePipe implements PipeTransform {
           };
         }
       } catch (e) {
-        throw new HttpException('Incorrect range parameter', 400);
+        throw new BadRequestException('Incorrect range parameter');
       }
     }
 
@@ -35,7 +35,7 @@ export class SortPipe implements PipeTransform {
           };
         }
       } catch (e) {
-        throw new HttpException('Incorrect sort parameter', 400);
+        throw new BadRequestException('Incorrect sort parameter');
       }
     }
 
@@ -59,7 +59,7 @@ export class FilterUserPipe implements PipeTransform {
           };
         }
       } catch (e) {
-        throw new HttpException('Incorrect filter parameter', 400);
+        throw new BadRequestException('Incorrect filter parameter');
       }
     }
 

@@ -587,7 +587,7 @@ export class GameStateService {
       });
       return this.deserializerGameState(res);
     } catch (err) {
-      throw new Error("That game does not exists");
+      throw new Error("That game does not exist");
     }
   };
 

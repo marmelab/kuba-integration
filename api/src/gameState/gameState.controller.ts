@@ -61,7 +61,7 @@ export class GameStateController {
       const game = await this.gameStateService.getGame({ id });
       return this.gameStateService.deserializerGame(game);
     } catch (error) {
-      throw new NotFoundException('That game does not exists');
+      throw new NotFoundException('That game does not exist');
     }
   }
 
@@ -172,9 +172,6 @@ export class GameStateController {
 
   @Delete(':id')
   async deleteGame(@Param('id', ParseIntPipe) id: number) {
-    if (!id) {
-      throw new HttpException('Missing parameter', 400);
-    }
     return this.gameStateService.deleteGame({ id });
   }
 

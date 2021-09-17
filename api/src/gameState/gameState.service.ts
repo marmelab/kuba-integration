@@ -179,10 +179,9 @@ export class GameStateService {
   };
 
   getCurrentPlayer = (gameState: GameState): Player => {
-    const index = gameState.players.findIndex(
+    return gameState.players.find(
       (player) => player.playerNumber === gameState.currentPlayerId,
     );
-    return gameState.players[index];
   };
 
   getMarbleWonByPlayer = (graph: Graph): number => {

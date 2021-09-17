@@ -12,6 +12,7 @@ import {
   HttpStatus,
   BadRequestException,
   ConflictException,
+  ForbiddenException,
   // UseGuards,
 } from '@nestjs/common';
 import { AppGateway } from '../app.gateway';
@@ -53,7 +54,7 @@ export class GameStateController {
       const game = await this.gameStateService.getGame({ id });
       return this.gameStateService.deserializerGame(game);
     } catch (error) {
-      throw new NotFoundException("That game doesn't exists");
+      throw new NotFoundException("That game does not exists");
     }
   }
 
@@ -67,7 +68,7 @@ export class GameStateController {
       this.gatewayService.emitGameState(gameState);
       return gameState
     } catch (e) {
-      throw new HttpException("Can't join the game", HttpStatus.FORBIDDEN);
+      throw new ForbiddenException("Can't join the game");
     }
   }
 

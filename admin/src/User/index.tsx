@@ -19,7 +19,7 @@ export const UserFilter = [
 
 export const UserList = (props: any) => (
   <List {...props} filters={UserFilter}>
-    <Datagrid rowClick="edit">
+    <Datagrid rowClick="show">
       <TextField source="id" />
       <EmailField source="email" />
     </Datagrid>

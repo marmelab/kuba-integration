@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { Game, Prisma } from '@prisma/client';
 import {
@@ -30,22 +30,30 @@ export class GameStateService {
     take?: number;
     cursor?: Prisma.GameWhereUniqueInput;
     where?: Prisma.GameWhereInput;
-  }): Promise<Game[]> {
+  }): Promise<{ data: Game[]; total: number }> {
     const { skip, take, cursor, where } = params;
-    return this.prisma.game.findMany({
+    const data = await this.prisma.game.findMany({
       skip,
       take,
       cursor,
       where,
     });
+    const total = await this.prisma.user.count({ where });
+    return { data, total };
   }
 
-  async createGame(): Promise<Game> {
+  async createGame(playerId: number): Promise<Game> {
     const newGameState: GameState = this.createNewGameState();
     const data = {
       board: JSON.stringify(this.graphToBoard(newGameState.graph)),
-      currentPlayer: 1,
-      players: JSON.stringify(newGameState.players),
+      currentPlayer: playerId,
+      players: JSON.stringify([
+        {
+          playerNumber: playerId,
+          marbleColor: 1,
+          marblesWon: [],
+        },
+      ]),
       hasWinner: false,
       started: true,
     };
@@ -69,7 +77,14 @@ export class GameStateService {
     });
   }
 
-  deserializer(entry: Game): GameState {
+  deserializerGame(entry: Game): Game {
+    entry.board = JSON.parse(entry.board as string);
+    entry.players = JSON.parse(entry.players as string);
+    entry.marbleClicked = JSON.parse(entry.marbleClicked as string);
+    return entry;
+  }
+
+  deserializerGameState(entry: Game): GameState {
     const board = JSON.parse(entry.board as string);
     const graph = this.boardToGraph(board);
     const players = JSON.parse(entry.players as string);
@@ -155,14 +170,18 @@ export class GameStateService {
     return [player1, player2];
   };
 
-  switchToNextPlayer = (actualPlayerID: number): number => {
-    if (actualPlayerID === 1) return 2;
-    return 1;
+  switchToNextPlayer = (actualPlayerID: number, players: Player[]): number => {
+    const index = players.findIndex(
+      (player) => player.playerNumber === actualPlayerID,
+    );
+    if (index === 1) return players[0].playerNumber;
+    return players[1].playerNumber;
   };
 
   getCurrentPlayer = (gameState: GameState): Player => {
-    if (gameState.currentPlayerId === 1) return gameState.players[0];
-    return gameState.players[0];
+    return gameState.players.find(
+      (player) => player.playerNumber === gameState.currentPlayerId,
+    );
   };
 
   getMarbleWonByPlayer = (graph: Graph): number => {
@@ -208,9 +227,9 @@ export class GameStateService {
       throw new NotFoundException('Game not found');
     }
 
-    const currentGameState = this.deserializer(serializedGameState);
+    const currentGameState = this.deserializerGameState(serializedGameState);
     const marbleClickedCoordinates = `${currentGameState.marbleClicked.x},${currentGameState.marbleClicked.y}`;
-    const player = currentGameState.players[playerId - 1];
+    const player = this.getCurrentPlayer(currentGameState);
 
     try {
       this.checkMoveMarbleInDirection(
@@ -234,7 +253,7 @@ export class GameStateService {
     player: Player,
   ): Promise<GameState> {
     let serializedGameState = await this.getGame({ id });
-    const currentGameState = this.deserializer(serializedGameState);
+    const currentGameState = this.deserializerGameState(serializedGameState);
 
     if (currentGameState.currentPlayerId !== player.playerNumber) {
       throw new Error('This is the other player turn, please be patient');
@@ -261,6 +280,7 @@ export class GameStateService {
     } else {
       currentGameState.currentPlayerId = this.switchToNextPlayer(
         currentGameState.currentPlayerId,
+        currentGameState.players,
       );
     }
 
@@ -277,7 +297,6 @@ export class GameStateService {
     player: Player,
   ): void {
     const existInBoard = this.positionExistsInBoard(boardGraph, marblePosition);
-
     if (currentPlayerId !== player.playerNumber) {
       throw new CantMoveError('This is not your turn');
     }
@@ -553,9 +572,44 @@ export class GameStateService {
           currentPlayer: 1,
         },
       });
-      return this.deserializer(res);
+      return this.deserializerGameState(res);
     } catch (err) {
-      throw new Error("That game doesn't exists");
+      throw new Error("That game does not exists");
+    }
+  };
+
+  joinGame = async (id: number, playerId: number): Promise<GameState> => {
+    try {
+      const game = await this.getGame({ id });
+      const players = JSON.parse(game.players as string) as Player[];
+      const isAlreadyInThisGame = players.find(
+        (player) => player.playerNumber === playerId,
+      );
+
+      if (isAlreadyInThisGame) {
+        return this.deserializerGameState(game);
+      }
+
+      if (players.length >= 2) {
+        throw new ForbiddenException('That game as already two player');
+      }
+
+      players.push({
+        playerNumber: playerId,
+        marbleColor: 2,
+        marblesWon: [],
+      });
+
+      const res = await this.updateGame({
+        where: { id },
+        data: {
+          players: JSON.stringify(players),
+        },
+      });
+
+      return this.deserializerGameState(res);
+    } catch (err) {
+      throw new Error(err.message);
     }
   };
 }

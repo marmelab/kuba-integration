@@ -63,9 +63,11 @@ export class GameStateController {
     @Body('playerId', ParseIntPipe) playerId: number,
   ): Promise<GameState> {
     try {
-      return await this.gameStateService.joinGame(id, playerId);
+      const gameState =  await this.gameStateService.joinGame(id, playerId);
+      this.gatewayService.emitGameState(gameState);
+      return gameState
     } catch (e) {
-      throw new NotFoundException("That game doesn't exists");
+      throw new HttpException("Can't join the game", HttpStatus.FORBIDDEN);
     }
   }
 

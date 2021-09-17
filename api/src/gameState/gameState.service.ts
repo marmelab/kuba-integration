@@ -170,14 +170,19 @@ export class GameStateService {
     return [player1, player2];
   };
 
-  switchToNextPlayer = (actualPlayerID: number): number => {
-    if (actualPlayerID === 1) return 2;
-    return 1;
+  switchToNextPlayer = (actualPlayerID: number, players: Player[]): number => {
+    const index = players.findIndex(
+      (player) => player.playerNumber === actualPlayerID,
+    );
+    if (index === 1) return players[0].playerNumber;
+    return players[1].playerNumber;
   };
 
   getCurrentPlayer = (gameState: GameState): Player => {
-    if (gameState.currentPlayerId === 1) return gameState.players[0];
-    return gameState.players[0];
+    const index = gameState.players.findIndex(
+      (player) => player.playerNumber === gameState.currentPlayerId,
+    );
+    return gameState.players[index];
   };
 
   getMarbleWonByPlayer = (graph: Graph): number => {
@@ -225,7 +230,7 @@ export class GameStateService {
 
     const currentGameState = this.deserializerGameState(serializedGameState);
     const marbleClickedCoordinates = `${currentGameState.marbleClicked.x},${currentGameState.marbleClicked.y}`;
-    const player = currentGameState.players[playerId - 1];
+    const player = this.getCurrentPlayer(currentGameState);
 
     try {
       this.checkMoveMarbleInDirection(
@@ -276,6 +281,7 @@ export class GameStateService {
     } else {
       currentGameState.currentPlayerId = this.switchToNextPlayer(
         currentGameState.currentPlayerId,
+        currentGameState.players,
       );
     }
 
@@ -292,7 +298,6 @@ export class GameStateService {
     player: Player,
   ): void {
     const existInBoard = this.positionExistsInBoard(boardGraph, marblePosition);
-
     if (currentPlayerId !== player.playerNumber) {
       throw new CantMoveError('This is not your turn');
     }
@@ -577,10 +582,19 @@ export class GameStateService {
   joinGame = async (id: number, playerId: number): Promise<GameState> => {
     try {
       const game = await this.getGame({ id });
-      const players = JSON.parse(game.players as string);
-      if (players.length > 2) {
+      const players = JSON.parse(game.players as string) as Player[];
+      const isAlreadyInThisGame = players.find(
+        (player) => player.playerNumber === playerId,
+      );
+
+      if (isAlreadyInThisGame) {
+        return this.deserializerGameState(game);
+      }
+
+      if (players.length >= 2) {
         throw new Error('That game as already two player');
       }
+
       players.push({
         playerNumber: playerId,
         marbleColor: 2,
@@ -593,9 +607,10 @@ export class GameStateService {
           players: JSON.stringify(players),
         },
       });
+
       return this.deserializerGameState(res);
     } catch (err) {
-      throw new Error("That game doesn't exists");
+      throw new Error(err.message);
     }
   };
 }

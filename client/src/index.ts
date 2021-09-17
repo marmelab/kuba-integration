@@ -9,10 +9,12 @@ export let ACCESS_TOKEN: string | undefined = null;
 async function main() {
   const resultLogin = await renderLogin();
   const gameChoice = await renderGameChoice();
-  ACCESS_TOKEN = resultLogin.access_token;
   if (resultLogin && gameChoice) {
+    ACCESS_TOKEN = resultLogin.access_token;
+    PLAYER_ID = resultLogin.id;
+
     try {
-      await startGame(resultLogin.id, gameChoice);
+      await startGame(PLAYER_ID, gameChoice);
     } catch (e) {
       console.error(`Game can't be started: `, e);
     }

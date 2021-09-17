@@ -84,7 +84,9 @@ export const renderGameView = (gameState: GameState) => {
     content: `Game : #${gameState.id}`,
   });
 
-  const currentPlayerMarbleColor = gameState.players.find(player => player.playerNumber === gameState.currentPlayerId).marbleColor;
+  const currentPlayerMarbleColor = gameState.players.find(
+    (player) => player.playerNumber === gameState.currentPlayerId,
+  ).marbleColor;
   const playerTurnText = blessed.box({
     top: 'center',
     left: '80%',
@@ -112,13 +114,14 @@ export const renderGameView = (gameState: GameState) => {
   });
 
   const iOrOpponentRed: string =
-    PLAYER_ID === 1
+    PLAYER_ID === gameState.players[0]?.playerNumber
       ? `I (\u001b[31m RED \u001b[0m) have captured `
       : `The opponent (\u001b[31m RED \u001b[0m) has captured `;
+
   const iOrOpponentBlue: string =
-    PLAYER_ID === 1
-      ? `The Opponent (\u001b[34m BLUE \u001b[0m) has captured `
-      : `I (\u001b[34m BLUE \u001b[0m) have captured `;
+    PLAYER_ID === gameState.players[1]?.playerNumber
+      ? `I (\u001b[34m BLUE \u001b[0m) have captured `
+      : `The Opponent (\u001b[34m BLUE \u001b[0m) has captured `;
 
   const nodes = gameState.graph.nodes;
   Object.keys(nodes).forEach((key) => {
@@ -243,7 +246,7 @@ export const renderGameView = (gameState: GameState) => {
 
   if (gameState.hasWinner) {
     const winnerColor =
-      gameState.currentPlayerId === 1
+      gameState.currentPlayerId === gameState.players[0].playerNumber
         ? `\u001b[31m REDS \u001b[0m`
         : `\u001b[34m BLUES \u001b[0m`;
     const winnerString = `{center}Congratulations to the ${winnerColor} for the nice victory !{/center}`;

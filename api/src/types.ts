@@ -54,3 +54,9 @@ export type GameState = {
   hasWinner: boolean;
   started: boolean;
 };
+
+export type Admin = {
+  id: number;
+  email: string;
+  role: string;
+};

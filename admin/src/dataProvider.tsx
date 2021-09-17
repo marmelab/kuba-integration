@@ -90,6 +90,6 @@ export const dataProvider: DataProvider = {
     return httpClient(`${apiUrl}/${resource}?${stringify(query)}`, {
       method: "DELETE",
       body: JSON.stringify(params),
-    }).then(({ json }) => ({ data: json }));
+    }).then(({ json }) => ({ data: json.data }));
   },
 };

@@ -12,6 +12,7 @@ import {
   HttpStatus,
   BadRequestException,
   ConflictException,
+  Delete,
   // UseGuards,
 } from '@nestjs/common';
 import { AppGateway } from '../app.gateway';
@@ -160,5 +161,22 @@ export class GameStateController {
 
     this.gatewayService.emitGameState(newGameState);
     return newGameState;
+  }
+
+  @Delete(':id')
+  async deleteGame(@Param('id', ParseIntPipe) id: number) {
+    if (!id) {
+      throw new HttpException('Missing parameter', 400);
+    }
+    return this.gameStateService.deleteGame({ id });
+  }
+
+  @Delete()
+  async deleteManyGame(@Query('filter') filter: any) {
+    if (!filter) {
+      throw new HttpException('Missing parameter', 400);
+    }
+
+    return this.gameStateService.deleteManyGame(JSON.parse(filter).id);
   }
 }

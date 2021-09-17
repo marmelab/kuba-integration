@@ -71,10 +71,21 @@ export class GameStateService {
     });
   }
 
-  async deleteGame(where: Prisma.GameWhereUniqueInput): Promise<Game> {
-    return this.prisma.game.delete({
+  async deleteGame(where: Prisma.GameWhereUniqueInput): Promise<{data: any}> {
+    const deletedGame = await this.prisma.game.delete({
       where,
     });
+    return { data: deletedGame };
+  }
+
+  async deleteManyGame(ids: number[]) {
+    const deletedGames = await this.prisma.game.deleteMany({
+      where: {
+        id: { in: ids },
+      },
+    });
+
+    return { data: [deletedGames] };
   }
 
   deserializerGame(entry: Game): Game {

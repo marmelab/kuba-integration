@@ -1,11 +1,23 @@
 import { Grid, Typography } from "@material-ui/core";
-import { Show, SimpleShowLayout, TextField } from "react-admin";
+import {
+  Show,
+  SimpleShowLayout,
+  TextField,
+  DeleteButton,
+  TopToolbar,
+} from "react-admin";
 import { Board } from "./Board";
 import { GameUser } from "./User";
 
+const GameShowActions = ({ basePath, data, resource }: any) => (
+  <TopToolbar>
+    <DeleteButton basePath={basePath} record={data} />
+  </TopToolbar>
+);
+
 export const GameShow = (props: any) => {
   return (
-    <Show {...props}>
+    <Show actions={<GameShowActions />} {...props}>
       <SimpleShowLayout>
         <Grid container spacing={2}>
           <Grid item>

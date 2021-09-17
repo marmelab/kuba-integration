@@ -14,15 +14,15 @@ import {
   ConflictException,
   Delete,
   ForbiddenException,
-  // UseGuards,
+  UseGuards,
 } from '@nestjs/common';
 import { AppGateway } from '../app.gateway';
 import { GameState, Player, Node } from '../types';
 import { GameStateService } from './gameState.service';
 import { Game } from '@prisma/client';
-// import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
-// @UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard)
 @Controller('games')
 export class GameStateController {
   constructor(

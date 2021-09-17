@@ -84,13 +84,16 @@ export const renderGameView = (gameState: GameState) => {
     content: `Game : #${gameState.id}`,
   });
 
+  const currentPlayerMarbleColor = gameState.players.find(
+    (player) => player.playerNumber === gameState.currentPlayerId,
+  ).marbleColor;
   const playerTurnText = blessed.box({
     top: 'center',
     left: '80%',
     tags: true,
     content: `Player turn : \u25CF`,
     style: {
-      fg: MARBLE_INT_COLORS[gameState.currentPlayerId],
+      fg: MARBLE_INT_COLORS[currentPlayerMarbleColor],
     },
   });
 
@@ -111,63 +114,14 @@ export const renderGameView = (gameState: GameState) => {
   });
 
   const iOrOpponentRed: string =
-    PLAYER_ID === 1
+    PLAYER_ID === gameState.players[0]?.playerNumber
       ? `I (\u001b[31m RED \u001b[0m) have captured `
       : `The opponent (\u001b[31m RED \u001b[0m) has captured `;
+
   const iOrOpponentBlue: string =
-    PLAYER_ID === 1
-      ? `The Opponent (\u001b[34m BLUE \u001b[0m) has captured `
-      : `I (\u001b[34m BLUE \u001b[0m) have captured `;
-
-  const playerOneCatchMarblesContainer = blessed.box({
-    top: 0,
-    left: 0,
-    height: 2,
-    width: '100%',
-    content: iOrOpponentRed,
-  });
-
-  let marblesWonByRed = gameState.players[0].marblesWon;
-
-  for (let i = 0; i < marblesWonByRed.length; i++) {
-    const marbleBox = blessed.box({
-      top: 1,
-      left: i * 2,
-      width: 1,
-      height: 1,
-      tags: true,
-      style: {
-        fg: MARBLE_INT_COLORS[marblesWonByRed[i]],
-      },
-      content: '{center}\u25CF{/center}',
-    });
-    playerOneCatchMarblesContainer.append(marbleBox);
-  }
-
-  const playerTwoCatchMarblesContainer = blessed.box({
-    top: 37,
-    left: 0,
-    height: 2,
-    width: '100%',
-    content: iOrOpponentBlue,
-  });
-
-  let marblesWonByBlue = gameState.players[1].marblesWon;
-
-  for (let i = 0; i < marblesWonByBlue.length; i++) {
-    const marbleBox = blessed.box({
-      top: 1,
-      left: i * 2,
-      width: 1,
-      height: 1,
-      tags: true,
-      style: {
-        fg: MARBLE_INT_COLORS[marblesWonByBlue[i]],
-      },
-      content: '{center}\u25CF{/center}',
-    });
-    playerTwoCatchMarblesContainer.append(marbleBox);
-  }
+    PLAYER_ID === gameState.players[1]?.playerNumber
+      ? `I (\u001b[34m BLUE \u001b[0m) have captured `
+      : `The Opponent (\u001b[34m BLUE \u001b[0m) has captured `;
 
   const nodes = gameState.graph.nodes;
   Object.keys(nodes).forEach((key) => {
@@ -228,8 +182,63 @@ export const renderGameView = (gameState: GameState) => {
   outerBoard.append(cardinalWestBox);
   outerBoard.append(cardinalNorthBox);
   outerBoard.append(cardinalSouthBox);
-  outerBoard.append(playerOneCatchMarblesContainer);
-  outerBoard.append(playerTwoCatchMarblesContainer);
+
+  if (gameState.players[0]) {
+    const playerOneCatchMarblesContainer = blessed.box({
+      top: 0,
+      left: 0,
+      height: 2,
+      width: '100%',
+      content: iOrOpponentRed,
+    });
+    let marblesWonByRed = gameState.players[0].marblesWon;
+
+    for (let i = 0; i < marblesWonByRed.length; i++) {
+      const marbleBox = blessed.box({
+        top: 1,
+        left: i * 2,
+        width: 1,
+        height: 1,
+        tags: true,
+        style: {
+          fg: MARBLE_INT_COLORS[marblesWonByRed[i]],
+        },
+        content: '{center}\u25CF{/center}',
+      });
+      playerOneCatchMarblesContainer.append(marbleBox);
+    }
+
+    outerBoard.append(playerOneCatchMarblesContainer);
+  }
+
+  if (gameState.players[1]) {
+    const playerTwoCatchMarblesContainer = blessed.box({
+      top: 37,
+      left: 0,
+      height: 2,
+      width: '100%',
+      content: iOrOpponentBlue,
+    });
+
+    let marblesWonByBlue = gameState.players[1].marblesWon;
+
+    for (let i = 0; i < marblesWonByBlue.length; i++) {
+      const marbleBox = blessed.box({
+        top: 1,
+        left: i * 2,
+        width: 1,
+        height: 1,
+        tags: true,
+        style: {
+          fg: MARBLE_INT_COLORS[marblesWonByBlue[i]],
+        },
+        content: '{center}\u25CF{/center}',
+      });
+      playerTwoCatchMarblesContainer.append(marbleBox);
+    }
+    outerBoard.append(playerTwoCatchMarblesContainer);
+  }
+
   outerBoard.append(restartGameBox);
 
   SCREEN.append(gameIdText);
@@ -237,7 +246,7 @@ export const renderGameView = (gameState: GameState) => {
 
   if (gameState.hasWinner) {
     const winnerColor =
-      gameState.currentPlayerId === 1
+      gameState.currentPlayerId === gameState.players[0].playerNumber
         ? `\u001b[31m REDS \u001b[0m`
         : `\u001b[34m BLUES \u001b[0m`;
     const winnerString = `{center}Congratulations to the ${winnerColor} for the nice victory !{/center}`;
@@ -430,7 +439,7 @@ export const renderGameChoice = (): Promise<GameChoice> => {
         content: ' New Game',
       });
 
-      const or = blessed.box({
+      blessed.box({
         parent: GAME_CHOICE_SCREEN,
         keys: true,
         left: 'center',

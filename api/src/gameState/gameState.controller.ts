@@ -12,15 +12,16 @@ import {
   HttpStatus,
   BadRequestException,
   ConflictException,
-  UseGuards,
+  ForbiddenException,
+  // UseGuards,
 } from '@nestjs/common';
 import { AppGateway } from '../app.gateway';
 import { GameState, Player, Node } from '../types';
 import { GameStateService } from './gameState.service';
 import { Game } from '@prisma/client';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+// import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
-@UseGuards(JwtAuthGuard)
+// @UseGuards(JwtAuthGuard)
 @Controller('games')
 export class GameStateController {
   constructor(
@@ -29,34 +30,46 @@ export class GameStateController {
   ) {}
 
   @Post('')
-  async createGame(): Promise<GameState> {
-    const res = await this.gameStateService.createGame();
-    return this.gameStateService.deserializer(res);
+  async createGame(
+    @Body('playerId', ParseIntPipe) playerId: number,
+  ): Promise<GameState> {
+    const res = await this.gameStateService.createGame(playerId);
+    return this.gameStateService.deserializerGameState(res);
+  }
+
+  @Get('')
+  async getGames(): Promise<{ data: Game[] }> {
+    try {
+      const result = await this.gameStateService.getGames({});
+      result.data.map((game) => this.gameStateService.deserializerGame(game));
+      return result;
+    } catch (error) {
+      throw new NotFoundException('No games was found');
+    }
   }
 
   @Get(':id')
-  async getGameState(
-    @Param('id', ParseIntPipe) id: number,
-  ): Promise<GameState> {
-    let res: Game;
+  async getGame(@Param('id', ParseIntPipe) id: number): Promise<Game> {
     try {
-      res = await this.gameStateService.getGame({ id });
+      const game = await this.gameStateService.getGame({ id });
+      return this.gameStateService.deserializerGame(game);
     } catch (error) {
-      throw new NotFoundException("That game doesn't exists");
+      throw new NotFoundException("That game does not exists");
     }
-    return this.gameStateService.deserializer(res);
   }
 
   @Put(':id/join')
-  async joinGame(@Param('id', ParseIntPipe) id: number): Promise<GameState> {
-    let res: Game;
+  async joinGame(
+    @Param('id', ParseIntPipe) id: number,
+    @Body('playerId', ParseIntPipe) playerId: number,
+  ): Promise<GameState> {
     try {
-      res = await this.gameStateService.getGame({ id });
+      const gameState =  await this.gameStateService.joinGame(id, playerId);
+      this.gatewayService.emitGameState(gameState);
+      return gameState
     } catch (e) {
-      throw new NotFoundException("That game doesn't exists");
+      throw new ForbiddenException("Can't join the game");
     }
-    const gameState: GameState = this.gameStateService.deserializer(res);
-    return gameState;
   }
 
   @Post(':id/restart')
@@ -91,7 +104,7 @@ export class GameStateController {
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
-    const gameState = this.gameStateService.deserializer(res);
+    const gameState = this.gameStateService.deserializerGameState(res);
     this.gatewayService.emitGameState(gameState);
     return gameState;
   }

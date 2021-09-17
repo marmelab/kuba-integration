@@ -9,7 +9,7 @@ async function bootstrap() {
       methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
       preflightContinue: false,
       optionsSuccessStatus: 204,
-      allowedHeaders: ['content-type']
+      allowedHeaders: ['content-type', 'authorization']
     },
   });
   app.useWebSocketAdapter(new WsAdapter(app));

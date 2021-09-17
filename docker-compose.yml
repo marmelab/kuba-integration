@@ -12,7 +12,7 @@ services:
       - "3001:3001"
   api:
     container_name: kuba_api_container
-    image: node:14 || node:latest
+    image: node
     user: ${CURRENT_UID}
     volumes:
       - ./:/kuba

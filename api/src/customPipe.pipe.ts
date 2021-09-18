@@ -1,4 +1,4 @@
-import { PipeTransform, Injectable, HttpException, BadRequestException } from '@nestjs/common';
+import { PipeTransform, Injectable, BadRequestException } from '@nestjs/common';
 
 @Injectable()
 export class RangePipe implements PipeTransform {

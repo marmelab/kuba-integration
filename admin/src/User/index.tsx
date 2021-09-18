@@ -32,7 +32,7 @@ export const UserEdit = (props: any) => {
       <SimpleForm>
         <TextInput disabled source="id" />
         <TextInput source="email" type="email" validate={validateEmail} />
-        <TextInput source="hash" validate={required()} />
+        <TextInput source="password" label="new Password" />
       </SimpleForm>
     </Edit>
   );

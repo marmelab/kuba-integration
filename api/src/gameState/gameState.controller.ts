@@ -21,7 +21,7 @@ import { GameState, Player, Node } from '../types';
 import { GameStateService } from './gameState.service';
 import { Game } from '@prisma/client';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { RangePipe, SortPipe } from 'src/customPipe.pipe';
+import { FilterGamePipe, RangePipe, SortPipe } from 'src/customPipe.pipe';
 
 @UseGuards(JwtAuthGuard)
 @Controller('games')
@@ -41,15 +41,15 @@ export class GameStateController {
 
   @Get('')
   async getGames(
+    @Query('filter', FilterGamePipe) filter: {},
     @Query('sort', SortPipe) sort: {},
     @Query('range', RangePipe) range: {},
   ): Promise<{ data: Game[] }> {
-    const params = { ...sort, ...range };
+    const params = { ...filter, ...sort, ...range };
     try {
       const result = await this.gameStateService.getGames(params);
       result.data.map((game) => this.gameStateService.deserializerGame(game));
       return result;
-      return;
     } catch (error) {
       throw new NotFoundException('No games was found');
     }

@@ -30,15 +30,17 @@ export class GameStateService {
     take?: number;
     cursor?: Prisma.GameWhereUniqueInput;
     where?: Prisma.GameWhereInput;
+    orderBy?: Prisma.GameOrderByWithAggregationInput;
   }): Promise<{ data: Game[]; total: number }> {
-    const { skip, take, cursor, where } = params;
+    const { skip, take, cursor, where, orderBy } = params;
     const data = await this.prisma.game.findMany({
       skip,
       take,
       cursor,
       where,
+      orderBy,
     });
-    const total = await this.prisma.user.count({ where });
+    const total = await this.prisma.game.count({ where });
     return { data, total };
   }
 
@@ -71,10 +73,21 @@ export class GameStateService {
     });
   }
 
-  async deleteGame(where: Prisma.GameWhereUniqueInput): Promise<Game> {
-    return this.prisma.game.delete({
+  async deleteGame(where: Prisma.GameWhereUniqueInput): Promise<{data: any}> {
+    const deletedGame = await this.prisma.game.delete({
       where,
     });
+    return { data: deletedGame };
+  }
+
+  async deleteManyGame(ids: number[]) {
+    const deletedGames = await this.prisma.game.deleteMany({
+      where: {
+        id: { in: ids },
+      },
+    });
+
+    return { data: [deletedGames] };
   }
 
   deserializerGame(entry: Game): Game {
@@ -574,7 +587,7 @@ export class GameStateService {
       });
       return this.deserializerGameState(res);
     } catch (err) {
-      throw new Error("That game does not exists");
+      throw new Error("That game does not exist");
     }
   };
 

@@ -133,6 +133,6 @@ export const dataProvider: DataProvider = {
         'Content-Type': 'application/json', 
         'Authorization': 'Bearer ' + localStorage.getItem('token')
       })
-    }).then(({ json }) => ({ data: json }));
+    }).then(({ json }) => ({ data: json.data }));
   },
 };

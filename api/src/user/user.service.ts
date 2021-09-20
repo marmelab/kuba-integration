@@ -46,15 +46,13 @@ export class UserService {
     });
   }
 
-  async updateUser(params: {
-    where: Prisma.UserWhereUniqueInput;
-    data: Prisma.UserUpdateInput;
-  }): Promise<User> {
-    const { where, data } = params;
-    return this.prisma.user.update({
-      data,
-      where,
-    });
+  async updateUser(id: number, email: string, password: string): Promise<User> {
+    const hash = password ? await this.getHash(password) : undefined;
+    const params = {
+      where: { id } as Prisma.UserWhereUniqueInput,
+      data: { email, hash  } as Prisma.UserUpdateInput,
+    };
+    return this.prisma.user.update(params);
   }
 
   async deleteUser(where: Prisma.UserWhereUniqueInput): Promise<User> {
@@ -71,5 +69,11 @@ export class UserService {
     });
 
     return { data: [deletedUsers] };
+  }
+
+  async getHash(password) {
+    const salt = await bcrypt.genSalt(Number(saltRounds));
+    const hash = await bcrypt.hash(password, salt);
+    return hash;
   }
 }

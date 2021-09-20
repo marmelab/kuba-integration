@@ -66,3 +66,28 @@ export class FilterUserPipe implements PipeTransform {
     return undefined;
   }
 }
+
+
+@Injectable()
+export class FilterGamePipe implements PipeTransform {
+  transform(filter: any) {
+    if (filter) {
+      try {
+        const filters = JSON.parse(filter);
+        if (filters.playerNumber) {
+          return {
+            where: {
+              players: {
+                contains: `playerNumber":${filters.playerNumber}`,
+              },
+            },
+          };
+        }
+      } catch (e) {
+        throw new BadRequestException('Incorrect filter parameter');
+      }
+    }
+
+    return undefined;
+  }
+}

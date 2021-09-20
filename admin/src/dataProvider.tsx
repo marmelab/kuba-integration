@@ -71,8 +71,8 @@ export const dataProvider: DataProvider = {
         'Authorization': 'Bearer ' + localStorage.getItem('token')
       })
     }).then(({ headers, json }) => ({
-      data: json,
-      total: parseInt(headers?.get("content-range")?.split("/").pop() as string, 10),
+      data: json.data,
+      total: parseInt(json.total),
     }));
   },
 

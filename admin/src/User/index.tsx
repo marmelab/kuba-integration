@@ -9,6 +9,11 @@ import {
   TextField,
   EmailField,
   email,
+  Show,
+  SimpleShowLayout,
+  ReferenceManyField,
+  ChipField,
+  SingleFieldList,
 } from "react-admin";
 
 const validateEmail = [email(), required()];
@@ -32,12 +37,11 @@ export const UserEdit = (props: any) => {
       <SimpleForm>
         <TextInput disabled source="id" />
         <TextInput source="email" type="email" validate={validateEmail} />
-        <TextInput source="hash" validate={required()} />
+        <TextInput source="password" label="new Password" />
       </SimpleForm>
     </Edit>
   );
 };
-
 
 export const UserCreate = (props: any) => (
   <Create {...props}>
@@ -46,4 +50,22 @@ export const UserCreate = (props: any) => (
       <TextInput source="password" validate={required()} />
     </SimpleForm>
   </Create>
+);
+
+export const UserShow = (props: any) => (
+  <Show {...props}>
+    <SimpleShowLayout>
+      <TextField source="id" />
+      <TextField source="email" />
+      <ReferenceManyField
+        label="User's games"
+        reference="games"
+        target="playerNumber"
+      >
+        <SingleFieldList linkType="show">
+          <ChipField source="id" />
+        </SingleFieldList>
+      </ReferenceManyField>
+    </SimpleShowLayout>
+  </Show>
 );

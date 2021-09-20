@@ -55,16 +55,13 @@ export class UserController {
   async putUser(
     @Param('id', ParseIntPipe) id: number,
     @Body('email') email: string,
-    @Body('hash') hash: string,
+    @Body('password') password: string,
   ) {
-    if (!email || !hash) {
+    if (!email && !password) {
       throw new HttpException('Missing parameter', 400);
     }
 
-    return this.userService.updateUser({
-      where: { id },
-      data: { email, hash },
-    });
+    return this.userService.updateUser(id, email, password);
   }
 
   @Delete(':id')

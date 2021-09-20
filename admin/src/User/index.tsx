@@ -1,4 +1,3 @@
-import { Typography } from "@material-ui/core";
 import {
   Create,
   Edit,
@@ -12,10 +11,9 @@ import {
   email,
   Show,
   SimpleShowLayout,
-  Link,
-  linkToRecord,
-  useRecordContext,
-  useGetManyReference,
+  ReferenceManyField,
+  ChipField,
+  SingleFieldList,
 } from "react-admin";
 
 const validateEmail = [email(), required()];
@@ -59,29 +57,15 @@ export const UserShow = (props: any) => (
     <SimpleShowLayout>
       <TextField source="id" />
       <TextField source="email" />
-      <UserGame />
+      <ReferenceManyField
+        label="User's games"
+        reference="games"
+        target="playerNumber"
+      >
+        <SingleFieldList linkType="show">
+          <ChipField source="id" />
+        </SingleFieldList>
+      </ReferenceManyField>
     </SimpleShowLayout>
   </Show>
 );
-
-const UserGame = (props: any) => {
-  const user = useRecordContext(props);
-  const result = useGetManyReference(
-    "games",
-    "playerNumber",
-    user.id,
-    { page: 1, perPage: 10 },
-    { field: "id", order: "DESC" },
-    {},
-    "games"
-  );
-
-  return (
-    <div className="MuiFormControl-root">
-      <Typography variant="caption">User' Game: </Typography>
-      {result.ids.map((gameId: number) => (
-        <Link to={linkToRecord("/games", gameId, "show")}>{gameId}.</Link>
-      ))}
-    </div>
-  );
-};

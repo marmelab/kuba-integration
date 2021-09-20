@@ -14,7 +14,7 @@ import {
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { FilterUserPipe, RangePipe, SortPipe } from 'src/customPipe.pipe';
+import { FilterUserPipe, RangePipe, SortPipe } from 'src/custom.pipe';
 @UseGuards(JwtAuthGuard)
 @Controller('user')
 export class UserController {

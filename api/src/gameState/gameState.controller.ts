@@ -13,7 +13,6 @@ import {
   BadRequestException,
   ConflictException,
   Delete,
-  ForbiddenException,
   UseGuards,
 } from '@nestjs/common';
 import { AppGateway } from '../app.gateway';
@@ -21,7 +20,7 @@ import { GameState, Player, Node } from '../types';
 import { GameStateService } from './gameState.service';
 import { Game } from '@prisma/client';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { FilterGamePipe, RangePipe, SortPipe } from 'src/customPipe.pipe';
+import { FilterGamePipe, RangePipe, SortPipe } from 'src/custom.pipe';
 
 @UseGuards(JwtAuthGuard)
 @Controller('games')
@@ -57,12 +56,8 @@ export class GameStateController {
 
   @Get(':id')
   async getGame(@Param('id', ParseIntPipe) id: number): Promise<Game> {
-    try {
-      const game = await this.gameStateService.getGame({ id });
-      return this.gameStateService.deserializerGame(game);
-    } catch (error) {
-      throw new NotFoundException('That game does not exist');
-    }
+    const game = await this.gameStateService.getGame({ id });
+    return this.gameStateService.deserializerGame(game);
   }
 
   @Put(':id/join')
@@ -70,13 +65,9 @@ export class GameStateController {
     @Param('id', ParseIntPipe) id: number,
     @Body('playerId', ParseIntPipe) playerId: number,
   ): Promise<GameState> {
-    try {
-      const gameState = await this.gameStateService.joinGame(id, playerId);
-      this.gatewayService.emitGameState(gameState);
-      return gameState;
-    } catch (e) {
-      throw new ForbiddenException("Can't join the game");
-    }
+    const gameState = await this.gameStateService.joinGame(id, playerId);
+    this.gatewayService.emitGameState(gameState);
+    return gameState;
   }
 
   @Post(':id/restart')
@@ -178,7 +169,7 @@ export class GameStateController {
   @Delete()
   async deleteManyGame(@Query('filter') filter: any) {
     if (!filter) {
-      throw new HttpException('Missing parameter', 400);
+      throw new BadRequestException('Missing parameter');
     }
 
     return this.gameStateService.deleteManyGame(JSON.parse(filter).id);

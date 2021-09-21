@@ -54,7 +54,7 @@ export class GameStateController {
       const game = await this.gameStateService.getGame({ id });
       return this.gameStateService.deserializerGame(game);
     } catch (error) {
-      throw new NotFoundException("That game does not exists");
+      throw new NotFoundException('That game does not exists');
     }
   }
 
@@ -64,9 +64,9 @@ export class GameStateController {
     @Body('playerId', ParseIntPipe) playerId: number,
   ): Promise<GameState> {
     try {
-      const gameState =  await this.gameStateService.joinGame(id, playerId);
+      const gameState = await this.gameStateService.joinGame(id, playerId);
       this.gatewayService.emitGameState(gameState);
-      return gameState
+      return gameState;
     } catch (e) {
       throw new ForbiddenException("Can't join the game");
     }

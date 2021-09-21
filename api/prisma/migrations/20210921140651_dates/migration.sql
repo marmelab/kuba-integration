@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Game" ALTER COLUMN "creationDate" SET DATA TYPE TEXT,
+ALTER COLUMN "lastMoveDate" SET DATA TYPE TEXT;

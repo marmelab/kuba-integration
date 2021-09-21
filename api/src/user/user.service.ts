@@ -35,13 +35,18 @@ export class UserService {
     return { data, total };
   }
 
-  async createUser(email: string, password: string): Promise<User> {
+  async createUser(
+    email: string,
+    password: string,
+    username: string,
+  ): Promise<User> {
     const salt = await bcrypt.genSalt(Number(saltRounds));
     const hash = await bcrypt.hash(password, salt);
     return this.prisma.user.create({
       data: {
         email,
         hash,
+        username,
       },
     });
   }

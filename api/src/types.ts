@@ -53,6 +53,8 @@ export type GameState = {
   directionSelected: string | null;
   hasWinner: boolean;
   started: boolean;
+  creationDate: any;
+  lastMoveDate: any;
 };
 
 export type Admin = {

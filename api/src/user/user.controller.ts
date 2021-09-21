@@ -92,26 +92,27 @@ export class UserController {
   async createUser(
     @Body('email') email: string,
     @Body('password') password: string,
+    @Body('username') username: string,
   ) {
-    if (!email || !password) {
+    if (!email || !password || !username) {
       throw new HttpException("Something's wrong with your credentials ", 400);
     }
-    return this.userService.createUser(email, password);
+    return this.userService.createUser(email, password, username);
   }
 
   @Put(':id')
   async putUser(
     @Param('id', ParseIntPipe) id: number,
     @Body('email') email: string,
-    @Body('hash') hash: string,
+    @Body('username') username: string,
   ) {
-    if (!email || !hash) {
+    if (!email || !username) {
       throw new HttpException('Missing parameter', 400);
     }
 
     return this.userService.updateUser({
       where: { id },
-      data: { email, hash },
+      data: { email, username },
     });
   }
 

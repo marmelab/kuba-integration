@@ -11,20 +11,23 @@ generator client {
 }
 
 model Game {
-  id                Int     @id @default(autoincrement())
+  id                Int      @id @default(autoincrement())
   board             Json?
   currentPlayer     Int?
   players           Json?
   directionSelected String?
   marbleClicked     Json?
-  hasWinner         Boolean @default(false)
-  started           Boolean @default(false)
+  hasWinner         Boolean  @default(false)
+  started           Boolean  @default(false)
+  creationDate      DateTime @default(now())
+  lastMoveDate      DateTime @default(now())
 }
 
 model User {
-  id    Int    @id @default(autoincrement())
-  email String @unique
-  hash  String
+  id       Int    @id @default(autoincrement())
+  email    String @unique
+  hash     String
+  username String @default(dbgenerated("gen_random_uuid()"))
 }
 
 model Admin {

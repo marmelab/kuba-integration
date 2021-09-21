@@ -7,14 +7,15 @@ datasource db {
 }
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["filterJson"]
 }
 
 model Game {
   id                Int      @id @default(autoincrement())
   board             Json?
   currentPlayer     Int?
-  players           Json?
+  players           String?
   directionSelected String?
   marbleClicked     Json?
   hasWinner         Boolean  @default(false)

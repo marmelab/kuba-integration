@@ -58,6 +58,16 @@ export class FilterUserPipe implements PipeTransform {
             },
           };
         }
+
+        if (filters.id) {
+          return {
+            where: {
+              id: {
+                in: filters.id,
+              },
+            },
+          };
+        }
       } catch (e) {
         throw new BadRequestException('Incorrect filter parameter');
       }

@@ -144,12 +144,16 @@ export class GameStateController {
     }
 
     try {
-      await this.gameStateService.updateGame({
+      const gameUpdate = await this.gameStateService.updateGame({
         where: { id: newGameState.id },
         data: {
           ...this.gameStateService.serializer(newGameState),
         },
       });
+
+      this.gatewayService.emitGameState(
+        this.gameStateService.deserializerGameState(gameUpdate),
+      );
     } catch (error) {
       throw new HttpException(
         'unable to update the game',
@@ -157,7 +161,6 @@ export class GameStateController {
       );
     }
 
-    this.gatewayService.emitGameState(newGameState);
     return newGameState;
   }
 

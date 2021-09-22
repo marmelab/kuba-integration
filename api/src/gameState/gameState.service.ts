@@ -16,10 +16,14 @@ import {
 } from '../types';
 import { INITIAL_BOARD, INVERSE_DIRECTION, ALPHABET } from '../constants';
 import { CantMoveError, UserPositionError } from 'src/error';
+import { AppGateway } from 'src/app.gateway';
 
 @Injectable()
 export class GameStateService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private gatewayService: AppGateway,
+  ) {}
 
   async getGame(
     userWhereUniqueInput: Prisma.GameWhereUniqueInput,
@@ -293,21 +297,25 @@ export class GameStateService {
     this.sanitizeGraph(newGraph);
 
     if (marbleWon > -1) {
-      currentGameState.players[
-        currentGameState.currentPlayerId - 1
-      ].marblesWon.push(marbleWon);
-      if (
-        this.checkIfPlayerWon(
-          currentGameState.players[currentGameState.currentPlayerId - 1],
-        )
-      ) {
+      const currentPlayer = this.getCurrentPlayer(currentGameState);
+      currentPlayer.marblesWon.push(marbleWon);
+      if (this.checkIfPlayerWon(currentPlayer)) {
         currentGameState.hasWinner = true;
+        this.gatewayService.emitEvent(currentGameState.id, {
+          hasWinner: true,
+          playerWinner: currentPlayer,
+        });
       }
     } else {
       currentGameState.currentPlayerId = this.switchToNextPlayer(
         currentGameState.currentPlayerId,
         currentGameState.players,
       );
+
+      this.gatewayService.emitEvent(currentGameState.id, {
+        switchPlayer: true,
+        playerId: currentGameState.currentPlayerId,
+      });
     }
 
     currentGameState.graph = newGraph;
@@ -590,15 +598,17 @@ export class GameStateService {
 
   restartGame = async (id: number): Promise<GameState> => {
     try {
-      const clearedPlayers = this.initializePlayers();
       const res = await this.updateGame({
         where: { id },
         data: {
           board: JSON.stringify(INITIAL_BOARD),
-          players: JSON.stringify(clearedPlayers),
-          currentPlayer: 1,
         },
       });
+
+      this.gatewayService.emitEvent(id, {
+        restart: true,
+      });
+
       return this.deserializerGameState(res);
     } catch (err) {
       throw new Error('That game does not exist');

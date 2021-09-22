@@ -30,9 +30,11 @@ export const startGame = async (
   });
 
   ws.on('message', (message) => {
-    const newGameState = JSON.parse(message.toString('utf8'))
-      .gameState as GameState;
-    renderGameView(newGameState);
+    const messageReceived = JSON.parse(message.toString('utf8'));
+
+    if (messageReceived.gameState) {
+      renderGameView(messageReceived.gameState as GameState);
+    }
   });
 };
 

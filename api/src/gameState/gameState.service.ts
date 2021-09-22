@@ -112,6 +112,7 @@ export class GameStateService {
     const gameState: GameState = {
       id: entry.id,
       graph,
+      board,
       currentPlayerId: entry.currentPlayer,
       players,
       marbleClicked,

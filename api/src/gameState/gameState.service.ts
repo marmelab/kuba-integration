@@ -1,4 +1,8 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { Game, Prisma } from '@prisma/client';
 import {
@@ -58,6 +62,8 @@ export class GameStateService {
       ]),
       hasWinner: false,
       started: true,
+      creationDate: new Date(Date.now()).toISOString(),
+      lastMoveDate: new Date(Date.now()).toISOString(),
     };
     return this.prisma.game.create({ data });
   }
@@ -73,7 +79,7 @@ export class GameStateService {
     });
   }
 
-  async deleteGame(where: Prisma.GameWhereUniqueInput): Promise<{data: any}> {
+  async deleteGame(where: Prisma.GameWhereUniqueInput): Promise<{ data: any }> {
     const deletedGame = await this.prisma.game.delete({
       where,
     });
@@ -112,6 +118,8 @@ export class GameStateService {
       directionSelected: entry.directionSelected,
       hasWinner: entry.hasWinner,
       started: entry.started,
+      creationDate: entry.creationDate,
+      lastMoveDate: entry.lastMoveDate,
     };
     return gameState;
   }
@@ -126,6 +134,8 @@ export class GameStateService {
       directionSelected: gameState.directionSelected,
       hasWinner: gameState.hasWinner,
       started: gameState.started,
+      creationDate: gameState.creationDate,
+      lastMoveDate: gameState.lastMoveDate,
     };
 
     return game;
@@ -140,6 +150,8 @@ export class GameStateService {
     directionSelected: null,
     hasWinner: false,
     started: false,
+    creationDate: new Date(Date.now()).toISOString(),
+    lastMoveDate: new Date(Date.now()).toISOString(),
   };
 
   startNewGame = (playerNumber: number): GameState => {
@@ -298,6 +310,7 @@ export class GameStateService {
     }
 
     currentGameState.graph = newGraph;
+    currentGameState.lastMoveDate = new Date(Date.now()).toISOString();
 
     return currentGameState;
   }
@@ -587,7 +600,7 @@ export class GameStateService {
       });
       return this.deserializerGameState(res);
     } catch (err) {
-      throw new Error("That game does not exist");
+      throw new Error('That game does not exist');
     }
   };
 

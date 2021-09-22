@@ -26,7 +26,7 @@ export class UserController {
     @Query('sort', SortPipe) sort: {},
     @Query('range', RangePipe) range: {},
   ) {
-    const params = {...filter, ...sort, ...range};
+    const params = { ...filter, ...sort, ...range };
     const users = await this.userService.getUsers(params);
     return users;
   }
@@ -44,11 +44,12 @@ export class UserController {
   async createUser(
     @Body('email') email: string,
     @Body('password') password: string,
+    @Body('username') username: string,
   ) {
-    if (!email || !password) {
+    if (!email || !password || !username) {
       throw new HttpException("Something's wrong with your credentials ", 400);
     }
-    return this.userService.createUser(email, password);
+    return this.userService.createUser(email, password, username);
   }
 
   @Put(':id')

@@ -259,8 +259,10 @@ export class GameStateService {
 
     const currentGameState = this.deserializerGameState(serializedGameState);
     const marbleClickedCoordinates = `${currentGameState.marbleClicked.x},${currentGameState.marbleClicked.y}`;
-    const player = this.getCurrentPlayer(currentGameState);
-
+    const player = currentGameState.players.find(
+      (player) => player.playerNumber === playerId,
+    );
+    
     try {
       this.checkMoveMarbleInDirection(
         currentGameState.currentPlayerId,
@@ -272,6 +274,10 @@ export class GameStateService {
 
       return true;
     } catch (error) {
+      this.gatewayService.emitEvent(currentGameState.id, {
+        type: 'error',
+        message: error.message,
+      });
       return false;
     }
   }
@@ -302,8 +308,8 @@ export class GameStateService {
       if (this.checkIfPlayerWon(currentPlayer)) {
         currentGameState.hasWinner = true;
         this.gatewayService.emitEvent(currentGameState.id, {
-          hasWinner: true,
-          playerWinner: currentPlayer,
+          type: 'hasWinner',
+          data: { playerWinner: currentPlayer },
         });
       }
     } else {
@@ -313,8 +319,8 @@ export class GameStateService {
       );
 
       this.gatewayService.emitEvent(currentGameState.id, {
-        switchPlayer: true,
-        playerId: currentGameState.currentPlayerId,
+        type: 'switchPlayer',
+        data: { playerId: currentGameState.currentPlayerId },
       });
     }
 
@@ -606,7 +612,7 @@ export class GameStateService {
       });
 
       this.gatewayService.emitEvent(id, {
-        restart: true,
+        type: 'restart',
       });
 
       return this.deserializerGameState(res);

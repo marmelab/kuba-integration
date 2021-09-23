@@ -67,6 +67,9 @@ export class GameStateController {
   ): Promise<GameState> {
     const gameState = await this.gameStateService.joinGame(id, playerId);
     this.gatewayService.emitGameState(gameState);
+    this.gatewayService.emitEvent(id, {
+      type: 'joinGame',
+    });
     return gameState;
   }
 

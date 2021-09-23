@@ -51,11 +51,11 @@ export class UserService {
     });
   }
 
-  async updateUser(id: number, email: string, password: string): Promise<User> {
+  async updateUser(id: number, email: string, password: string, username: string): Promise<User> {
     const hash = password ? await this.getHash(password) : undefined;
     const params = {
       where: { id } as Prisma.UserWhereUniqueInput,
-      data: { email, hash  } as Prisma.UserUpdateInput,
+      data: { email, hash, username } as Prisma.UserUpdateInput,
     };
     return this.prisma.user.update(params);
   }

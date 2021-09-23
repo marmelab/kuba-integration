@@ -60,12 +60,13 @@ export class UserController {
     @Param('id', ParseIntPipe) id: number,
     @Body('email') email: string,
     @Body('password') password: string,
+    @Body('username') username: string,
   ) {
     if (!email && !password) {
       throw new HttpException('Missing parameter', 400);
     }
 
-    return this.userService.updateUser(id, email, password);
+    return this.userService.updateUser(id, email, password, username);
   }
 
   @Delete(':id')

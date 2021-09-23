@@ -14,6 +14,7 @@ import {
   ConflictException,
   Delete,
   UseGuards,
+  Header,
 } from '@nestjs/common';
 import { AppGateway } from '../app.gateway';
 import { GameState, Player, Node } from '../types';
@@ -39,6 +40,7 @@ export class GameStateController {
   }
 
   @Get('')
+  @Header('Pragma', 'no-cache')
   async getGames(
     @Query('filter', FilterGamePipe) filter: {},
     @Query('sort', SortPipe) sort: {},
@@ -55,6 +57,7 @@ export class GameStateController {
   }
 
   @Get(':id')
+  @Header('Pragma', 'no-cache')
   async getGame(@Param('id', ParseIntPipe) id: number): Promise<Game> {
     const game = await this.gameStateService.getGame({ id });
     return this.gameStateService.deserializerGame(game);
@@ -111,6 +114,7 @@ export class GameStateController {
   }
 
   @Get(':id/authorized-move')
+  @Header('Pragma', 'no-cache')
   isAnAuthorizedMove(
     @Param('id', ParseIntPipe) id: number,
     @Query('player', ParseIntPipe) player: number,

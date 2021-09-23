@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Header,
   HttpException,
   NotFoundException,
   Param,
@@ -21,6 +22,7 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get()
+  @Header('Pragma', 'no-cache')
   async getUsers(
     @Query('filter', FilterUserPipe) filter: {},
     @Query('sort', SortPipe) sort: {},
@@ -32,6 +34,7 @@ export class UserController {
   }
 
   @Get(':id')
+  @Header('Pragma', 'no-cache')
   async getUser(@Param('id', ParseIntPipe) id: number) {
     try {
       return this.userService.getUser({ id });

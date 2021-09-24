@@ -56,7 +56,7 @@ export class GameStateService {
     const newGameState: GameState = this.createNewGameState();
     const data = {
       board: JSON.stringify(this.graphToBoard(newGameState.graph)),
-      currentPlayer: playerId,
+      currentPlayerId: playerId,
       players: JSON.stringify([
         {
           playerNumber: playerId,
@@ -117,7 +117,7 @@ export class GameStateService {
       id: entry.id,
       graph,
       board,
-      currentPlayerId: entry.currentPlayer,
+      currentPlayerId: entry.currentPlayerId,
       players,
       marbleClicked,
       directionSelected: entry.directionSelected,
@@ -133,7 +133,7 @@ export class GameStateService {
     const game: Game = {
       id: gameState.id,
       board: JSON.stringify(this.graphToBoard(gameState.graph)),
-      currentPlayer: gameState.currentPlayerId,
+      currentPlayerId: gameState.currentPlayerId,
       players: JSON.stringify(gameState.players),
       marbleClicked: JSON.stringify(gameState.marbleClicked),
       directionSelected: gameState.directionSelected,
@@ -305,7 +305,7 @@ export class GameStateService {
       data: {
         marblesCoordinate: newGraph.marblesCoordinate,
         direction,
-        playerId: currentGameState.currentPlayerId
+        playerId: currentGameState.currentPlayerId,
       },
     });
 

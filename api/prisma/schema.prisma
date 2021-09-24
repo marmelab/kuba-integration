@@ -14,7 +14,7 @@ generator client {
 model Game {
   id                Int      @id @default(autoincrement())
   board             Json?
-  currentPlayer     Int?
+  currentPlayerId   Int?
   players           String?
   directionSelected String?
   marbleClicked     Json?

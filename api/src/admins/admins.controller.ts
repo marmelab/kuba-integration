@@ -10,6 +10,7 @@ import {
   Body,
   ForbiddenException,
   UseGuards,
+  Header,
 } from '@nestjs/common';
 import { Admin } from 'src/types';
 import { AdminsService } from './admins.service';
@@ -22,6 +23,7 @@ export class AdminsController {
 
   @UseGuards(JwtAuthGuard)
   @Get(':id')
+  @Header('Pragma', 'no-cache')
   async getAdmin(@Param('id', ParseIntPipe) id: number): Promise<Admin> {
     try {
       return await this.adminsService.getAdmin({ id });
@@ -32,6 +34,7 @@ export class AdminsController {
 
   @UseGuards(JwtAuthGuard)
   @Get()
+  @Header('Pragma', 'no-cache')
   async getAdmins(
     @Query('filter') filter: string,
     @Query('sort') sort: string,

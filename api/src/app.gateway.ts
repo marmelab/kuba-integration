@@ -31,6 +31,14 @@ export class AppGateway
     });
   }
 
+  emitEvent(gameId: number, event: any) {
+    this.clients.map((client) => {
+      if (client.gameId === gameId) {
+        client.wsClient.send(JSON.stringify({ event }));
+      }
+    });
+  }
+
   afterInit() {
     console.info('init Gateway');
   }

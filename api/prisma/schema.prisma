@@ -20,8 +20,8 @@ model Game {
   marbleClicked     Json?
   hasWinner         Boolean  @default(false)
   started           Boolean  @default(false)
-  creationDate      DateTime
-  lastMoveDate      DateTime
+  creationDate      DateTime @default(now())
+  lastMoveDate      DateTime @default(now())
 }
 
 model User {

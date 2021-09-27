@@ -22,6 +22,7 @@ model Game {
   started           Boolean  @default(false)
   creationDate      DateTime @default(now())
   lastMoveDate      DateTime @default(now())
+  lastMoves         Json?
 }
 
 model User {

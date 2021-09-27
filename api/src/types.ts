@@ -49,8 +49,9 @@ export type GameState = {
   id: number | null;
   graph: Graph | null;
   board?: Board | null;
+  lastMoves: Board[];
   currentPlayerId: number | null;
-  players: Players | null;
+  players: Player[] | null;
   marbleClicked: Node | null;
   directionSelected: string | null;
   hasWinner: boolean;
@@ -58,10 +59,6 @@ export type GameState = {
   creationDate: any;
   lastMoveDate: any;
 };
-
-export interface Players {
-  [key: string]: Player;
-}
 
 export type Admin = {
   id: number;

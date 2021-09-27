@@ -18,7 +18,7 @@ import { AdminsService } from 'src/admins/admins.service';
     UserModule,
     JwtModule.register({
       secret: JWT_CONSTANTS.secret,
-      signOptions: { expiresIn: '600s' },
+      signOptions: { expiresIn: '1d' },
     }),
   ],
   providers: [

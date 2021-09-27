@@ -66,7 +66,7 @@ export class GameStateService {
           marblesWon: [],
         },
       ]),
-      hasWinner: false,
+      winnerId: null,
       started: true,
       creationDate: new Date(Date.now()).toISOString(),
       lastMoveDate: new Date(Date.now()).toISOString(),
@@ -125,7 +125,7 @@ export class GameStateService {
       players,
       marbleClicked,
       directionSelected: entry.directionSelected,
-      hasWinner: entry.hasWinner,
+      winnerId: entry.winnerId,
       started: entry.started,
       creationDate: entry.creationDate,
       lastMoveDate: entry.lastMoveDate,
@@ -142,7 +142,7 @@ export class GameStateService {
       players: JSON.stringify(gameState.players),
       marbleClicked: JSON.stringify(gameState.marbleClicked),
       directionSelected: gameState.directionSelected,
-      hasWinner: gameState.hasWinner,
+      winnerId: gameState.winnerId,
       started: gameState.started,
       creationDate: gameState.creationDate,
       lastMoveDate: gameState.lastMoveDate,
@@ -159,7 +159,7 @@ export class GameStateService {
     players: null,
     marbleClicked: null,
     directionSelected: null,
-    hasWinner: false,
+    winnerId: null,
     started: false,
     creationDate: new Date(Date.now()).toISOString(),
     lastMoveDate: new Date(Date.now()).toISOString(),
@@ -341,7 +341,7 @@ export class GameStateService {
       const currentPlayer = this.getCurrentPlayer(currentGameState);
       currentPlayer.marblesWon.push(marbleWon);
       if (this.checkIfPlayerWon(currentPlayer)) {
-        currentGameState.hasWinner = true;
+        currentGameState.winnerId = currentPlayer.playerId;
         this.gatewayService.emitEvent(currentGameState.id, {
           type: 'hasWinner',
           data: { playerWinner: currentPlayer },

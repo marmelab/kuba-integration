@@ -54,7 +54,7 @@ export type GameState = {
   players: Player[] | null;
   marbleClicked: Node | null;
   directionSelected: string | null;
-  hasWinner: boolean;
+  winnerId: number | null;
   started: boolean;
   creationDate: any;
   lastMoveDate: any;

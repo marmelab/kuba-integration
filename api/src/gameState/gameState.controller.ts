@@ -58,9 +58,9 @@ export class GameStateController {
 
   @Get(':id')
   @Header('Pragma', 'no-cache')
-  async getGame(@Param('id', ParseIntPipe) id: number): Promise<Game> {
+  async getGame(@Param('id', ParseIntPipe) id: number): Promise<GameState> {
     const game = await this.gameStateService.getGame({ id });
-    return this.gameStateService.deserializerGame(game);
+    return this.gameStateService.deserializerGameState(game);
   }
 
   @Put(':id/join')

@@ -87,7 +87,7 @@ export class FilterGamePipe implements PipeTransform {
           return {
             where: {
               players: {
-                contains: `playerId":${filters.playerNumber}`,
+                contains: `playerId":${filters.playerId}`,
               },
             },
           };

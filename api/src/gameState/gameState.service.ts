@@ -61,7 +61,8 @@ export class GameStateService {
       currentPlayerId: playerId,
       players: JSON.stringify([
         {
-          playerNumber: playerId,
+          playerId,
+          playerNumber: 1,
           marbleColor: 1,
           marblesWon: [],
         },

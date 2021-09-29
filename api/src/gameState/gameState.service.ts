@@ -262,7 +262,7 @@ export class GameStateService {
     const player = currentGameState.players.find(
       (player) => player.playerNumber === playerId,
     );
-    
+
     try {
       this.checkMoveMarbleInDirection(
         currentGameState.currentPlayerId,
@@ -299,8 +299,18 @@ export class GameStateService {
       coordinates,
       direction,
     );
-    const marbleWon = this.getMarbleWonByPlayer(newGraph);
-    this.sanitizeGraph(newGraph);
+
+    this.gatewayService.emitEvent(currentGameState.id, {
+      type: 'animatedMarble',
+      data: {
+        marblesCoordinate: newGraph.marblesCoordinate,
+        direction,
+        playerId: currentGameState.currentPlayerId
+      },
+    });
+
+    const marbleWon = this.getMarbleWonByPlayer(newGraph.graph);
+    this.sanitizeGraph(newGraph.graph);
 
     if (marbleWon > -1) {
       const currentPlayer = this.getCurrentPlayer(currentGameState);
@@ -324,7 +334,7 @@ export class GameStateService {
       });
     }
 
-    currentGameState.graph = newGraph;
+    currentGameState.graph = newGraph.graph;
     currentGameState.lastMoveDate = new Date(Date.now()).toISOString();
 
     return currentGameState;
@@ -503,11 +513,13 @@ export class GameStateService {
     graph: Graph,
     marbleCoordinate: { x: number; y: number },
     direction: string,
-  ): Graph {
+  ): { graph: Graph; marblesCoordinate?: Node[] } {
     if (!marbleCoordinate || !graph || !direction) {
       return {
-        nodes: {},
-        edges: [],
+        graph: {
+          nodes: {},
+          edges: [],
+        },
       };
     }
 
@@ -515,7 +527,7 @@ export class GameStateService {
       graph.nodes[`${marbleCoordinate.x},${marbleCoordinate.y}`];
 
     if (currentNode.value === 0) {
-      return graph;
+      return { graph };
     }
 
     const nodes = [currentNode];
@@ -546,7 +558,7 @@ export class GameStateService {
       previousValue = tmpValue;
     });
 
-    return graph;
+    return { graph, marblesCoordinate: nodes };
   }
   graphToBoard = (graph: Graph): Board => {
     const board: Board = [[]];

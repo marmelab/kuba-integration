@@ -110,27 +110,31 @@ export class GameStateService {
   }
 
   deserializerGameState(entry: Game): GameState {
-    const board = JSON.parse(entry.board as string);
-    const lastMoves = JSON.parse(entry.lastMoves as string);
-    const graph = this.boardToGraph(board);
-    const players = JSON.parse(entry.players as string);
-    const marbleClicked = JSON.parse(entry.marbleClicked as string);
+    try {
+      const board = JSON.parse(entry.board as string);
+      const lastMoves = JSON.parse(entry.lastMoves as string);
+      const graph = this.boardToGraph(board);
+      const players = JSON.parse(entry.players as string);
+      const marbleClicked = JSON.parse(entry.marbleClicked as string);
 
-    const gameState: GameState = {
-      id: entry.id,
-      graph,
-      board,
-      lastMoves,
-      currentPlayerId: entry.currentPlayerId,
-      players,
-      marbleClicked,
-      directionSelected: entry.directionSelected,
-      winnerId: entry.winnerId,
-      started: entry.started,
-      creationDate: entry.creationDate,
-      lastMoveDate: entry.lastMoveDate,
-    };
-    return gameState;
+      const gameState: GameState = {
+        id: entry.id,
+        graph,
+        board,
+        lastMoves,
+        currentPlayerId: entry.currentPlayerId,
+        players,
+        marbleClicked,
+        directionSelected: entry.directionSelected,
+        winnerId: entry.winnerId,
+        started: entry.started,
+        creationDate: entry.creationDate,
+        lastMoveDate: entry.lastMoveDate,
+      };
+      return gameState;
+    } catch (error) {
+      console.error(`parsing DB query result incident => `, error);
+    }
   }
 
   serializer(gameState: GameState): Prisma.GameUpdateInput {
@@ -190,24 +194,6 @@ export class GameStateService {
     this.gameState.started = true;
 
     return this.gameState;
-  };
-
-  initializePlayers = () => {
-    const player1: Player = {
-      playerId: null,
-      playerNumber: 1,
-      marbleColor: 1,
-      marblesWon: [],
-    };
-
-    const player2: Player = {
-      playerId: null,
-      playerNumber: 2,
-      marbleColor: 2,
-      marblesWon: [],
-    };
-
-    return [player1, player2];
   };
 
   switchToNextPlayer = (actualPlayerID: number, players: Player[]): number => {
@@ -327,7 +313,7 @@ export class GameStateService {
         JSON.stringify(currentGameState.lastMoves[1])
       ) {
         throw new Error(
-          'You cannot make a move resulting in beeing the previous position',
+          'You cannot make the exact opposite of your opponent move',
         );
       } else {
         currentGameState.lastMoves = currentGameState.lastMoves.slice(1);

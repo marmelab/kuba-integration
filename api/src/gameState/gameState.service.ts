@@ -306,6 +306,7 @@ export class GameStateService {
       },
     });
 
+
     const newBoard = this.graphToBoard(result.graph);
 
     if (currentGameState.lastMoves.length > 2) {
@@ -581,6 +582,7 @@ export class GameStateService {
         if (!board[node.y]) {
           board.push([]);
         }
+        if (node.x >= 0 && node.y >=0)
         board[node.y][node.x] = node.value;
       }
     }

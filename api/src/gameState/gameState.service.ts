@@ -199,15 +199,15 @@ export class GameStateService {
 
   switchToNextPlayer = (actualPlayerID: number, players: Player[]): number => {
     const index = players.findIndex(
-      (player) => player.playerNumber === actualPlayerID,
+      (player) => player.playerId === actualPlayerID,
     );
-    if (index === 1) return players[0].playerNumber;
-    return players[1].playerNumber;
+    if (index === 1) return players[0].playerId;
+    return players[1].playerId;
   };
 
   getCurrentPlayer = (gameState: GameState): Player => {
     return gameState.players.find(
-      (player) => player.playerNumber === gameState.currentPlayerId,
+      (player) => player.playerId === gameState.currentPlayerId,
     );
   };
 
@@ -257,7 +257,7 @@ export class GameStateService {
     const currentGameState = this.deserializerGameState(serializedGameState);
     const marbleClickedCoordinates = `${currentGameState.marbleClicked.x},${currentGameState.marbleClicked.y}`;
     const player = currentGameState.players.find(
-      (player) => player.playerNumber === playerId,
+      (player) => player.playerId === playerId,
     );
 
     try {
@@ -288,7 +288,7 @@ export class GameStateService {
     let serializedGameState = await this.getGame({ id });
 
     const currentGameState = this.deserializerGameState(serializedGameState);
-    if (currentGameState.currentPlayerId !== player.playerNumber) {
+    if (currentGameState.currentPlayerId !== player.playerId) {
       throw new Error('This is the other player turn, please be patient');
     }
     const result = this.moveMarbleInDirection(
@@ -361,7 +361,7 @@ export class GameStateService {
     player: Player,
   ): void {
     const existInBoard = this.positionExistsInBoard(boardGraph, marblePosition);
-    if (currentPlayerId !== player.playerNumber) {
+    if (currentPlayerId !== player.playerId) {
       throw new CantMoveError('This is not your turn');
     }
 

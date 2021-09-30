@@ -14,14 +14,15 @@ generator client {
 model Game {
   id                Int      @id @default(autoincrement())
   board             Json?
-  currentPlayer     Int?
+  currentPlayerId   Int?
   players           String?
   directionSelected String?
   marbleClicked     Json?
-  hasWinner         Boolean  @default(false)
+  winnerId          Int?
   started           Boolean  @default(false)
   creationDate      DateTime @default(now())
   lastMoveDate      DateTime @default(now())
+  lastMoves         Json?
 }
 
 model User {

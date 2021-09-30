@@ -2,14 +2,15 @@
 CREATE TABLE "Game" (
     "id" SERIAL NOT NULL,
     "board" JSONB,
-    "currentPlayer" INTEGER,
+    "currentPlayerId" INTEGER,
     "players" TEXT,
     "directionSelected" TEXT,
     "marbleClicked" JSONB,
-    "hasWinner" BOOLEAN NOT NULL DEFAULT false,
+    "winnerId" INTEGER,
     "started" BOOLEAN NOT NULL DEFAULT false,
-    "creationDate" TIMESTAMP(3) NOT NULL,
-    "lastMoveDate" TIMESTAMP(3) NOT NULL,
+    "lastMoves" JSONB,
+    "creationDate" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "lastMoveDate" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Game_pkey" PRIMARY KEY ("id")
 );

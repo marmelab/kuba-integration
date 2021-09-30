@@ -35,6 +35,7 @@ export type Coordinates = string;
 
 export type Player = {
   playerNumber: number;
+  playerId: number | null;
   marbleColor: number;
   marblesWon: number[];
 };

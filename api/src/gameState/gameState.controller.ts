@@ -147,7 +147,7 @@ export class GameStateController {
         player,
       );
     } catch (error) {
-      throw new ConflictException(error);
+      throw new ConflictException(error.message);
     }
 
     try {

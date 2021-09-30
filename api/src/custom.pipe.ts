@@ -77,18 +77,17 @@ export class FilterUserPipe implements PipeTransform {
   }
 }
 
-
 @Injectable()
 export class FilterGamePipe implements PipeTransform {
   transform(filter: any) {
     if (filter) {
       try {
         const filters = JSON.parse(filter);
-        if (filters.playerNumber) {
+        if (filters.playerId) {
           return {
             where: {
               players: {
-                contains: `playerNumber":${filters.playerNumber}`,
+                contains: `playerId":${filters.playerId}`,
               },
             },
           };

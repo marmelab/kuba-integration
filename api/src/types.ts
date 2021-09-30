@@ -34,6 +34,7 @@ export type DirectionInBoard = {
 export type Coordinates = string;
 
 export type Player = {
+  playerId: number;
   playerNumber: number;
   marbleColor: number;
   marblesWon: number[];
@@ -47,12 +48,13 @@ export type UserMove = {
 export type GameState = {
   id: number | null;
   graph: Graph | null;
-  board?: Board | null,
+  board?: Board | null;
+  lastMoves: Board[];
   currentPlayerId: number | null;
   players: Player[] | null;
   marbleClicked: Node | null;
   directionSelected: string | null;
-  hasWinner: boolean;
+  winnerId: number | null;
   started: boolean;
   creationDate: any;
   lastMoveDate: any;

@@ -54,17 +54,20 @@ export class GameStateService {
 
   async createGame(playerId: number): Promise<Game> {
     const newGameState: GameState = this.createNewGameState();
+    const newBoard = this.graphToBoard(newGameState.graph);
     const data = {
-      board: JSON.stringify(this.graphToBoard(newGameState.graph)),
-      currentPlayer: playerId,
+      board: JSON.stringify(newBoard),
+      lastMoves: JSON.stringify(newGameState.lastMoves),
+      currentPlayerId: playerId,
       players: JSON.stringify([
         {
-          playerNumber: playerId,
+          playerId,
+          playerNumber: 1,
           marbleColor: 1,
           marblesWon: [],
         },
       ]),
-      hasWinner: false,
+      winnerId: null,
       started: true,
       creationDate: new Date(Date.now()).toISOString(),
       lastMoveDate: new Date(Date.now()).toISOString(),
@@ -108,36 +111,43 @@ export class GameStateService {
   }
 
   deserializerGameState(entry: Game): GameState {
-    const board = JSON.parse(entry.board as string);
-    const graph = this.boardToGraph(board);
-    const players = JSON.parse(entry.players as string);
-    const marbleClicked = JSON.parse(entry.marbleClicked as string);
+    try {
+      const board = JSON.parse(entry.board as string);
+      const lastMoves = JSON.parse(entry.lastMoves as string);
+      const graph = this.boardToGraph(board);
+      const players = JSON.parse(entry.players as string);
+      const marbleClicked = JSON.parse(entry.marbleClicked as string);
 
-    const gameState: GameState = {
-      id: entry.id,
-      graph,
-      board,
-      currentPlayerId: entry.currentPlayer,
-      players,
-      marbleClicked,
-      directionSelected: entry.directionSelected,
-      hasWinner: entry.hasWinner,
-      started: entry.started,
-      creationDate: entry.creationDate,
-      lastMoveDate: entry.lastMoveDate,
-    };
-    return gameState;
+      const gameState: GameState = {
+        id: entry.id,
+        graph,
+        board,
+        lastMoves,
+        currentPlayerId: entry.currentPlayerId,
+        players,
+        marbleClicked,
+        directionSelected: entry.directionSelected,
+        winnerId: entry.winnerId,
+        started: entry.started,
+        creationDate: entry.creationDate,
+        lastMoveDate: entry.lastMoveDate,
+      };
+      return gameState;
+    } catch (error) {
+      console.error(`parsing DB query result incident => `, error);
+    }
   }
 
   serializer(gameState: GameState): Prisma.GameUpdateInput {
     const game: Game = {
       id: gameState.id,
       board: JSON.stringify(this.graphToBoard(gameState.graph)),
-      currentPlayer: gameState.currentPlayerId,
+      lastMoves: JSON.stringify(gameState.lastMoves),
+      currentPlayerId: gameState.currentPlayerId,
       players: JSON.stringify(gameState.players),
       marbleClicked: JSON.stringify(gameState.marbleClicked),
       directionSelected: gameState.directionSelected,
-      hasWinner: gameState.hasWinner,
+      winnerId: gameState.winnerId,
       started: gameState.started,
       creationDate: gameState.creationDate,
       lastMoveDate: gameState.lastMoveDate,
@@ -150,10 +160,11 @@ export class GameStateService {
     id: null,
     graph: null,
     currentPlayerId: null,
+    lastMoves: [],
     players: null,
     marbleClicked: null,
     directionSelected: null,
-    hasWinner: false,
+    winnerId: null,
     started: false,
     creationDate: new Date(Date.now()).toISOString(),
     lastMoveDate: new Date(Date.now()).toISOString(),
@@ -170,34 +181,20 @@ export class GameStateService {
   createNewGameState = (): GameState => {
     let board = INITIAL_BOARD;
 
-    const players: Player[] = this.initializePlayers();
+    const players: Player[] = [];
 
     const graph = this.boardToGraph(board);
 
     this.gameState.graph = graph;
+    this.gameState.lastMoves = [];
+    this.gameState.lastMoves.push(board);
     this.gameState.players = players;
-    this.gameState.currentPlayerId = players[0].playerNumber;
+    this.gameState.currentPlayerId = null;
     this.gameState.marbleClicked = { x: -1, y: -1, value: -1, isExit: false };
     this.gameState.directionSelected = '';
     this.gameState.started = true;
 
     return this.gameState;
-  };
-
-  initializePlayers = () => {
-    const player1: Player = {
-      playerNumber: 1,
-      marbleColor: 1,
-      marblesWon: [],
-    };
-
-    const player2: Player = {
-      playerNumber: 2,
-      marbleColor: 2,
-      marblesWon: [],
-    };
-
-    return [player1, player2];
   };
 
   switchToNextPlayer = (actualPlayerID: number, players: Player[]): number => {
@@ -289,12 +286,12 @@ export class GameStateService {
     player: Player,
   ): Promise<GameState> {
     let serializedGameState = await this.getGame({ id });
-    const currentGameState = this.deserializerGameState(serializedGameState);
 
+    const currentGameState = this.deserializerGameState(serializedGameState);
     if (currentGameState.currentPlayerId !== player.playerNumber) {
       throw new Error('This is the other player turn, please be patient');
     }
-    const newGraph = this.moveMarbleInDirection(
+    const result = this.moveMarbleInDirection(
       currentGameState.graph,
       coordinates,
       direction,
@@ -303,20 +300,35 @@ export class GameStateService {
     this.gatewayService.emitEvent(currentGameState.id, {
       type: 'animatedMarble',
       data: {
-        marblesCoordinate: newGraph.marblesCoordinate,
+        marblesCoordinate: result.marblesCoordinate,
         direction,
-        playerId: currentGameState.currentPlayerId
+        playerId: currentGameState.currentPlayerId,
       },
     });
 
-    const marbleWon = this.getMarbleWonByPlayer(newGraph.graph);
-    this.sanitizeGraph(newGraph.graph);
+    const newBoard = this.graphToBoard(result.graph);
+
+    if (currentGameState.lastMoves.length > 2) {
+      if (
+        JSON.stringify(newBoard) ===
+        JSON.stringify(currentGameState.lastMoves[1])
+      ) {
+        throw new Error(
+          'You cannot make the exact opposite of your opponent move',
+        );
+      } else {
+        currentGameState.lastMoves = currentGameState.lastMoves.slice(1);
+      }
+    }
+
+    const marbleWon = this.getMarbleWonByPlayer(result.graph);
+    this.sanitizeGraph(result.graph);
 
     if (marbleWon > -1) {
       const currentPlayer = this.getCurrentPlayer(currentGameState);
       currentPlayer.marblesWon.push(marbleWon);
       if (this.checkIfPlayerWon(currentPlayer)) {
-        currentGameState.hasWinner = true;
+        currentGameState.winnerId = currentPlayer.playerId;
         this.gatewayService.emitEvent(currentGameState.id, {
           type: 'hasWinner',
           data: { playerWinner: currentPlayer },
@@ -334,7 +346,8 @@ export class GameStateService {
       });
     }
 
-    currentGameState.graph = newGraph.graph;
+    currentGameState.lastMoves.push(this.graphToBoard(currentGameState.graph));
+    currentGameState.graph = result.graph;
     currentGameState.lastMoveDate = new Date(Date.now()).toISOString();
 
     return currentGameState;
@@ -638,7 +651,7 @@ export class GameStateService {
       const game = await this.getGame({ id });
       const players = JSON.parse(game.players as string) as Player[];
       const isAlreadyInThisGame = players.find(
-        (player) => player.playerNumber === playerId,
+        (player) => player.playerId === playerId,
       );
 
       if (isAlreadyInThisGame) {
@@ -650,7 +663,8 @@ export class GameStateService {
       }
 
       players.push({
-        playerNumber: playerId,
+        playerId: playerId,
+        playerNumber: 2,
         marbleColor: 2,
         marblesWon: [],
       });

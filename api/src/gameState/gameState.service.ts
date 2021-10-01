@@ -262,8 +262,7 @@ export class GameStateService {
 
     try {
       this.checkMoveMarbleInDirection(
-        currentGameState.currentPlayerId,
-        currentGameState.graph,
+        currentGameState,
         marbleClickedCoordinates,
         direction,
         player,
@@ -274,9 +273,24 @@ export class GameStateService {
       this.gatewayService.emitEvent(currentGameState.id, {
         type: 'error',
         message: error.message,
+        data: {playerId: player.playerId}
       });
       return false;
     }
+  }
+
+  isOppositeMove = (currentGameState: GameState, coordinates: any, direction: string) => {
+    const result = this.moveMarbleInDirection(
+      currentGameState.graph,
+      coordinates,
+      direction,
+    );
+    const newBoard = this.graphToBoard(result.graph);
+
+    return (currentGameState.lastMoves.length > 2 && (
+      JSON.stringify(newBoard) ===
+      JSON.stringify(currentGameState.lastMoves[1])
+    ));
   }
 
   async moveMarble(
@@ -354,13 +368,19 @@ export class GameStateService {
     return currentGameState;
   }
 
+  convertStringPositionToCoordinates = (position: string) => {
+    return position.split(',');
+  }
+
   checkMoveMarbleInDirection(
-    currentPlayerId: number,
-    boardGraph: Graph,
+    gameState: GameState,
     marblePosition: string,
     direction: string,
     player: Player,
   ): void {
+
+    const currentPlayerId = gameState.currentPlayerId;
+    const boardGraph = gameState.graph;
     const existInBoard = this.positionExistsInBoard(boardGraph, marblePosition);
     if (currentPlayerId !== player.playerId) {
       throw new CantMoveError('This is not your turn');
@@ -399,6 +419,16 @@ export class GameStateService {
     );
     if (itWillExitAnOwnMarble) {
       throw new CantMoveError("You can't exit one of your own marbles");
+    } 
+
+    const marbleCoordinate = this.convertStringPositionToCoordinates(marblePosition);
+    const itWillBeOppositeMove = this.isOppositeMove(
+      gameState,
+      {x: +marbleCoordinate[0], y: +marbleCoordinate[1]},
+      direction,
+    );
+    if (itWillBeOppositeMove) {
+      throw new CantMoveError("You cannot make the exact opposite of your opponent move");
     }
   }
 
